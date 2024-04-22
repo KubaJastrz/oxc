@@ -1,0 +1,5 @@
+---
+source: crates/oxc_linter/src/tester.rs
+expression: rules_of_hooks
+---
+
