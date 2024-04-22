@@ -265,3 +265,11 @@ pub fn parse_jsx_value(value: &JSXAttributeValue) -> Result<f64, ()> {
         _ => Err(()),
     }
 }
+
+/// Checks whether the `name` follows the official conventions of React Hooks.
+///
+/// Hook names must start with use followed by a capital letter,
+/// like useState (built-in) or useOnlineStatus (custom).
+pub fn is_react_hook_name(name: &str) -> bool {
+    name.starts_with("use") && name.chars().nth(3).is_some_and(char::is_uppercase)
+}
