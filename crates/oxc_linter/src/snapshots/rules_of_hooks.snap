@@ -2,4 +2,11 @@
 source: crates/oxc_linter/src/tester.rs
 expression: rules_of_hooks
 ---
-
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+   ╭─[rules_of_hooks.tsx:8:11]
+ 7 │           if (c) {
+ 8 │           useHook();
+   ·           ─────────
+ 9 │ 
+   ╰────
+  help: TODO
