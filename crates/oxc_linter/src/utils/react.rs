@@ -273,3 +273,9 @@ pub fn parse_jsx_value(value: &JSXAttributeValue) -> Result<f64, ()> {
 pub fn is_react_hook_name(name: &str) -> bool {
     name.starts_with("use") && name.chars().nth(3).is_some_and(char::is_uppercase)
 }
+
+/// Checks if the node is a React component name. React component names must
+/// always start with an uppercase letter.
+pub fn is_react_component_name(name: &str) -> bool {
+    name.chars().next().is_some_and(|c| c.is_ascii_uppercase())
+}

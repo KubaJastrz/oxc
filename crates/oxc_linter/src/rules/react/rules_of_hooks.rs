@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use oxc_ast::AstKind;
+use oxc_ast::{ast::Function, AstKind};
 use oxc_diagnostics::{
     miette::{self, Diagnostic},
     thiserror::Error,
@@ -11,12 +11,20 @@ use oxc_semantic::{
 };
 use oxc_span::Span;
 
-use crate::{context::LintContext, rule::Rule, utils::is_react_hook_name, AstNode};
+use crate::{
+    context::LintContext,
+    rule::Rule,
+    utils::{is_react_component_name, is_react_hook_name},
+    AstNode,
+};
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO")]
 #[diagnostic(severity(warning), help("TODO"))]
-struct RulesOfHooksDiagnostic(#[label] pub Span);
+enum RulesOfHooksDiagnostic {
+    FunctionError(#[label] Span),
+    ConditionalError(#[label] Span),
+}
 
 #[derive(Debug, Default, Clone)]
 pub struct RulesOfHooks;
@@ -52,6 +60,15 @@ impl Rule for RulesOfHooks {
 
         let parent_func =
             if is_func(parent) { parent } else { ancestors.find(|it| is_func(it)).unwrap() };
+
+        match parent_func.kind() {
+            AstKind::Function(Function { id: Some(id), .. }) => {
+                if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) {
+                    ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError(id.span));
+                }
+            }
+            _ => {}
+        }
 
         let cfg = semantic.cfg();
         let node_cfg_ix = node.cfg_ix();
@@ -107,7 +124,7 @@ impl Rule for RulesOfHooks {
 
         if all_edges_blocks.any(|f| matches!(f, BasicBlockElement::Assignment(Register::Return, _)))
         {
-            ctx.diagnostic(RulesOfHooksDiagnostic(call.span));
+            ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalError(call.span));
         }
 
         // panic!();
