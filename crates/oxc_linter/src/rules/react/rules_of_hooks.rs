@@ -11,6 +11,14 @@ use oxc_semantic::{
 };
 use oxc_span::Span;
 
+// TODO: REMOVE ME PLS
+use std::dbg as std_dbg;
+macro_rules! dbg {
+    ($($any:tt)*) => (
+        std_dbg!($($any)*)
+    )
+}
+
 use crate::{
     context::LintContext,
     rule::Rule,
@@ -62,12 +70,14 @@ impl Rule for RulesOfHooks {
             if is_func(parent) { parent } else { ancestors.find(|it| is_func(it)).unwrap() };
 
         match parent_func.kind() {
-            AstKind::Function(Function { id: Some(id), .. }) => {
-                if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) {
-                    ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError(id.span));
-                }
+            AstKind::Function(Function { id: Some(id), .. })
+                if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) =>
+            {
+                ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError(id.span));
             }
-            _ => {}
+            _ => {
+                dbg!("TODO!");
+            }
         }
 
         let cfg = semantic.cfg();
