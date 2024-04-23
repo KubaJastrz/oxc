@@ -95,7 +95,7 @@ impl Rule for RulesOfHooks {
         dbg!(&func_to_node_path);
 
         let func_to_node_all_edge_nodes =
-            petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(parent_cfg_ix), |_| 0);
+            petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
         dbg!(&func_to_node_all_edge_nodes);
 
         let mut all_edges_blocks = func_to_node_all_edge_nodes
@@ -128,15 +128,27 @@ fn test() {
     let pass = vec!["<App />"];
 
     let fail = vec![
-        // // Invalid because it's dangerous and might not warn otherwise.
-        // // This *must* be invalid.
-        // "
-        //     function ComponentWithConditionalHook() {
-        //       if (cond) {
-        //         useConditionalHook();
-        //       }
-        //     }
-        // ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        "
+            function useHook() {
+              if (a) return; 
+              useState();
+            }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        "
+            function useHook() {
+              if (a) return;
+              if (b) {
+                console.log('true');
+              } else {
+                console.log('false');
+              }
+              useState();
+            }
+        ",
         // Is valid but hard to compute by brute-forcing
         "
             function MyComponent() {
@@ -144,10 +156,7 @@ fn test() {
               // if (c) {} else {}
               if (c) {} else { return; }
 
-              if (c) {
               useHook();
-
-              } else {}
             }
         ",
     ];

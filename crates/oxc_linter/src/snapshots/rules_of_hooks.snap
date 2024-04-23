@@ -3,10 +3,28 @@ source: crates/oxc_linter/src/tester.rs
 expression: rules_of_hooks
 ---
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
-   ╭─[rules_of_hooks.tsx:8:15]
- 7 │               if (c) {
- 8 │               useHook();
+   ╭─[rules_of_hooks.tsx:4:15]
+ 3 │               if (a) return; 
+ 4 │               useState();
+   ·               ──────────
+ 5 │             }
+   ╰────
+  help: TODO
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+    ╭─[rules_of_hooks.tsx:9:15]
+  8 │               }
+  9 │               useState();
+    ·               ──────────
+ 10 │             }
+    ╰────
+  help: TODO
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+   ╭─[rules_of_hooks.tsx:7:15]
+ 6 │ 
+ 7 │               useHook();
    ·               ─────────
- 9 │ 
+ 8 │             }
    ╰────
   help: TODO
