@@ -35,7 +35,7 @@ declare_oxc_lint!(
 impl Rule for RulesOfHooks {
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         let AstKind::CallExpression(call) = node.kind() else { return };
-        let is_hook = call.callee_name().is_some_and(|name| is_react_hook_name(name));
+        let is_hook = call.callee_name().is_some_and(is_react_hook_name);
 
         if !is_hook {
             return;
@@ -86,11 +86,10 @@ impl Rule for RulesOfHooks {
 
         let func_to_node_path = astar
             .iter()
-            .map(|c| {
+            .flat_map(|c| {
                 let blocks = cfg.basic_block_by_index(*c);
                 blocks
             })
-            .flatten()
             .collect_vec();
         dbg!(&func_to_node_path);
 
@@ -98,13 +97,10 @@ impl Rule for RulesOfHooks {
             petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
         dbg!(&func_to_node_all_edge_nodes);
 
-        let mut all_edges_blocks = func_to_node_all_edge_nodes
-            .iter()
-            .map(|(c, _)| {
-                let blocks = cfg.basic_block_by_index(*c);
-                blocks
-            })
-            .flatten();
+        let mut all_edges_blocks = func_to_node_all_edge_nodes.keys().flat_map(|ix| {
+            let blocks = cfg.basic_block_by_index(*ix);
+            blocks
+        });
 
         dbg!(&all_edges_blocks);
 
