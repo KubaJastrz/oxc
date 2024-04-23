@@ -81,14 +81,14 @@ impl Rule for RulesOfHooks {
         let astar = astar.chunks(astar.len() - 1).next().unwrap();
         dbg!(&astar);
 
-        let func_to_node_path = astar
+        let func_to_node_path_blocks = astar
             .iter()
             .flat_map(|c| {
                 let blocks = cfg.basic_block_by_index(*c);
                 blocks
             })
             .collect_vec();
-        dbg!(&func_to_node_path);
+        dbg!(&func_to_node_path_blocks);
 
         let func_to_node_all_edge_nodes =
             petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
@@ -101,7 +101,7 @@ impl Rule for RulesOfHooks {
 
         dbg!(&all_edges_blocks);
 
-        if func_to_node_all_edge_nodes.len() == func_to_node_path.len() {
+        if func_to_node_all_edge_nodes.len() == astar.len() {
             return;
         }
 
