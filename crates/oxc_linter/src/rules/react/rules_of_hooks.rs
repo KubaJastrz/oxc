@@ -53,7 +53,6 @@ impl Rule for RulesOfHooks {
         let parent_func =
             if is_func(parent) { parent } else { ancestors.find(|it| is_func(it)).unwrap() };
 
-
         let cfg = semantic.cfg();
         let node_cfg_ix = node.cfg_ix();
         let func_cfg_ix = parent_func.cfg_ix();
@@ -180,8 +179,8 @@ fn test() {
             }
         ",
         // Valid although unconditional return doesn't make sense and would fail other rules.
+        // We could make it invalid but it doesn't matter.
         "
-            // We could make it invalid but it doesn't matter.
             function useUnreachable() {
               return;
               useHook();
@@ -234,49 +233,49 @@ fn test() {
               return useHook1(useHook2());
             }
         ",
-        // // Valid because hooks can be used in anonymous arrow-function arguments
-        // "
-        //     // to forwardRef.
-        //     const FancyButton = React.forwardRef((props, ref) => {
-        //       useHook();
-        //       return <button {...props} ref={ref} />
-        //     });
-        // ",
-        // Valid because hooks can be used in anonymous function arguments to
+        // Valid because hooks can be used in anonymous arrow-function arguments
+        // to forwardRef.
         "
-            // forwardRef.
+            const FancyButton = React.forwardRef((props, ref) => {
+              useHook();
+              return <button {...props} ref={ref} />
+            });
+        ",
+        // Valid because hooks can be used in anonymous function arguments to
+        // forwardRef.
+        "
             const FancyButton = React.forwardRef(function (props, ref) {
               useHook();
               return <button {...props} ref={ref} />
             });
         ",
         // Valid because hooks can be used in anonymous function arguments to
+        // forwardRef.
         "
-            // forwardRef.
             const FancyButton = forwardRef(function (props, ref) {
               useHook();
               return <button {...props} ref={ref} />
             });
         ",
-        // // Valid because hooks can be used in anonymous function arguments to
-        // "
-        //     // React.memo.
-        //     const MemoizedFunction = React.memo(props => {
-        //       useHook();
-        //       return <button {...props} />
-        //     });
-        // ",
         // Valid because hooks can be used in anonymous function arguments to
+        // React.memo.
         "
-            // memo.
+            const MemoizedFunction = React.memo(props => {
+              useHook();
+              return <button {...props} />
+            });
+        ",
+        // Valid because hooks can be used in anonymous function arguments to
+        // memo.
+        "
             const MemoizedFunction = memo(function (props) {
               useHook();
               return <button {...props} />
             });
         ",
         // Valid because classes can call functions.
+        // We don't consider these to be hooks.
         "
-            // We don't consider these to be hooks.
             class C {
               m() {
                 this.useHook();
@@ -313,18 +312,18 @@ fn test() {
               });
             }
         ",
-        // // This is valid because "use"-prefixed functions called in
-        // "
-        //     // unnamed function arguments are not assumed to be hooks.
-        //     React.unknownFunction((foo, bar) => {
-        //       if (foo) {
-        //         useNotAHook(bar)
-        //       }
-        //     });
-        // ",
         // This is valid because "use"-prefixed functions called in
+        // unnamed function arguments are not assumed to be hooks.
         "
-            // unnamed function arguments are not assumed to be hooks.
+            React.unknownFunction((foo, bar) => {
+              if (foo) {
+                useNotAHook(bar)
+              }
+            });
+        ",
+        // This is valid because "use"-prefixed functions called in
+        // unnamed function arguments are not assumed to be hooks.
+        "
             unknownFunction(function(foo, bar) {
               if (foo) {
                 useNotAHook(bar)
