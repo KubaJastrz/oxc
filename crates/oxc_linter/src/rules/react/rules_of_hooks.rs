@@ -74,12 +74,13 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        let astar =
+        let Some((_, astar)) =
             petgraph::algo::astar(&cfg.graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0)
-                .expect(
-                    "There should always be a control flow path between a parent and child node.",
-                )
-                .1;
+        else {
+            // There should always be a control flow path between a parent and child node.
+            // If there is none it means we always do an early exit before reaching our hook call.
+            return;
+        };
 
         let astar = astar.chunks(astar.len() - 1).next().unwrap();
         dbg!(&astar);
