@@ -43,7 +43,7 @@ impl Rule for RulesOfHooks {
 
         let semantic = ctx.semantic();
 
-        let is_func = |it: &AstNode| matches!(it.kind(), AstKind::Function(_));
+        let is_func = |it: &AstNode| it.kind().is_function_like();
 
         let mut ancestors =
             semantic.nodes().ancestors(node.id()).map(|id| semantic.nodes().get_node(id));
@@ -53,9 +53,6 @@ impl Rule for RulesOfHooks {
         let parent_func =
             if is_func(parent) { parent } else { ancestors.find(|it| is_func(it)).unwrap() };
 
-        // .find()
-        // .and_then(|it| Some(semantic.nodes().get_node(it)))
-        // .unwrap();
 
         let cfg = semantic.cfg();
         let node_cfg_ix = node.cfg_ix();
