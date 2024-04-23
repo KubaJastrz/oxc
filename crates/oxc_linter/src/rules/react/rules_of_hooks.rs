@@ -6,13 +6,8 @@ use oxc_diagnostics::{
 };
 use oxc_macros::declare_oxc_lint;
 use oxc_semantic::{
-    petgraph::{
-        self,
-        visit::{EdgeRef, NodeRef},
-        Direction,
-    },
-    pg::neighbors_filtered_by_edge_weight,
-    BasicBlockElement, EdgeType, Register,
+    petgraph::{self, Direction},
+    BasicBlockElement, Register,
 };
 use oxc_span::Span;
 
@@ -133,19 +128,27 @@ fn test() {
     let pass = vec!["<App />"];
 
     let fail = vec![
+        // // Invalid because it's dangerous and might not warn otherwise.
+        // // This *must* be invalid.
+        // "
+        //     function ComponentWithConditionalHook() {
+        //       if (cond) {
+        //         useConditionalHook();
+        //       }
+        //     }
+        // ",
         // Is valid but hard to compute by brute-forcing
         "
-        function MyComponent() {
-          // 40 conditions
-          // if (c) {} else {}
-          if (c) {} else { return; }
+            function MyComponent() {
+              // 40 conditions
+              // if (c) {} else {}
+              if (c) {} else { return; }
 
-          if (c) {
-          useHook();
+              if (c) {
+              useHook();
 
-          } else {}
-        }
-
+              } else {}
+            }
         ",
     ];
 
