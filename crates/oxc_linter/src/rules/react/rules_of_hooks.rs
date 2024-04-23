@@ -9,7 +9,7 @@ use oxc_semantic::{
     petgraph::{self, Direction},
     BasicBlockElement, Register,
 };
-use oxc_span::Span;
+use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
 use std::dbg as std_dbg;
@@ -27,10 +27,25 @@ use crate::{
 };
 
 #[derive(Debug, Error, Diagnostic)]
-#[error("eslint-plugin-react-hooks(rules-of-hooks): TODO")]
-#[diagnostic(severity(warning), help("TODO"))]
 enum RulesOfHooksDiagnostic {
-    FunctionError(#[label] Span),
+    #[error(
+        "eslint-plugin-react-hooks(rules-of-hooks): \
+      React Hook \"{hook:?}\" is called in function \"{func:?}\" that is neither \
+      a React function component nor a custom React Hook function. \
+      React component names must start with an uppercase letter. \
+      React Hook names must start with the word \"use\"."
+    )]
+    #[diagnostic(severity(warning), help("TODO"))]
+    FunctionError {
+        #[label]
+        span: Span,
+        #[label]
+        hook: Span,
+        #[label]
+        func: Span,
+    },
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO")]
+    #[diagnostic(severity(warning), help("TODO"))]
     ConditionalError(#[label] Span),
 }
 
@@ -73,7 +88,11 @@ impl Rule for RulesOfHooks {
             AstKind::Function(Function { id: Some(id), .. })
                 if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) =>
             {
-                ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError(id.span));
+                ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
+                    span: id.span,
+                    hook: call.callee.span(),
+                    func: id.span,
+                });
             }
             _ => {
                 dbg!("TODO!");
