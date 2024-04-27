@@ -2,29 +2,56 @@
 source: crates/oxc_linter/src/tester.rs
 expression: rules_of_hooks
 ---
-  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
    ╭─[rules_of_hooks.tsx:4:15]
  3 │               if (a) return; 
  4 │               useState();
    ·               ──────────
  5 │             }
    ╰────
-  help: TODO
+  help: TODO: ConditionalError
 
-  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
     ╭─[rules_of_hooks.tsx:9:15]
   8 │               }
   9 │               useState();
     ·               ──────────
  10 │             }
     ╰────
-  help: TODO
+  help: TODO: ConditionalError
 
-  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
    ╭─[rules_of_hooks.tsx:7:15]
  6 │ 
  7 │               useHook();
    ·               ─────────
  8 │             }
    ╰────
-  help: TODO
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:18]
+ 3 │                if (cond) {
+ 4 │                  useConditionalHook();
+   ·                  ────────────────────
+ 5 │                }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:2:13]
+ 1 │ 
+ 2 │             Hook.useState();
+   ·             ───────────────
+ 3 │             Hook._useState();
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:5:13]
+ 4 │             Hook.use42();
+ 5 │             Hook.useHook();
+   ·             ──────────────
+ 6 │             Hook.use_hook();
+   ╰────
+  help: TODO: TopLevelError
