@@ -145,17 +145,22 @@ fn parent_func<'a>(nodes: &'a AstNodes<'a>, node: &AstNode) -> Option<&'a AstNod
     nodes.ancestors(node.id()).map(|id| nodes.get_node(id)).find(|it| it.kind().is_function_like())
 }
 
+/// Checks if the `node_id` is a callback argument,
+/// And that function isn't a `React.memo` or `React.forwardRef`.
+/// Returns `true` if this node is a function argument and that isn't a React special function.
+/// Otherwise it would return `false`.
 fn is_non_react_func_arg(nodes: &AstNodes, node_id: AstNodeId) -> bool {
     let argument = match nodes.parent_node(node_id) {
         Some(parent) if matches!(parent.kind(), AstKind::Argument(_)) => parent,
         _ => return false,
     };
 
-    let Some(AstKind::CallExpression(call)) = nodes.parent_kind(argument.id()) else { return false };
+    let Some(AstKind::CallExpression(call)) = nodes.parent_kind(argument.id()) else {
+        return false;
+    };
 
     // TODO make it better, might have false positives.
     call.callee_name().is_some_and(|name| !matches!(name, "forwardRef" | "memo"))
-
 }
 
 #[test]
