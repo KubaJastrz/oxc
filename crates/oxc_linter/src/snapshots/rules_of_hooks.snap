@@ -55,3 +55,297 @@ expression: rules_of_hooks
  6 │             Hook.use_hook();
    ╰────
   help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:25]
+ 4 │                     if (cond) {
+ 5 │                         FooStore.useFeatureFlag();
+   ·                         ─────────────────────────
+ 6 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:21]
+ 3 │                 if (cond) {
+ 4 │                     Namespace.useConditionalHook();
+   ·                     ──────────────────────────────
+ 5 │                 }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:29]
+ 4 │                         if (cond) {
+ 5 │                             useConditionalHook();
+   ·                             ────────────────────
+ 6 │                         }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     if (cond) {
+ 4 │                         useConditionalHook();
+   ·                         ────────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:29]
+ 4 │                         if (cond) {
+ 5 │                             useConditionalHook();
+   ·                             ────────────────────
+ 6 │                         }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 131, end: 139 }" is called in function "Span { start: 91, end: 102 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:3:30]
+ 2 │                 function ComponentWithHookInsideCallback() {
+ 3 │                     function handleClick() {
+   ·                              ────────────
+ 4 │                         useState();
+   ·                         ────────
+ 5 │                     }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 195, end: 203 }" is called in function "Span { start: 151, end: 162 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:4:34]
+ 3 │                     return function ComponentWithHookInsideCallback() {
+ 4 │                         function handleClick() {
+   ·                                  ────────────
+ 5 │                             useState();
+   ·                             ────────
+ 6 │                         }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     while (cond) {
+ 4 │                         useHookInsideLoop();
+   ·                         ───────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 61, end: 69 }" is called in function "Span { start: 26, end: 36 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │                 function renderItem() {
+   ·                          ───────────
+ 3 │                     useState();
+   ·                     ────────
+ 4 │                 }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 73, end: 100 }" is called in function "Span { start: 26, end: 48 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │                 function normalFunctionWithHook() {
+   ·                          ───────────────────────
+ 3 │                     useHookInsideNormalFunction();
+   ·                     ───────────────────────────
+ 4 │                 }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 74, end: 101 }" is called in function "Span { start: 26, end: 49 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │                 function _normalFunctionWithHook() {
+   ·                          ────────────────────────
+ 3 │                     useHookInsideNormalFunction();
+   ·                     ───────────────────────────
+ 4 │                 }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 185, end: 212 }" is called in function "Span { start: 148, end: 160 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:5:26]
+ 4 │                 }
+ 5 │                 function _useNotAHook() {
+   ·                          ─────────────
+ 6 │                     useHookInsideNormalFunction();
+   ·                     ───────────────────────────
+ 7 │                 }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 120, end: 147 }" is called in function "Span { start: 26, end: 59 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │                 function normalFunctionWithConditionalHook() {
+   ·                          ──────────────────────────────────
+ 3 │                     if (cond) {
+ 4 │                         useHookInsideNormalFunction();
+   ·                         ───────────────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     if (cond) {
+ 4 │                         useHookInsideNormalFunction();
+   ·                         ─────────────────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     while (a) {
+ 4 │                         useHook1();
+   ·                         ──────────
+ 5 │                         if (b) return;
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:6:25]
+ 5 │                         if (b) return;
+ 6 │                         useHook2();
+   ·                         ──────────
+ 7 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+    ╭─[rules_of_hooks.tsx:9:25]
+  8 │                     while (c) {
+  9 │                         useHook3();
+    ·                         ──────────
+ 10 │                         if (d) return;
+    ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+    ╭─[rules_of_hooks.tsx:11:25]
+ 10 │                         if (d) return;
+ 11 │                         useHook4();
+    ·                         ──────────
+ 12 │                     }
+    ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:21]
+ 3 │                 while (a) {
+ 4 │                     useHook1();
+   ·                     ──────────
+ 5 │                     if (b) continue;
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:6:21]
+ 5 │                     if (b) continue;
+ 6 │                     useHook2();
+   ·                     ──────────
+ 7 │                 }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 28, end: 36 }" is called in function "Span { start: 22, end: 23 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:22]
+ 1 │ 
+ 2 │             function a() { useState(); }
+   ·                      ──    ────────
+ 3 │             const whatever = function b() { useState(); };
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 86, end: 94 }" is called in function "Span { start: 80, end: 81 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:3:39]
+ 2 │             function a() { useState(); }
+ 3 │             const whatever = function b() { useState(); };
+   ·                                       ──    ────────
+ 4 │             const c = () => { useState(); };
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:21]
+ 3 │                     if (a) return;
+ 4 │                     useState();
+   ·                     ──────────
+ 5 │                 }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+    ╭─[rules_of_hooks.tsx:9:21]
+  8 │                     }
+  9 │                     useState();
+    ·                     ──────────
+ 10 │                 }
+    ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+    ╭─[rules_of_hooks.tsx:9:21]
+  8 │                     if (a) return;
+  9 │                     useState();
+    ·                     ──────────
+ 10 │                 }
+    ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:3:26]
+ 2 │                 function useHook() {
+ 3 │                     a && useHook1();
+   ·                          ──────────
+ 4 │                     b && useHook2();
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:26]
+ 3 │                     a && useHook1();
+ 4 │                     b && useHook2();
+   ·                          ──────────
+ 5 │                 }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:25]
+ 4 │                         f();
+ 5 │                         useState();
+   ·                         ──────────
+ 6 │                     } catch {}
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:3:39]
+ 2 │                 function useHook({ bar }) {
+ 3 │                     let foo1 = bar && useState();
+   ·                                       ──────────
+ 4 │                     let foo2 = bar || useState();
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:39]
+ 3 │                     let foo1 = bar && useState();
+ 4 │                     let foo2 = bar || useState();
+   ·                                       ──────────
+ 5 │                     let foo3 = bar ?? useState();
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:39]
+ 4 │                     let foo2 = bar || useState();
+ 5 │                     let foo3 = bar ?? useState();
+   ·                                       ──────────
+ 6 │                 }
+   ╰────
+  help: TODO: ConditionalError

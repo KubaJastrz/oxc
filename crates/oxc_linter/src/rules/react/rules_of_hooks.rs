@@ -35,7 +35,7 @@ enum RulesOfHooksDiagnostic {
       React component names must start with an uppercase letter. \
       React Hook names must start with the word \"use\"."
     )]
-    #[diagnostic(severity(warning), help("TODO"))]
+    #[diagnostic(severity(warning), help("TODO: FunctionError"))]
     FunctionError {
         #[label]
         span: Span,
@@ -666,409 +666,351 @@ fn test() {
             Hook.useHook();
             Hook.use_hook();
         ",
-        //          {
-        //            code: normalizeIndent`
-        //              class C {
-        //                m() {
-        //                  This.useHook();
-        //                  Super.useHook();
-        //                }
-        //              }
-        //            `,
-        //            errors: [classError('This.useHook'), classError('Super.useHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // This is a false positive (it's valid) that unfortunately
-        //              // we cannot avoid. Prefer to rename it to not start with "use"
-        //              class Foo extends Component {
-        //                render() {
-        //                  if (cond) {
-        //                    FooStore.useFeatureFlag();
-        //                  }
-        //                }
-        //              }
-        //            `,
-        //            errors: [classError('FooStore.useFeatureFlag')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function ComponentWithConditionalHook() {
-        //                if (cond) {
-        //                  Namespace.useConditionalHook();
-        //                }
-        //              }
-        //            `,
-        //            errors: [conditionalError('Namespace.useConditionalHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function createComponent() {
-        //                return function ComponentWithConditionalHook() {
-        //                  if (cond) {
-        //                    useConditionalHook();
-        //                  }
-        //                }
-        //              }
-        //            `,
-        //            errors: [conditionalError('useConditionalHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHookWithConditionalHook() {
-        //                if (cond) {
-        //                  useConditionalHook();
-        //                }
-        //              }
-        //            `,
-        //            errors: [conditionalError('useConditionalHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function createHook() {
-        //                return function useHookWithConditionalHook() {
-        //                  if (cond) {
-        //                    useConditionalHook();
-        //                  }
-        //                }
-        //              }
-        //            `,
-        //            errors: [conditionalError('useConditionalHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function ComponentWithTernaryHook() {
-        //                cond ? useTernaryHook() : null;
-        //              }
-        //            `,
-        //            errors: [conditionalError('useTernaryHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              function ComponentWithHookInsideCallback() {
-        //                useEffect(() => {
-        //                  useHookInsideCallback();
-        //                });
-        //              }
-        //            `,
-        //            errors: [genericError('useHookInsideCallback')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              function createComponent() {
-        //                return function ComponentWithHookInsideCallback() {
-        //                  useEffect(() => {
-        //                    useHookInsideCallback();
-        //                  });
-        //                }
-        //              }
-        //            `,
-        //            errors: [genericError('useHookInsideCallback')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              const ComponentWithHookInsideCallback = React.forwardRef((props, ref) => {
-        //                useEffect(() => {
-        //                  useHookInsideCallback();
-        //                });
-        //                return <button {...props} ref={ref} />
-        //              });
-        //            `,
-        //            errors: [genericError('useHookInsideCallback')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              const ComponentWithHookInsideCallback = React.memo(props => {
-        //                useEffect(() => {
-        //                  useHookInsideCallback();
-        //                });
-        //                return <button {...props} />
-        //              });
-        //            `,
-        //            errors: [genericError('useHookInsideCallback')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              function ComponentWithHookInsideCallback() {
-        //                function handleClick() {
-        //                  useState();
-        //                }
-        //              }
-        //            `,
-        //            errors: [functionError('useState', 'handleClick')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's a common misunderstanding.
-        //              // We *could* make it valid but the runtime error could be confusing.
-        //              function createComponent() {
-        //                return function ComponentWithHookInsideCallback() {
-        //                  function handleClick() {
-        //                    useState();
-        //                  }
-        //                }
-        //              }
-        //            `,
-        //            errors: [functionError('useState', 'handleClick')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function ComponentWithHookInsideLoop() {
-        //                while (cond) {
-        //                  useHookInsideLoop();
-        //                }
-        //              }
-        //            `,
-        //            errors: [loopError('useHookInsideLoop')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function renderItem() {
-        //                useState();
-        //              }
-        //
-        //              function List(props) {
-        //                return props.items.map(renderItem);
-        //              }
-        //            `,
-        //            errors: [functionError('useState', 'renderItem')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Currently invalid because it violates the convention and removes the "taint"
-        //              // from a hook. We *could* make it valid to avoid some false positives but let's
-        //              // ensure that we don't break the "renderItem" and "normalFunctionWithConditionalHook"
-        //              // cases which must remain invalid.
-        //              function normalFunctionWithHook() {
-        //                useHookInsideNormalFunction();
-        //              }
-        //            `,
-        //            errors: [
-        //              functionError('useHookInsideNormalFunction', 'normalFunctionWithHook'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // These are neither functions nor hooks.
-        //              function _normalFunctionWithHook() {
-        //                useHookInsideNormalFunction();
-        //              }
-        //              function _useNotAHook() {
-        //                useHookInsideNormalFunction();
-        //              }
-        //            `,
-        //            errors: [
-        //              functionError('useHookInsideNormalFunction', '_normalFunctionWithHook'),
-        //              functionError('useHookInsideNormalFunction', '_useNotAHook'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function normalFunctionWithConditionalHook() {
-        //                if (cond) {
-        //                  useHookInsideNormalFunction();
-        //                }
-        //              }
-        //            `,
-        //            errors: [
-        //              functionError(
-        //                'useHookInsideNormalFunction',
-        //                'normalFunctionWithConditionalHook'
-        //              ),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHookInLoops() {
-        //                while (a) {
-        //                  useHook1();
-        //                  if (b) return;
-        //                  useHook2();
-        //                }
-        //                while (c) {
-        //                  useHook3();
-        //                  if (d) return;
-        //                  useHook4();
-        //                }
-        //              }
-        //            `,
-        //            errors: [
-        //              loopError('useHook1'),
-        //              loopError('useHook2'),
-        //              loopError('useHook3'),
-        //              loopError('useHook4'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHookInLoops() {
-        //                while (a) {
-        //                  useHook1();
-        //                  if (b) continue;
-        //                  useHook2();
-        //                }
-        //              }
-        //            `,
-        //            errors: [loopError('useHook1'), loopError('useHook2', true)],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useLabeledBlock() {
-        //                label: {
-        //                  if (a) break label;
-        //                  useHook();
-        //                }
-        //              }
-        //            `,
-        //            errors: [conditionalError('useHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Currently invalid.
-        //              // These are variations capturing the current heuristic--
-        //              // we only allow hooks in PascalCase or useFoo functions.
-        //              // We *could* make some of these valid. But before doing it,
-        //              // consider specific cases documented above that contain reasoning.
-        //              function a() { useState(); }
-        //              const whatever = function b() { useState(); };
-        //              const c = () => { useState(); };
-        //              let d = () => useState();
-        //              e = () => { useState(); };
-        //              ({f: () => { useState(); }});
-        //              ({g() { useState(); }});
-        //              const {j = () => { useState(); }} = {};
-        //              ({k = () => { useState(); }} = {});
-        //            `,
-        //            errors: [
-        //              functionError('useState', 'a'),
-        //              functionError('useState', 'b'),
-        //              functionError('useState', 'c'),
-        //              functionError('useState', 'd'),
-        //              functionError('useState', 'e'),
-        //              functionError('useState', 'f'),
-        //              functionError('useState', 'g'),
-        //              functionError('useState', 'j'),
-        //              functionError('useState', 'k'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook() {
-        //                if (a) return;
-        //                useState();
-        //              }
-        //            `,
-        //            errors: [conditionalError('useState', true)],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook() {
-        //                if (a) return;
-        //                if (b) {
-        //                  console.log('true');
-        //                } else {
-        //                  console.log('false');
-        //                }
-        //                useState();
-        //              }
-        //            `,
-        //            errors: [conditionalError('useState', true)],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook() {
-        //                if (b) {
-        //                  console.log('true');
-        //                } else {
-        //                  console.log('false');
-        //                }
-        //                if (a) return;
-        //                useState();
-        //              }
-        //            `,
-        //            errors: [conditionalError('useState', true)],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook() {
-        //                a && useHook1();
-        //                b && useHook2();
-        //              }
-        //            `,
-        //            errors: [conditionalError('useHook1'), conditionalError('useHook2')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook() {
-        //                try {
-        //                  f();
-        //                  useState();
-        //                } catch {}
-        //              }
-        //            `,
-        //            errors: [
-        //              // NOTE: This is an error since `f()` could possibly throw.
-        //              conditionalError('useState'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              function useHook({ bar }) {
-        //                let foo1 = bar && useState();
-        //                let foo2 = bar || useState();
-        //                let foo3 = bar ?? useState();
-        //              }
-        //            `,
-        //            errors: [
-        //              conditionalError('useState'),
-        //              conditionalError('useState'),
-        //              conditionalError('useState'),
-        //            ],
-        //          },
+        // errors: [classError('This.useHook'), classError('Super.useHook')],
+        // "
+        //     class C {
+        //          m() {
+        //              This.useHook();
+        //              Super.useHook();
+        //          }
+        //     }
+        // ",
+        // This is a false positive (it's valid) that unfortunately
+        // we cannot avoid. Prefer to rename it to not start with "use"
+        // errors: [classError('FooStore.useFeatureFlag')],
+        "
+            class Foo extends Component {
+                render() {
+                    if (cond) {
+                        FooStore.useFeatureFlag();
+                    }
+                }
+            }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('Namespace.useConditionalHook')],
+        "
+            function ComponentWithConditionalHook() {
+                if (cond) {
+                    Namespace.useConditionalHook();
+                }
+            }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useConditionalHook')],
+        "
+                function createComponent() {
+                    return function ComponentWithConditionalHook() {
+                        if (cond) {
+                            useConditionalHook();
+                        }
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useConditionalHook')],
+        "
+                function useHookWithConditionalHook() {
+                    if (cond) {
+                        useConditionalHook();
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useConditionalHook')],
+        "
+                function createHook() {
+                    return function useHookWithConditionalHook() {
+                        if (cond) {
+                            useConditionalHook();
+                        }
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useTernaryHook')],
+        // "
+        //         function ComponentWithTernaryHook() {
+        //             cond ? useTernaryHook() : null;
+        //         }
+        // ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [genericError('useHookInsideCallback')],
+        // "
+        //         function ComponentWithHookInsideCallback() {
+        //             useEffect(() => {
+        //                 useHookInsideCallback();
+        //             });
+        //         }
+        // ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [genericError('useHookInsideCallback')],
+        // "
+        //         function createComponent() {
+        //             return function ComponentWithHookInsideCallback() {
+        //                 useEffect(() => {
+        //                     useHookInsideCallback();
+        //                 });
+        //             }
+        //         }
+        // ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [genericError('useHookInsideCallback')],
+        // "
+        //         const ComponentWithHookInsideCallback = React.forwardRef((props, ref) => {
+        //             useEffect(() => {
+        //                 useHookInsideCallback();
+        //             });
+        //             return <button {...props} ref={ref} />
+        //         });
+        // ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [genericError('useHookInsideCallback')],
+        // "
+        //         const ComponentWithHookInsideCallback = React.memo(props => {
+        //             useEffect(() => {
+        //                 useHookInsideCallback();
+        //             });
+        //             return <button {...props} />
+        //         });
+        // ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [functionError('useState', 'handleClick')],
+        "
+                function ComponentWithHookInsideCallback() {
+                    function handleClick() {
+                        useState();
+                    }
+                }
+        ",
+        // Invalid because it's a common misunderstanding.
+        // We *could* make it valid but the runtime error could be confusing.
+        // errors: [functionError('useState', 'handleClick')],
+        "
+                function createComponent() {
+                    return function ComponentWithHookInsideCallback() {
+                        function handleClick() {
+                            useState();
+                        }
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [loopError('useHookInsideLoop')],
+        "
+                function ComponentWithHookInsideLoop() {
+                    while (cond) {
+                        useHookInsideLoop();
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [functionError('useState', 'renderItem')],
+        "
+                function renderItem() {
+                    useState();
+                }
+
+                function List(props) {
+                    return props.items.map(renderItem);
+                }
+        ",
+        // Currently invalid because it violates the convention and removes the "taint"
+        // from a hook. We *could* make it valid to avoid some false positives but let's
+        // ensure that we don't break the "renderItem" and "normalFunctionWithConditionalHook"
+        // cases which must remain invalid.
+        // errors: [functionError('useHookInsideNormalFunction', 'normalFunctionWithHook'), ],
+        "
+                function normalFunctionWithHook() {
+                    useHookInsideNormalFunction();
+                }
+        ",
+        // These are neither functions nor hooks.
+        // errors: [
+        //     functionError('useHookInsideNormalFunction', '_normalFunctionWithHook'),
+        //     functionError('useHookInsideNormalFunction', '_useNotAHook'),
+        // ],
+        "
+                function _normalFunctionWithHook() {
+                    useHookInsideNormalFunction();
+                }
+                function _useNotAHook() {
+                    useHookInsideNormalFunction();
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [
+        //   functionError(
+        //     'useHookInsideNormalFunction',
+        //     'normalFunctionWithConditionalHook'
+        //   ),
+        // ],
+        "
+                function normalFunctionWithConditionalHook() {
+                    if (cond) {
+                        useHookInsideNormalFunction();
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [
+        //     loopError('useHook1'),
+        //     loopError('useHook2'),
+        //     loopError('useHook3'),
+        //     loopError('useHook4'),
+        // ]
+        "
+                function useHookInLoops() {
+                    while (a) {
+                        useHook1();
+                        if (b) return;
+                        useHook2();
+                    }
+                    while (c) {
+                        useHook3();
+                        if (d) return;
+                        useHook4();
+                    }
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [loopError('useHook1'), loopError('useHook2', true)],
+        "
+            function useHookInLoops() {
+                while (a) {
+                    useHook1();
+                    if (b) continue;
+                    useHook2();
+                }
+            }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useHook')],
+        // "
+        //         function useLabeledBlock() {
+        //             label: {
+        //                 if (a) break label;
+        //                 useHook();
+        //             }
+        //         }
+        // ",
+        // Currently invalid.
+        // These are variations capturing the current heuristic--
+        // we only allow hooks in PascalCase or useFoo functions.
+        // We *could* make some of these valid. But before doing it,
+        // consider specific cases documented above that contain reasoning.
+        // errors: [
+        //     functionError('useState', 'a'),
+        //     functionError('useState', 'b'),
+        //     functionError('useState', 'c'),
+        //     functionError('useState', 'd'),
+        //     functionError('useState', 'e'),
+        //     functionError('useState', 'f'),
+        //     functionError('useState', 'g'),
+        //     functionError('useState', 'j'),
+        //     functionError('useState', 'k'),
+        // ]
+        "
+            function a() { useState(); }
+            const whatever = function b() { useState(); };
+            const c = () => { useState(); };
+            let d = () => useState();
+            e = () => { useState(); };
+            ({f: () => { useState(); }});
+            ({g() { useState(); }});
+            const {j = () => { useState(); }} = {};
+            ({k = () => { useState(); }} = {});
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useState', true)],
+        "
+                function useHook() {
+                    if (a) return;
+                    useState();
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useState', true)],
+        "
+                function useHook() {
+                    if (a) return;
+                    if (b) {
+                        console.log('true');
+                    } else {
+                        console.log('false');
+                    }
+                    useState();
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useState', true)],
+        "
+                function useHook() {
+                    if (b) {
+                        console.log('true');
+                    } else {
+                        console.log('false');
+                    }
+                    if (a) return;
+                    useState();
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useHook1'), conditionalError('useHook2')],
+        "
+                function useHook() {
+                    a && useHook1();
+                    b && useHook2();
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [
+        //     // NOTE: This is an error since `f()` could possibly throw.
+        //     conditionalError('useState'),
+        // ],
+        "
+                function useHook() {
+                    try {
+                        f();
+                        useState();
+                    } catch {}
+                }
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [
+        //     conditionalError('useState'),
+        //     conditionalError('useState'),
+        //     conditionalError('useState'),
+        // ],
+        "
+                function useHook({ bar }) {
+                    let foo1 = bar && useState();
+                    let foo2 = bar || useState();
+                    let foo3 = bar ?? useState();
+                }
+        ",
         //          {
         //            code: normalizeIndent`
         //              // Invalid because it's dangerous and might not warn otherwise.
