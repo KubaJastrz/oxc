@@ -4,7 +4,7 @@ use oxc_diagnostics::{
     thiserror::Error,
 };
 use oxc_macros::declare_oxc_lint;
-use oxc_semantic::{petgraph, AstNodes};
+use oxc_semantic::{petgraph, AstNodeId, AstNodes};
 use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
@@ -75,8 +75,9 @@ impl Rule for RulesOfHooks {
         }
 
         let semantic = ctx.semantic();
+        let nodes = semantic.nodes();
 
-        let Some(parent_func) = parent_func(semantic.nodes(), node) else {
+        let Some(parent_func) = parent_func(nodes, node) else {
             ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelHook(call.span));
             return;
         };
@@ -94,12 +95,18 @@ impl Rule for RulesOfHooks {
             AstKind::Function(Function { id: Some(id), r#async: true, .. }) => {
                 ctx.diagnostic(RulesOfHooksDiagnostic::AsyncComponent(id.span));
             }
+            // Hooks are allowed inside of unnamed functions used as arguments.
+            AstKind::Function(Function { id: None, .. }) | AstKind::ArrowFunctionExpression(_)
+                if is_non_react_func_arg(nodes, parent_func.id()) =>
+            {
+                return;
+            }
             _ => {
                 dbg!("TODO!");
             }
         }
 
-        let cfg = semantic.cfg();
+        let graph = &semantic.cfg().graph;
         let node_cfg_ix = node.cfg_ix();
         let func_cfg_ix = parent_func.cfg_ix();
 
@@ -109,7 +116,7 @@ impl Rule for RulesOfHooks {
         }
 
         let Some((_, astar)) =
-            petgraph::algo::astar(&cfg.graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0)
+            petgraph::algo::astar(graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0)
         else {
             // There should always be a control flow path between a parent and child node.
             // If there is none it means we always do an early exit before reaching our hook call.
@@ -119,7 +126,7 @@ impl Rule for RulesOfHooks {
         let astar = astar.chunks(astar.len() - 1).next().unwrap();
 
         let func_to_node_all_edge_nodes =
-            petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
+            petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         if func_to_node_all_edge_nodes.len() == astar.len() {
             return;
@@ -127,7 +134,7 @@ impl Rule for RulesOfHooks {
 
         if func_to_node_all_edge_nodes
             .into_iter()
-            .any(|(f, _)| !petgraph::algo::has_path_connecting(&cfg.graph, f, node_cfg_ix, None))
+            .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
@@ -136,6 +143,19 @@ impl Rule for RulesOfHooks {
 
 fn parent_func<'a>(nodes: &'a AstNodes<'a>, node: &AstNode) -> Option<&'a AstNode<'a>> {
     nodes.ancestors(node.id()).map(|id| nodes.get_node(id)).find(|it| it.kind().is_function_like())
+}
+
+fn is_non_react_func_arg(nodes: &AstNodes, node_id: AstNodeId) -> bool {
+    let argument = match nodes.parent_node(node_id) {
+        Some(parent) if matches!(parent.kind(), AstKind::Argument(_)) => parent,
+        _ => return false,
+    };
+
+    let Some(AstKind::CallExpression(call)) = nodes.parent_kind(argument.id()) else { return false };
+
+    // TODO make it better, might have false positives.
+    call.callee_name().is_some_and(|name| !matches!(name, "forwardRef" | "memo"))
+
 }
 
 #[test]
@@ -339,22 +359,22 @@ fn test() {
         ",
         // This is valid because "use"-prefixed functions called in
         // unnamed function arguments are not assumed to be hooks.
-        // "
-        //     React.unknownFunction((foo, bar) => {
-        //       if (foo) {
-        //         useNotAHook(bar)
-        //       }
-        //     });
-        // ",
+        "
+            React.unknownFunction((foo, bar) => {
+              if (foo) {
+                useNotAHook(bar)
+              }
+            });
+        ",
         // This is valid because "use"-prefixed functions called in
         // unnamed function arguments are not assumed to be hooks.
-        // "
-        //     unknownFunction(function(foo, bar) {
-        //       if (foo) {
-        //         useNotAHook(bar)
-        //       }
-        //     });
-        // ",
+        "
+            unknownFunction(function(foo, bar) {
+              if (foo) {
+                useNotAHook(bar)
+              }
+            });
+        ",
         // Regression test for incorrectly flagged valid code.
         "
             function RegressionTest() {
