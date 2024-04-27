@@ -349,3 +349,104 @@ expression: rules_of_hooks
  6 │                 }
    ╰────
   help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     if (props.fancy) {
+ 4 │                         useCustomHook();
+   ·                         ───────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     if (props.fancy) {
+ 4 │                         useCustomHook();
+   ·                         ───────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     if (props.fancy) {
+ 4 │                         useCustomHook();
+   ·                         ───────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 94, end: 110 }" is called in function "Span { start: 48, end: 61 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:48]
+ 1 │ 
+ 2 │                 React.unknownFunction(function notAComponent(foo, bar) {
+   ·                                                ──────────────
+ 3 │                     useProbablyAHook(bar)
+   ·                     ────────────────
+ 4 │                 });
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:2:13]
+ 1 │ 
+ 2 │             useState();
+   ·             ──────────
+ 3 │             if (foo) {
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:4:29]
+ 3 │             if (foo) {
+ 4 │                 const foo = React.useCallback(() => {});
+   ·                             ───────────────────────────
+ 5 │             }
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:6:13]
+ 5 │             }
+ 6 │             useCustomHook();
+   ·             ───────────────
+ 7 │         
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:3:36]
+ 2 │             const {createHistory, useBasename} = require('history-2.1.2');
+ 3 │             const browserHistory = useBasename(createHistory)({
+   ·                                    ──────────────────────────
+ 4 │                 basename: '/',
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError
+   ╭─[rules_of_hooks.tsx:5:29]
+ 4 │                         if (foo) {
+ 5 │                             useFeatureFlag();
+   ·                             ────────────────
+ 6 │                         }
+   ╰────
+  help: TODO: ConditionalError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:4:13]
+ 3 │             Hook._use();
+ 4 │             Hook.useState();
+   ·             ───────────────
+ 5 │             Hook._useState();
+   ╰────
+  help: TODO: TopLevelError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError
+   ╭─[rules_of_hooks.tsx:7:13]
+ 6 │             Hook.use42();
+ 7 │             Hook.useHook();
+   ·             ──────────────
+ 8 │             Hook.use_hook();
+   ╰────
+  help: TODO: TopLevelError

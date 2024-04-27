@@ -1011,307 +1011,163 @@ fn test() {
                     let foo3 = bar ?? useState();
                 }
         ",
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              const FancyButton = React.forwardRef((props, ref) => {
-        //                if (props.fancy) {
-        //                  useCustomHook();
-        //                }
-        //                return <button ref={ref}>{props.children}</button>;
-        //              });
-        //            `,
-        //            errors: [conditionalError('useCustomHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              const FancyButton = forwardRef(function(props, ref) {
-        //                if (props.fancy) {
-        //                  useCustomHook();
-        //                }
-        //                return <button ref={ref}>{props.children}</button>;
-        //              });
-        //            `,
-        //            errors: [conditionalError('useCustomHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous and might not warn otherwise.
-        //              // This *must* be invalid.
-        //              const MemoizedButton = memo(function(props) {
-        //                if (props.fancy) {
-        //                  useCustomHook();
-        //                }
-        //                return <button>{props.children}</button>;
-        //              });
-        //            `,
-        //            errors: [conditionalError('useCustomHook')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // This is invalid because "use"-prefixed functions used in named
-        //              // functions are assumed to be hooks.
-        //              React.unknownFunction(function notAComponent(foo, bar) {
-        //                useProbablyAHook(bar)
-        //              });
-        //            `,
-        //            errors: [functionError('useProbablyAHook', 'notAComponent')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Invalid because it's dangerous.
-        //              // Normally, this would crash, but not if you use inline requires.
-        //              // This *must* be invalid.
-        //              // It's expected to have some false positives, but arguably
-        //              // they are confusing anyway due to the use*() convention
-        //              // already being associated with Hooks.
-        //              useState();
-        //              if (foo) {
-        //                const foo = React.useCallback(() => {});
-        //              }
-        //              useCustomHook();
-        //            `,
-        //            errors: [
-        //              topLevelError('useState'),
-        //              topLevelError('React.useCallback'),
-        //              topLevelError('useCustomHook'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Technically this is a false positive.
-        //              // We *could* make it valid (and it used to be).
-        //              //
-        //              // However, top-level Hook-like calls can be very dangerous
-        //              // in environments with inline requires because they can mask
-        //              // the runtime error by accident.
-        //              // So we prefer to disallow it despite the false positive.
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useCustomHook')],
+        "
+                const FancyButton = React.forwardRef((props, ref) => {
+                    if (props.fancy) {
+                        useCustomHook();
+                    }
+                    return <button ref={ref}>{props.children}</button>;
+                });
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useCustomHook')],
+        "
+                const FancyButton = forwardRef(function(props, ref) {
+                    if (props.fancy) {
+                        useCustomHook();
+                    }
+                    return <button ref={ref}>{props.children}</button>;
+                });
+        ",
+        // Invalid because it's dangerous and might not warn otherwise.
+        // This *must* be invalid.
+        // errors: [conditionalError('useCustomHook')],
+        "
+                const MemoizedButton = memo(function(props) {
+                    if (props.fancy) {
+                        useCustomHook();
+                    }
+                    return <button>{props.children}</button>;
+                });
+        ",
+        // This is invalid because "use"-prefixed functions used in named
+        // functions are assumed to be hooks.
+        // errors: [functionError('useProbablyAHook', 'notAComponent')],
+        "
+                React.unknownFunction(function notAComponent(foo, bar) {
+                    useProbablyAHook(bar)
+                });
+        ",
+        // Invalid because it's dangerous.
+        // Normally, this would crash, but not if you use inline requires.
+        // This *must* be invalid.
+        // It's expected to have some false positives, but arguably
+        // they are confusing anyway due to the use*() convention
+        // already being associated with Hooks.
+        // errors: [
+        //     topLevelError('useState'),
+        //     topLevelError('React.useCallback'),
+        //     topLevelError('useCustomHook'),
+        // ],
+        "
+            useState();
+            if (foo) {
+                const foo = React.useCallback(() => {});
+            }
+            useCustomHook();
+        ",
+        // Technically this is a false positive.
+        // We *could* make it valid (and it used to be).
         //
-        //              const {createHistory, useBasename} = require('history-2.1.2');
-        //              const browserHistory = useBasename(createHistory)({
-        //                basename: '/',
-        //              });
-        //            `,
-        //            errors: [topLevelError('useBasename')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              class ClassComponentWithFeatureFlag extends React.Component {
-        //                render() {
-        //                  if (foo) {
-        //                    useFeatureFlag();
-        //                  }
-        //                }
-        //              }
-        //            `,
-        //            errors: [classError('useFeatureFlag')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              class ClassComponentWithHook extends React.Component {
-        //                render() {
-        //                  React.useState();
-        //                }
-        //              }
-        //            `,
-        //            errors: [classError('React.useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              (class {useHook = () => { useState(); }});
-        //            `,
-        //            errors: [classError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              (class {useHook() { useState(); }});
-        //            `,
-        //            errors: [classError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              (class {h = () => { useState(); }});
-        //            `,
-        //            errors: [classError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              (class {i() { useState(); }});
-        //            `,
-        //            errors: [classError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              async function AsyncComponent() {
-        //                useState();
-        //              }
-        //            `,
-        //            errors: [asyncComponentHookError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              async function useAsyncHook() {
-        //                useState();
-        //              }
-        //            `,
-        //            errors: [asyncComponentHookError('useState')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              Hook.use();
-        //              Hook._use();
-        //              Hook.useState();
-        //              Hook._useState();
-        //              Hook.use42();
-        //              Hook.useHook();
-        //              Hook.use_hook();
-        //            `,
-        //            errors: [
-        //              topLevelError('Hook.use'),
-        //              topLevelError('Hook.useState'),
-        //              topLevelError('Hook.use42'),
-        //              topLevelError('Hook.useHook'),
-        //            ],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              function notAComponent() {
-        //                use(promise);
-        //              }
-        //            `,
-        //            errors: [functionError('use', 'notAComponent')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              const text = use(promise);
-        //              function App() {
-        //                return <Text text={text} />
-        //              }
-        //            `,
-        //            errors: [topLevelError('use')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              class C {
-        //                m() {
-        //                  use(promise);
-        //                }
-        //              }
-        //            `,
-        //            errors: [classError('use')],
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              async function AsyncComponent() {
-        //                use();
-        //              }
-        //            `,
-        //            errors: [asyncComponentHookError('use')],
-        //          },
-        //   ]     ,
-        // };
-        //
-        // if      (__EXPERIMENTAL__) {
-        //   t     ests.valid = [
-        //          ...tests.valid,
-        //          {
-        //            code: normalizeIndent`
-        //              // Valid because functions created with useEffectEvent can be called in a useEffect.
-        //              function MyComponent({ theme }) {
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //                useEffect(() => {
-        //                  onClick();
-        //                });
-        //              }
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Valid because functions created with useEffectEvent can be called in closures.
-        //              function MyComponent({ theme }) {
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //                return <Child onClick={() => onClick()}></Child>;
-        //              }
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Valid because functions created with useEffectEvent can be called in closures.
-        //              function MyComponent({ theme }) {
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //                const onClick2 = () => { onClick() };
-        //                const onClick3 = useCallback(() => onClick(), []);
-        //                return <>
-        //                  <Child onClick={onClick2}></Child>
-        //                  <Child onClick={onClick3}></Child>
-        //                </>;
-        //              }
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              // Valid because functions created with useEffectEvent can be passed by reference in useEffect
-        //              // and useEffectEvent.
-        //              function MyComponent({ theme }) {
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //                const onClick2 = useEffectEvent(() => {
-        //                  debounce(onClick);
-        //                });
-        //                useEffect(() => {
-        //                  let id = setInterval(onClick, 100);
-        //                  return () => clearInterval(onClick);
-        //                }, []);
-        //                return <Child onClick={() => onClick2()} />
-        //              }
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              const MyComponent = ({theme}) => {
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //                return <Child onClick={() => onClick()}></Child>;
-        //              };
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              function MyComponent({ theme }) {
-        //                const notificationService = useNotifications();
-        //                const showNotification = useEffectEvent((text) => {
-        //                  notificationService.notify(theme, text);
-        //                });
-        //                const onClick = useEffectEvent((text) => {
-        //                  showNotification(text);
-        //                });
-        //                return <Child onClick={(text) => onClick(text)} />
-        //              }
-        //            `,
-        //          },
-        //          {
-        //            code: normalizeIndent`
-        //              function MyComponent({ theme }) {
-        //                useEffect(() => {
-        //                  onClick();
-        //                });
-        //                const onClick = useEffectEvent(() => {
-        //                  showNotification(theme);
-        //                });
-        //              }
-        //            `,
-        //          },
+        // However, top-level Hook-like calls can be very dangerous
+        // in environments with inline requires because they can mask
+        // the runtime error by accident.
+        // So we prefer to disallow it despite the false positive.
+        // errors: [topLevelError('useBasename')],
+        "
+            const {createHistory, useBasename} = require('history-2.1.2');
+            const browserHistory = useBasename(createHistory)({
+                basename: '/',
+            });
+        ",
+        // errors: [classError('useFeatureFlag')],
+        "
+                class ClassComponentWithFeatureFlag extends React.Component {
+                    render() {
+                        if (foo) {
+                            useFeatureFlag();
+                        }
+                    }
+                }
+        ",
+        // errors: [classError('React.useState')],
+        // "
+        //         class ClassComponentWithHook extends React.Component {
+        //             render() {
+        //                 React.useState();
+        //             }
+        //         }
+        // ",
+        // errors: [classError('useState')],
+        // "(class {useHook = () => { useState(); }});",
+        // errors: [classError('useState')],
+        // "(class {useHook() { useState(); }});",
+        // errors: [classError('useState')],
+        // "(class {h = () => { useState(); }});",
+        // errors: [classError('useState')],
+        // "(class {i() { useState(); }});",
+        // errors: [asyncComponentHookError('useState')],
+        // "
+        //         async function AsyncComponent() {
+        //             useState();
+        //         }
+        // ",
+        // errors: [asyncComponentHookError('useState')],
+        // "
+        //         async function useAsyncHook() {
+        //             useState();
+        //         }
+        // ",
+        // errors: [
+        //     topLevelError('Hook.use'),
+        //     topLevelError('Hook.useState'),
+        //     topLevelError('Hook.use42'),
+        //     topLevelError('Hook.useHook'),
+        // ],
+        "
+            Hook.use();
+            Hook._use();
+            Hook.useState();
+            Hook._useState();
+            Hook.use42();
+            Hook.useHook();
+            Hook.use_hook();
+        ",
+        // errors: [functionError('use', 'notAComponent')],
+        // TODO: is this a false positive? if that's the case we already covered it.
+        // "
+        //         function notAComponent() {
+        //             use(promise);
+        //         }
+        // ",
+        // errors: [topLevelError('use')],
+        // TODO: is this a false positive? if that's the case we already covered it.
+        // "
+        //     const text = use(promise);
+        //     function App() {
+        //         return <Text text={text} />
+        //     }
+        // ",
+        // errors: [classError('use')],
+        // TODO: is this a false positive? if that's the case we already covered it.
+        // "
+        //     class C {
+        //         m() {
+        //             use(promise);
+        //         }
+        //     }
+        // ",
+        // errors: [asyncComponentHookError('use')],
+        // TODO: is this a false positive? if that's the case we already covered it.
+        // "
+        //     async function AsyncComponent() {
+        //             use();
+        //     }
+        // ",
     ];
 
     Tester::new(RulesOfHooks::NAME, pass, fail).test_and_snapshot();
