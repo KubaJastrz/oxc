@@ -46,6 +46,9 @@ enum RulesOfHooksDiagnostic {
     #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook")]
     #[diagnostic(severity(warning), help("TODO: TopLevelHook"))]
     TopLevelHook(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent")]
+    #[diagnostic(severity(warning), help("TODO: AsyncComponent"))]
+    AsyncComponent(#[label] Span),
 }
 
 #[derive(Debug, Default, Clone)]
@@ -88,6 +91,9 @@ impl Rule for RulesOfHooks {
                     func: id.span,
                 });
             }
+            AstKind::Function(Function { id: Some(id), r#async: true, .. }) => {
+                ctx.diagnostic(RulesOfHooksDiagnostic::AsyncComponent(id.span));
+            }
             _ => {
                 dbg!("TODO!");
             }
@@ -98,7 +104,6 @@ impl Rule for RulesOfHooks {
         let func_cfg_ix = parent_func.cfg_ix();
 
         // there is no branch between us and our parent function
-        // TODO: we still need to make sure our parent is a component function.
         if node_cfg_ix == func_cfg_ix {
             return;
         }
@@ -126,8 +131,6 @@ impl Rule for RulesOfHooks {
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
-
-        // panic!();
     }
 }
 
@@ -1087,17 +1090,17 @@ fn test() {
         // errors: [classError('useState')],
         // "(class {i() { useState(); }});",
         // errors: [asyncComponentHookError('useState')],
-        // "
-        //         async function AsyncComponent() {
-        //             useState();
-        //         }
-        // ",
+        "
+                async function AsyncComponent() {
+                    useState();
+                }
+        ",
         // errors: [asyncComponentHookError('useState')],
-        // "
-        //         async function useAsyncHook() {
-        //             useState();
-        //         }
-        // ",
+        "
+                async function useAsyncHook() {
+                    useState();
+                }
+        ",
         // errors: [
         //     topLevelError('Hook.use'),
         //     topLevelError('Hook.useState'),

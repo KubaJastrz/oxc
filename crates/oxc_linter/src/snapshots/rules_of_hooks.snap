@@ -433,6 +433,24 @@ expression: rules_of_hooks
    ╰────
   help: TODO: ConditionalHook
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:2:32]
+ 1 │ 
+ 2 │                 async function AsyncComponent() {
+   ·                                ──────────────
+ 3 │                     useState();
+   ╰────
+  help: TODO: AsyncComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:2:32]
+ 1 │ 
+ 2 │                 async function useAsyncHook() {
+   ·                                ────────────
+ 3 │                     useState();
+   ╰────
+  help: TODO: AsyncComponent
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook
    ╭─[rules_of_hooks.tsx:4:13]
  3 │             Hook._use();
