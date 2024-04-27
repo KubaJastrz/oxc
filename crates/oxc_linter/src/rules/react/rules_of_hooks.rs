@@ -1,14 +1,10 @@
-use itertools::Itertools;
 use oxc_ast::{ast::Function, AstKind};
 use oxc_diagnostics::{
     miette::{self, Diagnostic},
     thiserror::Error,
 };
 use oxc_macros::declare_oxc_lint;
-use oxc_semantic::{
-    petgraph::{self, Direction},
-    AstNodeId, AstNodes, BasicBlockElement, Register,
-};
+use oxc_semantic::{petgraph, AstNodes};
 use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
@@ -44,12 +40,12 @@ enum RulesOfHooksDiagnostic {
         #[label]
         func: Span,
     },
-    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalError")]
-    #[diagnostic(severity(warning), help("TODO: ConditionalError"))]
-    ConditionalError(#[label] Span),
-    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelError")]
-    #[diagnostic(severity(warning), help("TODO: TopLevelError"))]
-    TopLevelError(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook")]
+    #[diagnostic(severity(warning), help("TODO: ConditionalHook"))]
+    ConditionalHook(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook")]
+    #[diagnostic(severity(warning), help("TODO: TopLevelHook"))]
+    TopLevelHook(#[label] Span),
 }
 
 #[derive(Debug, Default, Clone)]
@@ -77,11 +73,8 @@ impl Rule for RulesOfHooks {
 
         let semantic = ctx.semantic();
 
-        let mut ancestors =
-            semantic.nodes().ancestors(node.id()).map(|id| semantic.nodes().get_node(id));
-
         let Some(parent_func) = parent_func(semantic.nodes(), node) else {
-            ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelError(call.span));
+            ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelHook(call.span));
             return;
         };
 
@@ -104,13 +97,6 @@ impl Rule for RulesOfHooks {
         let node_cfg_ix = node.cfg_ix();
         let func_cfg_ix = parent_func.cfg_ix();
 
-        let parent_cfg_ix =
-            cfg.graph.neighbors_directed(node_cfg_ix, Direction::Incoming).next().unwrap();
-
-        dbg!(&func_cfg_ix);
-        dbg!(&node_cfg_ix);
-        dbg!(&parent_cfg_ix);
-
         // there is no branch between us and our parent function
         // TODO: we still need to make sure our parent is a component function.
         if node_cfg_ix == func_cfg_ix {
@@ -126,29 +112,19 @@ impl Rule for RulesOfHooks {
         };
 
         let astar = astar.chunks(astar.len() - 1).next().unwrap();
-        dbg!(&astar);
 
         let func_to_node_all_edge_nodes =
             petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
-        dbg!(&func_to_node_all_edge_nodes);
-
-        let all_edges_blocks = func_to_node_all_edge_nodes.keys().flat_map(|ix| {
-            let blocks = cfg.basic_block_by_index(*ix);
-            blocks
-        });
-
-        dbg!(&all_edges_blocks);
 
         if func_to_node_all_edge_nodes.len() == astar.len() {
             return;
         }
 
-        // if all_edges_blocks.any(|f| matches!(f, BasicBlockElement::Assignment(Register::Return, _)))
         if func_to_node_all_edge_nodes
             .into_iter()
             .any(|(f, _)| !petgraph::algo::has_path_connecting(&cfg.graph, f, node_cfg_ix, None))
         {
-            ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalError(call.span));
+            ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
 
         // panic!();
