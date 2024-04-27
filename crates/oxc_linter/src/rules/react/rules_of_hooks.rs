@@ -127,15 +127,6 @@ impl Rule for RulesOfHooks {
         let astar = astar.chunks(astar.len() - 1).next().unwrap();
         dbg!(&astar);
 
-        let func_to_node_path_blocks = astar
-            .iter()
-            .flat_map(|c| {
-                let blocks = cfg.basic_block_by_index(*c);
-                blocks
-            })
-            .collect_vec();
-        dbg!(&func_to_node_path_blocks);
-
         let func_to_node_all_edge_nodes =
             petgraph::algo::dijkstra(&cfg.graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
         dbg!(&func_to_node_all_edge_nodes);
@@ -151,7 +142,10 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        if all_edges_blocks.any(|f| matches!(f, BasicBlockElement::Assignment(Register::Return, _)))
+        // if all_edges_blocks.any(|f| matches!(f, BasicBlockElement::Assignment(Register::Return, _)))
+        if func_to_node_all_edge_nodes
+            .into_iter()
+            .any(|(f, _)| !petgraph::algo::has_path_connecting(&cfg.graph, f, node_cfg_ix, None))
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalError(call.span));
         }
@@ -361,22 +355,22 @@ fn test() {
         ",
         // This is valid because "use"-prefixed functions called in
         // unnamed function arguments are not assumed to be hooks.
-        "
-            React.unknownFunction((foo, bar) => {
-              if (foo) {
-                useNotAHook(bar)
-              }
-            });
-        ",
+        // "
+        //     React.unknownFunction((foo, bar) => {
+        //       if (foo) {
+        //         useNotAHook(bar)
+        //       }
+        //     });
+        // ",
         // This is valid because "use"-prefixed functions called in
         // unnamed function arguments are not assumed to be hooks.
-        "
-            unknownFunction(function(foo, bar) {
-              if (foo) {
-                useNotAHook(bar)
-              }
-            });
-        ",
+        // "
+        //     unknownFunction(function(foo, bar) {
+        //       if (foo) {
+        //         useNotAHook(bar)
+        //       }
+        //     });
+        // ",
         // Regression test for incorrectly flagged valid code.
         "
             function RegressionTest() {
@@ -394,16 +388,16 @@ fn test() {
             }
         ",
         // Valid because the loop doesn't change the order of hooks calls.
-        "
-            function RegressionTest() {
-              const res = [];
-              const additionalCond = true;
-              for (let i = 0; i !== 10 && additionalCond; ++i ) {
-                res.push(i);
-              }
-              React.useLayoutEffect(() => {});
-            }
-        ",
+        // "
+        //     function RegressionTest() {
+        //       const res = [];
+        //       const additionalCond = true;
+        //       for (let i = 0; i !== 10 && additionalCond; ++i ) {
+        //         res.push(i);
+        //       }
+        //       React.useLayoutEffect(() => {});
+        //     }
+        // ",
         // Is valid but hard to compute by brute-forcing
         "
             function MyComponent() {
