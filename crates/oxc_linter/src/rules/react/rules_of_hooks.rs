@@ -1,10 +1,14 @@
+use itertools::Itertools;
 use oxc_ast::{ast::Function, AstKind};
 use oxc_diagnostics::{
     miette::{self, Diagnostic},
     thiserror::Error,
 };
 use oxc_macros::declare_oxc_lint;
-use oxc_semantic::{petgraph, AstNodeId, AstNodes};
+use oxc_semantic::{
+    petgraph::{self, visit::EdgeRef},
+    AstNodeId, AstNodes, EdgeType,
+};
 use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
@@ -102,7 +106,7 @@ impl Rule for RulesOfHooks {
                 return;
             }
             _ => {
-                dbg!("TODO!");
+                dbg!("TODO?");
             }
         }
 
@@ -123,16 +127,14 @@ impl Rule for RulesOfHooks {
             return;
         };
 
-        let astar = astar.chunks(astar.len() - 1).next().unwrap();
-
-        let func_to_node_all_edge_nodes =
+        let dijkstra =
             petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
-        if func_to_node_all_edge_nodes.len() == astar.len() {
+        if dijkstra.len() == astar.len() {
             return;
         }
 
-        if func_to_node_all_edge_nodes
+        if dijkstra
             .into_iter()
             .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
@@ -397,16 +399,25 @@ fn test() {
             }
         ",
         // Valid because the loop doesn't change the order of hooks calls.
-        // "
-        //     function RegressionTest() {
-        //       const res = [];
-        //       const additionalCond = true;
-        //       for (let i = 0; i !== 10 && additionalCond; ++i ) {
-        //         res.push(i);
-        //       }
-        //       React.useLayoutEffect(() => {});
-        //     }
-        // ",
+        "
+            function RegressionTest(test) {
+              while (test) {
+                test = update(test);
+              }
+              React.useLayoutEffect(() => {});
+            }
+        ",
+        // Valid because the loop doesn't change the order of hooks calls.
+        "
+            function RegressionTest() {
+              const res = [];
+              const additionalCond = true;
+              for (let i = 0; i !== 10 && additionalCond; ++i ) {
+                res.push(i);
+              }
+              React.useLayoutEffect(() => {});
+            }
+        ",
         // Is valid but hard to compute by brute-forcing
         "
             function MyComponent() {
