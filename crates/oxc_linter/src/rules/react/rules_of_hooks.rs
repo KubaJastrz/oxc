@@ -47,6 +47,9 @@ enum RulesOfHooksDiagnostic {
     #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent")]
     #[diagnostic(severity(warning), help("TODO: ClassComponent"))]
     ClassComponent(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: GenericError")]
+    #[diagnostic(severity(warning), help("TODO: GenericError"))]
+    GenericError(#[label] Span),
 }
 
 #[derive(Debug, Default, Clone)]
@@ -75,8 +78,7 @@ impl Rule for RulesOfHooks {
         let nodes = semantic.nodes();
 
         let Some(parent_func) = parent_func(nodes, node) else {
-            ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelHook(call.span));
-            return;
+            return ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelHook(call.span));
         };
 
         // Check if our parent function is part of a class.
@@ -88,33 +90,38 @@ impl Rule for RulesOfHooks {
                     | AstKind::PropertyDefinition(_)
             )
         ) {
-            ctx.diagnostic(RulesOfHooksDiagnostic::ClassComponent(call.span));
-            return;
+            return ctx.diagnostic(RulesOfHooksDiagnostic::ClassComponent(call.span));
         }
+
+        let is_use = call.callee_name().is_some_and(|name| name == "use");
 
         match parent_func.kind() {
             AstKind::Function(Function { id: Some(id), .. })
                 if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) =>
             {
-                ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
+                return ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
                     span: id.span,
                     hook: call.callee.span(),
                     func: id.span,
                 });
             }
             AstKind::Function(Function { id: Some(id), r#async: true, .. }) => {
-                ctx.diagnostic(RulesOfHooksDiagnostic::AsyncComponent(id.span));
+                return ctx.diagnostic(RulesOfHooksDiagnostic::AsyncComponent(id.span));
             }
-            // Hooks are allowed inside of unnamed functions used as arguments.
+            // Hooks are allowed inside of unnamed functions used as arguments. As long as they are
+            // not used as a callback inside of components or hooks.
             AstKind::Function(Function { id: None, .. }) | AstKind::ArrowFunctionExpression(_)
                 if is_non_react_func_arg(nodes, parent_func.id()) =>
             {
-                return;
+                if !is_use && is_somewhere_inside_component_or_hook(nodes, parent_func.id()) {
+                    return ctx.diagnostic(RulesOfHooksDiagnostic::GenericError(call.span));
+                } else {
+                    return;
+                }
             }
             _ => {}
         }
 
-        let is_use = call.callee_name().is_some_and(|name| name == "use");
         // `use(...)` can be called conditionally, And,
         // `use(...)` can be called within a loop.
         // So we don't need the following checks.
@@ -148,7 +155,7 @@ impl Rule for RulesOfHooks {
             .flat_map(|it| graph.edges_directed(it, petgraph::Direction::Outgoing))
             .any(|edge| matches!(edge.weight(), EdgeType::Backedge))
         {
-            ctx.diagnostic(RulesOfHooksDiagnostic::LoopHook(call.span));
+            return ctx.diagnostic(RulesOfHooksDiagnostic::LoopHook(call.span));
         }
 
         // All nodes should be reachable from our hook, Otherwise we have a conditional/branching flow.
@@ -156,24 +163,8 @@ impl Rule for RulesOfHooks {
             .into_iter()
             .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
-            ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
+            return ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
-        // if let AstKind::Function(func) = parent_func.kind() {
-        //     if func.id.as_ref().is_some_and(|id| id.name == "t1") {
-        //         dbg!(graph
-        //             .node_indices()
-        //             .map(|n| (
-        //                 n,
-        //                 nodes
-        //                     .iter()
-        //                     .find(|it| it.cfg_ix() == n)
-        //                     .map(|node| node.kind().debug_name().into_owned()),
-        //                 graph.neighbors_directed(n, petgraph::Direction::Outgoing).map(|i| i).collect_vec(),
-        //             ))
-        //             .collect_vec());
-        //         panic!();
-        //     }
-        // }
     }
 }
 
@@ -197,6 +188,59 @@ fn is_non_react_func_arg(nodes: &AstNodes, node_id: AstNodeId) -> bool {
 
     // TODO make it better, might have false positives.
     call.callee_name().is_some_and(|name| !matches!(name, "forwardRef" | "memo"))
+}
+
+fn is_somewhere_inside_component_or_hook(nodes: &AstNodes, node_id: AstNodeId) -> bool {
+    nodes
+        .ancestors(node_id)
+        .into_iter()
+        .map(|id| nodes.get_node(id))
+        .filter(|node| node.kind().is_function_like())
+        .map(|node| {
+            (
+                node.id(),
+                match node.kind() {
+                    AstKind::Function(func) => func.id.as_ref().map(|it| it.name.as_str()),
+                    AstKind::ArrowFunctionExpression(_) => {
+                        get_declaration_identifier(nodes, node.id())
+                    }
+                    _ => unreachable!(),
+                },
+            )
+        })
+        .any(|(ix, id)| {
+            id.is_some_and(|name| {
+                is_react_component_name(name)
+                    || is_react_hook_name(name)
+                    || is_memo_or_forward_ref_callback(nodes, ix)
+            })
+        })
+}
+
+fn get_declaration_identifier<'a>(nodes: &'a AstNodes<'a>, node_id: AstNodeId) -> Option<&str> {
+    nodes.ancestors(node_id).into_iter().map(|id| nodes.get_node(id)).find_map(|node| {
+        if let AstKind::VariableDeclaration(decl) = node.kind() {
+            if decl.declarations.len() == 1 {
+                decl.declarations[0].id.get_identifier().map(|atom| atom.as_str())
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    })
+}
+
+/// # Panics
+/// `node_id` should always point to a valid `Function`.
+fn is_memo_or_forward_ref_callback(nodes: &AstNodes, node_id: AstNodeId) -> bool {
+    nodes.ancestors(node_id).map(|id| nodes.get_node(id)).any(|node| {
+        if let AstKind::CallExpression(call) = node.kind() {
+            call.callee_name().is_some_and(|name| matches!(name, "forwardRef" | "memo"))
+        } else {
+            false
+        }
+    })
 }
 
 #[test]
@@ -782,7 +826,6 @@ fn test() {
         // Invalid because it's dangerous and might not warn otherwise.
         // This *must* be invalid.
         // errors: [conditionalError('useTernaryHook')],
-        // TODO: FIX ME.
         "
                 function ComponentWithTernaryHook() {
                     cond ? useTernaryHook() : null;
@@ -791,50 +834,47 @@ fn test() {
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
-        // "
-        //         function ComponentWithHookInsideCallback() {
-        //             useEffect(() => {
-        //                 useHookInsideCallback();
-        //             });
-        //         }
-        // ",
+        "
+                function ComponentWithHookInsideCallback() {
+                    useEffect(() => {
+                        useHookInsideCallback();
+                    });
+                }
+        ",
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
-        // TODO: FIX ME.
-        // "
-        //         function createComponent() {
-        //             return function ComponentWithHookInsideCallback() {
-        //                 useEffect(() => {
-        //                     useHookInsideCallback();
-        //                 });
-        //             }
-        //         }
-        // ",
+        "
+                function createComponent() {
+                    return function ComponentWithHookInsideCallback() {
+                        useEffect(() => {
+                            useHookInsideCallback();
+                        });
+                    }
+                }
+        ",
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
-        // TODO: FIX ME.
-        // "
-        //         const ComponentWithHookInsideCallback = React.forwardRef((props, ref) => {
-        //             useEffect(() => {
-        //                 useHookInsideCallback();
-        //             });
-        //             return <button {...props} ref={ref} />
-        //         });
-        // ",
+        "
+                const ComponentWithHookInsideCallback = React.forwardRef((props, ref) => {
+                    useEffect(() => {
+                        useHookInsideCallback();
+                    });
+                    return <button {...props} ref={ref} />
+                });
+        ",
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
-        // TODO: FIX ME.
-        // "
-        //         const ComponentWithHookInsideCallback = React.memo(props => {
-        //             useEffect(() => {
-        //                 useHookInsideCallback();
-        //             });
-        //             return <button {...props} />
-        //         });
-        // ",
+        "
+                const ComponentWithHookInsideCallback = React.memo(props => {
+                    useEffect(() => {
+                        useHookInsideCallback();
+                    });
+                    return <button {...props} />
+                });
+        ",
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [functionError('useState', 'handleClick')],
