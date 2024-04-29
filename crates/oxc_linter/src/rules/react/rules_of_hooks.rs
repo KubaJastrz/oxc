@@ -1,14 +1,10 @@
-use itertools::Itertools;
 use oxc_ast::{ast::Function, AstKind};
 use oxc_diagnostics::{
     miette::{self, Diagnostic},
     thiserror::Error,
 };
 use oxc_macros::declare_oxc_lint;
-use oxc_semantic::{
-    petgraph::{self, visit::EdgeRef},
-    AstNodeId, AstNodes, EdgeType,
-};
+use oxc_semantic::{petgraph, AstNodeId, AstNodes};
 use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
@@ -127,8 +123,7 @@ impl Rule for RulesOfHooks {
             return;
         };
 
-        let dijkstra =
-            petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
+        let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         if dijkstra.len() == astar.len() {
             return;
@@ -140,6 +135,22 @@ impl Rule for RulesOfHooks {
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
+        // if let AstKind::Function(func) = parent_func.kind() {
+        //     if func.id.as_ref().is_some_and(|id| id.name == "t1") {
+        //         dbg!(graph
+        //             .node_indices()
+        //             .map(|n| (
+        //                 n,
+        //                 nodes
+        //                     .iter()
+        //                     .find(|it| it.cfg_ix() == n)
+        //                     .map(|node| node.kind().debug_name().into_owned()),
+        //                 graph.neighbors_directed(n, petgraph::Direction::Outgoing).map(|i| i).collect_vec(),
+        //             ))
+        //             .collect_vec());
+        //         panic!();
+        //     }
+        // }
     }
 }
 
