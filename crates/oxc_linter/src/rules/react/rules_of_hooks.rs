@@ -368,23 +368,22 @@ fn test() {
               }
             }
         ",
-        // TODO: jest cases do not work at the moment, FIX me!
         // Valid -- this is a regression test.
-        // "
-        //     jest.useFakeTimers();
-        //     beforeEach(() => {
-        //       jest.useRealTimers();
-        //     })
-        // ",
+        "
+            jest.useFakeTimers();
+            beforeEach(() => {
+              jest.useRealTimers();
+            })
+        ",
         // Valid because they're not matching use[A-Z].
-        // "
-        //     fooState();
-        //     _use();
-        //     _useState();
-        //     use_hook();
-        //     // also valid because it's not matching the PascalCase namespace
-        //     jest.useFakeTimer()
-        // ",
+        "
+            fooState();
+            _use();
+            _useState();
+            use_hook();
+            // also valid because it's not matching the PascalCase namespace
+            jest.useFakeTimer()
+        ",
         // Regression test for some internal code.
         // This shows how the "callback rule" is more relaxed,
         // and doesn't kick in unless we're confident we're in
@@ -783,6 +782,7 @@ fn test() {
         // Invalid because it's dangerous and might not warn otherwise.
         // This *must* be invalid.
         // errors: [conditionalError('useTernaryHook')],
+        // TODO: FIX ME.
         // "
         //         function ComponentWithTernaryHook() {
         //             cond ? useTernaryHook() : null;
@@ -801,6 +801,7 @@ fn test() {
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
+        // TODO: FIX ME.
         // "
         //         function createComponent() {
         //             return function ComponentWithHookInsideCallback() {
@@ -813,6 +814,7 @@ fn test() {
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
+        // TODO: FIX ME.
         // "
         //         const ComponentWithHookInsideCallback = React.forwardRef((props, ref) => {
         //             useEffect(() => {
@@ -824,6 +826,7 @@ fn test() {
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],
+        // TODO: FIX ME.
         // "
         //         const ComponentWithHookInsideCallback = React.memo(props => {
         //             useEffect(() => {
@@ -951,6 +954,7 @@ fn test() {
         // Invalid because it's dangerous and might not warn otherwise.
         // This *must* be invalid.
         // errors: [conditionalError('useHook')],
+        // TODO: FIX ME!
         // "
         //         function useLabeledBlock() {
         //             label: {

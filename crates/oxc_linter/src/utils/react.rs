@@ -293,9 +293,14 @@ pub fn is_react_hook(expr: &Expression) -> bool {
             #[allow(unsafe_code)]
             let expr = unsafe { expr.as_member_expression().unwrap_unchecked() };
             let MemberExpression::StaticMemberExpression(static_expr) = expr else { return false };
-            let is_class_call =
-                matches!(&static_expr.object, Expression::ThisExpression(_) | Expression::Super(_));
-            !is_class_call && expr.static_property_name().is_some_and(is_react_hook_name)
+            let is_valid_namespace = match &static_expr.object {
+                Expression::Identifier(ident) => {
+                    ident.name.chars().next().is_some_and(char::is_uppercase)
+                }
+                Expression::ThisExpression(_) | Expression::Super(_) => false,
+                _ => true,
+            };
+            is_valid_namespace && expr.static_property_name().is_some_and(is_react_hook_name)
         }
         Expression::Identifier(ident) => is_react_hook_name(ident.name.as_str()),
         _ => false,
