@@ -163,7 +163,6 @@ impl Rule for RulesOfHooks {
         }
 
         // TODO: all `dijkstra` algorithms can be merged together for better performance.
-        let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         // Is this node cyclic?
         if petgraph::algo::dijkstra(graph, node_cfg_ix, None, |_| 0)
@@ -175,7 +174,7 @@ impl Rule for RulesOfHooks {
         }
 
         // All nodes should be reachable from our hook, Otherwise we have a conditional/branching flow.
-        if dijkstra
+        if petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0)
             .into_iter()
             .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
