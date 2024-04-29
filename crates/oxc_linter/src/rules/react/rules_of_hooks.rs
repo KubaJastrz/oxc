@@ -68,11 +68,19 @@ declare_oxc_lint!(
 impl Rule for RulesOfHooks {
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         let AstKind::CallExpression(call) = node.kind() else { return };
-        let is_hook = call.callee_name().is_some_and(is_react_hook_name);
+        let Some(callee_name) = call.callee_name() else {
+            // Similar to the react's official `rulesOfHooks` we rely on the identifier for
+            // detecting hook calls.
+            return;
+        };
+        let is_hook = is_react_hook_name(callee_name);
 
         if !is_hook {
             return;
         }
+
+        // is `use(...)`?
+        let is_use = callee_name == "use";
 
         let semantic = ctx.semantic();
         let nodes = semantic.nodes();
@@ -120,18 +128,22 @@ impl Rule for RulesOfHooks {
         else {
             // There should always be a control flow path between a parent and child node.
             // If there is none it means we always do an early exit before reaching our hook call.
+            // In some cases it might mean that we are operating on an invalid `cfg` but in either
+            // case, It is somebody else's problem so we just return.
             return;
         };
 
+        // TODO: this can be merged with the `astar` pass so we can avoid multiple iterations.
         let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         if dijkstra.len() == astar.len() {
             return;
         }
 
-        if dijkstra
-            .into_iter()
-            .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
+        if !is_use // `use(...)` can be called conditionally.
+            && dijkstra
+                .into_iter()
+                .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
@@ -1164,22 +1176,19 @@ fn test() {
             Hook.use_hook();
         ",
         // errors: [functionError('use', 'notAComponent')],
-        // TODO: is this a false positive? if that's the case we already covered it.
-        // "
-        //         function notAComponent() {
-        //             use(promise);
-        //         }
-        // ",
+        "
+                function notAComponent() {
+                    use(promise);
+                }
+        ",
         // errors: [topLevelError('use')],
-        // TODO: is this a false positive? if that's the case we already covered it.
-        // "
-        //     const text = use(promise);
-        //     function App() {
-        //         return <Text text={text} />
-        //     }
-        // ",
+        "
+            const text = use(promise);
+            function App() {
+                return <Text text={text} />
+            }
+        ",
         // errors: [classError('use')],
-        // TODO: is this a false positive? if that's the case we already covered it.
         // "
         //     class C {
         //         m() {
@@ -1188,12 +1197,11 @@ fn test() {
         //     }
         // ",
         // errors: [asyncComponentHookError('use')],
-        // TODO: is this a false positive? if that's the case we already covered it.
-        // "
-        //     async function AsyncComponent() {
-        //             use();
-        //     }
-        // ",
+        "
+            async function AsyncComponent() {
+                    use();
+            }
+        ",
     ];
 
     Tester::new(RulesOfHooks::NAME, pass, fail).test_and_snapshot();

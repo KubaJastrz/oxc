@@ -268,10 +268,15 @@ pub fn parse_jsx_value(value: &JSXAttributeValue) -> Result<f64, ()> {
 
 /// Checks whether the `name` follows the official conventions of React Hooks.
 ///
+/// Identifies `use(...)` as a valid hook.
+///
 /// Hook names must start with use followed by a capital letter,
 /// like useState (built-in) or useOnlineStatus (custom).
 pub fn is_react_hook_name(name: &str) -> bool {
-    name.starts_with("use") && name.chars().nth(3).is_some_and(char::is_uppercase)
+    name.starts_with("use") && name.chars().nth(3).map(char::is_uppercase).unwrap_or(true)
+    // uncomment this check if react decided to drop the idea of `use` hook.
+    // <https://react.dev/reference/react/use> It is currently in `Canary` builds.
+    // name.starts_with("use") && name.chars().nth(3).is_some_and(char::is_uppercase)
 }
 
 /// Checks if the node is a React component name. React component names must

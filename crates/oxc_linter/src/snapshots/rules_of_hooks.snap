@@ -452,6 +452,15 @@ expression: rules_of_hooks
   help: TODO: AsyncComponent
 
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook
+   ╭─[rules_of_hooks.tsx:2:13]
+ 1 │ 
+ 2 │             Hook.use();
+   ·             ──────────
+ 3 │             Hook._use();
+   ╰────
+  help: TODO: TopLevelHook
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook
    ╭─[rules_of_hooks.tsx:4:13]
  3 │             Hook._use();
  4 │             Hook.useState();
@@ -468,3 +477,32 @@ expression: rules_of_hooks
  8 │             Hook.use_hook();
    ╰────
   help: TODO: TopLevelHook
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 64, end: 67 }" is called in function "Span { start: 26, end: 39 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │                 function notAComponent() {
+   ·                          ──────────────
+ 3 │                     use(promise);
+   ·                     ───
+ 4 │                 }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook
+   ╭─[rules_of_hooks.tsx:2:26]
+ 1 │ 
+ 2 │             const text = use(promise);
+   ·                          ────────────
+ 3 │             function App() {
+   ╰────
+  help: TODO: TopLevelHook
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:2:28]
+ 1 │ 
+ 2 │             async function AsyncComponent() {
+   ·                            ──────────────
+ 3 │                     use();
+   ╰────
+  help: TODO: AsyncComponent
