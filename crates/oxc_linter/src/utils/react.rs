@@ -312,3 +312,9 @@ pub fn is_react_hook(expr: &Expression) -> bool {
 pub fn is_react_component_name(name: &str) -> bool {
     name.chars().next().is_some_and(|c| c.is_ascii_uppercase())
 }
+
+/// Checks if the node is a React component name or React hook,
+/// `is_react_component_name`, `is_react_hook_name`
+pub fn is_react_component_or_hook_name(name: &str) -> bool {
+    is_react_component_name(name) || is_react_hook_name(name)
+}

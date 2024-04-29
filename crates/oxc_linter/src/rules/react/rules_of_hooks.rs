@@ -13,7 +13,7 @@ use oxc_span::{Atom, GetSpan, Span};
 use crate::{
     context::LintContext,
     rule::Rule,
-    utils::{is_react_component_name, is_react_hook, is_react_hook_name},
+    utils::{is_react_component_or_hook_name, is_react_hook},
     AstNode,
 };
 
@@ -100,7 +100,7 @@ impl Rule for RulesOfHooks {
 
         match parent_func.kind() {
             AstKind::Function(Function { id: Some(id), .. })
-                if !is_react_component_name(&id.name) && !is_react_hook_name(&id.name) =>
+                if !is_react_component_or_hook_name(&id.name) =>
             {
                 return ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
                     span: id.span,
@@ -123,8 +123,10 @@ impl Rule for RulesOfHooks {
             }
             AstKind::Function(Function { span, id: None, .. })
             | AstKind::ArrowFunctionExpression(ArrowFunctionExpression { span, .. }) => {
-                if get_declaration_identifier(nodes, parent_func.id())
-                    .is_some_and(|name| !is_react_component_name(name) && !is_react_hook_name(name))
+                let ident = get_declaration_identifier(nodes, parent_func.id());
+
+                if ident.is_some_and(|name| !is_react_component_or_hook_name(name))
+                    || is_export_default(nodes, parent_func.id())
                 {
                     return ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
                         span: *span,
@@ -224,9 +226,7 @@ fn is_somewhere_inside_component_or_hook(nodes: &AstNodes, node_id: AstNodeId) -
         })
         .any(|(ix, id)| {
             id.is_some_and(|name| {
-                is_react_component_name(name)
-                    || is_react_hook_name(name)
-                    || is_memo_or_forward_ref_callback(nodes, ix)
+                is_react_component_or_hook_name(name) || is_memo_or_forward_ref_callback(nodes, ix)
             })
         })
 }
@@ -243,6 +243,14 @@ fn get_declaration_identifier<'a>(nodes: &'a AstNodes<'a>, node_id: AstNodeId) -
             None
         }
     })
+}
+
+fn is_export_default<'a>(nodes: &'a AstNodes<'a>, node_id: AstNodeId) -> bool {
+    nodes
+        .ancestors(node_id)
+        .map(|id| nodes.get_node(id))
+        .nth(1)
+        .is_some_and(|node| matches!(node.kind(), AstKind::ExportDefaultDeclaration(_)))
 }
 
 /// # Panics
@@ -1252,15 +1260,22 @@ fn test() {
                 useState();
             }
         ",
-        // TODO: this should error but doesn't.
         // errors: [genericError('useState')],
-        // "
-        //         export default () => {
-        //             if (isVal) {
-        //                 useState(0);
-        //             }
-        //         }
-        // ",
+        "
+            export default () => {
+                if (isVal) {
+                    useState(0);
+                }
+            }
+        ",
+        // errors: [genericError('useState')],
+        "
+            export default function() {
+                if (isVal) {
+                    useState(0);
+                }
+            }
+        ",
         // TODO: this should error but doesn't.
         // errors: [genericError('useState')],
         // "
