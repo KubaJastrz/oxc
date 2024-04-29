@@ -5,7 +5,7 @@ use oxc_diagnostics::{
 };
 use oxc_macros::declare_oxc_lint;
 use oxc_semantic::{petgraph, AstNodeId, AstNodes, EdgeType};
-use oxc_span::{GetSpan, Span};
+use oxc_span::{Atom, GetSpan, Span};
 
 use crate::{
     context::LintContext,
@@ -114,10 +114,9 @@ impl Rule for RulesOfHooks {
                 if is_non_react_func_arg(nodes, parent_func.id()) =>
             {
                 if !is_use && is_somewhere_inside_component_or_hook(nodes, parent_func.id()) {
-                    return ctx.diagnostic(RulesOfHooksDiagnostic::GenericError(call.span));
-                } else {
-                    return;
+                    ctx.diagnostic(RulesOfHooksDiagnostic::GenericError(call.span));
                 }
+                return;
             }
             _ => {}
         }
@@ -163,6 +162,7 @@ impl Rule for RulesOfHooks {
             .into_iter()
             .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
+            #[allow(clippy::needless_return)]
             return ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
     }
@@ -193,7 +193,6 @@ fn is_non_react_func_arg(nodes: &AstNodes, node_id: AstNodeId) -> bool {
 fn is_somewhere_inside_component_or_hook(nodes: &AstNodes, node_id: AstNodeId) -> bool {
     nodes
         .ancestors(node_id)
-        .into_iter()
         .map(|id| nodes.get_node(id))
         .filter(|node| node.kind().is_function_like())
         .map(|node| {
@@ -218,10 +217,10 @@ fn is_somewhere_inside_component_or_hook(nodes: &AstNodes, node_id: AstNodeId) -
 }
 
 fn get_declaration_identifier<'a>(nodes: &'a AstNodes<'a>, node_id: AstNodeId) -> Option<&str> {
-    nodes.ancestors(node_id).into_iter().map(|id| nodes.get_node(id)).find_map(|node| {
+    nodes.ancestors(node_id).map(|id| nodes.get_node(id)).find_map(|node| {
         if let AstKind::VariableDeclaration(decl) = node.kind() {
             if decl.declarations.len() == 1 {
-                decl.declarations[0].id.get_identifier().map(|atom| atom.as_str())
+                decl.declarations[0].id.get_identifier().map(Atom::as_str)
             } else {
                 None
             }
