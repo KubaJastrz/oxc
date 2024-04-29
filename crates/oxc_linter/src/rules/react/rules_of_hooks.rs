@@ -7,14 +7,6 @@ use oxc_macros::declare_oxc_lint;
 use oxc_semantic::{petgraph, AstNodeId, AstNodes, EdgeType};
 use oxc_span::{GetSpan, Span};
 
-// TODO: REMOVE ME PLS
-use std::dbg as std_dbg;
-macro_rules! dbg {
-    ($($any:tt)*) => (
-        std_dbg!($($any)*)
-    )
-}
-
 use crate::{
     context::LintContext,
     rule::Rule,
@@ -109,9 +101,7 @@ impl Rule for RulesOfHooks {
             {
                 return;
             }
-            _ => {
-                dbg!("TODO?");
-            }
+            _ => {}
         }
 
         let is_use = callee_name == "use";
