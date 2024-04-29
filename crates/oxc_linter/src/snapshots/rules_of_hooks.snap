@@ -56,14 +56,32 @@ expression: rules_of_hooks
    ╰────
   help: TODO: TopLevelHook
 
-  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:4:22]
+ 3 │                  m() {
+ 4 │                      This.useHook();
+   ·                      ──────────────
+ 5 │                      Super.useHook();
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:5:22]
+ 4 │                      This.useHook();
+ 5 │                      Super.useHook();
+   ·                      ───────────────
+ 6 │                  }
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
    ╭─[rules_of_hooks.tsx:5:25]
  4 │                     if (cond) {
  5 │                         FooStore.useFeatureFlag();
    ·                         ─────────────────────────
  6 │                     }
    ╰────
-  help: TODO: ConditionalHook
+  help: TODO: ClassComponent
 
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
    ╭─[rules_of_hooks.tsx:4:21]
@@ -460,14 +478,51 @@ expression: rules_of_hooks
    ╰────
   help: TODO: TopLevelHook
 
-  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
    ╭─[rules_of_hooks.tsx:5:29]
  4 │                         if (foo) {
  5 │                             useFeatureFlag();
    ·                             ────────────────
  6 │                         }
    ╰────
-  help: TODO: ConditionalHook
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     render() {
+ 4 │                         React.useState();
+   ·                         ────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:1:27]
+ 1 │ (class {useHook = () => { useState(); }});
+   ·                           ──────────
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:1:21]
+ 1 │ (class {useHook() { useState(); }});
+   ·                     ──────────
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:1:21]
+ 1 │ (class {h = () => { useState(); }});
+   ·                     ──────────
+   ╰────
+  help: TODO: ClassComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:1:15]
+ 1 │ (class {i() { useState(); }});
+   ·               ──────────
+   ╰────
+  help: TODO: ClassComponent
 
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
    ╭─[rules_of_hooks.tsx:2:32]
@@ -533,6 +588,15 @@ expression: rules_of_hooks
  3 │             function App() {
    ╰────
   help: TODO: TopLevelHook
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
+   ╭─[rules_of_hooks.tsx:4:21]
+ 3 │                 m() {
+ 4 │                     use(promise);
+   ·                     ────────────
+ 5 │                 }
+   ╰────
+  help: TODO: ClassComponent
 
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent
    ╭─[rules_of_hooks.tsx:2:28]

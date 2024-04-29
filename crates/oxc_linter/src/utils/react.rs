@@ -1,9 +1,9 @@
 use oxc_ast::{
     ast::{
         CallExpression, Expression, JSXAttributeItem, JSXAttributeName, JSXAttributeValue,
-        JSXChild, JSXElement, JSXElementName, JSXExpression, JSXOpeningElement,
+        JSXChild, JSXElement, JSXElementName, JSXExpression, JSXOpeningElement, MemberExpression,
     },
-    AstKind,
+    match_member_expression, AstKind,
 };
 use oxc_semantic::{AstNode, SymbolFlags};
 
@@ -277,6 +277,29 @@ pub fn is_react_hook_name(name: &str) -> bool {
     // uncomment this check if react decided to drop the idea of `use` hook.
     // <https://react.dev/reference/react/use> It is currently in `Canary` builds.
     // name.starts_with("use") && name.chars().nth(3).is_some_and(char::is_uppercase)
+}
+
+/// Checks whether the `name` follows the official conventions of React Hooks.
+///
+/// Identifies `use(...)` as a valid hook.
+///
+/// Hook names must start with use followed by a capital letter,
+/// like useState (built-in) or useOnlineStatus (custom).
+pub fn is_react_hook<'a>(expr: &Expression<'a>) -> bool {
+    match expr {
+        match_member_expression!(Expression) => {
+            // SAFETY: We already have checked that `expr` is a member expression using the
+            // `match_member_expression` macro.
+            #[allow(unsafe_code)]
+            let expr = unsafe { expr.as_member_expression().unwrap_unchecked() };
+            let MemberExpression::StaticMemberExpression(static_expr) = expr else { return false };
+            let is_class_call =
+                matches!(&static_expr.object, Expression::ThisExpression(_) | Expression::Super(_));
+            !is_class_call && expr.static_property_name().is_some_and(is_react_hook_name)
+        }
+        Expression::Identifier(ident) => is_react_hook_name(ident.name.as_str()),
+        _ => false,
+    }
 }
 
 /// Checks if the node is a React component name. React component names must

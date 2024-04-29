@@ -10,7 +10,7 @@ use oxc_span::{GetSpan, Span};
 use crate::{
     context::LintContext,
     rule::Rule,
-    utils::{is_react_component_name, is_react_hook_name},
+    utils::{is_react_component_name, is_react_hook, is_react_hook_name},
     AstNode,
 };
 
@@ -44,6 +44,9 @@ enum RulesOfHooksDiagnostic {
     #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent")]
     #[diagnostic(severity(warning), help("TODO: AsyncComponent"))]
     AsyncComponent(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: AsyncComponent")]
+    #[diagnostic(severity(warning), help("TODO: ClassComponent"))]
+    ClassComponent(#[label] Span),
 }
 
 #[derive(Debug, Default, Clone)]
@@ -63,14 +66,8 @@ declare_oxc_lint!(
 impl Rule for RulesOfHooks {
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         let AstKind::CallExpression(call) = node.kind() else { return };
-        let Some(callee_name) = call.callee_name() else {
-            // Similar to the react's official `rulesOfHooks` we rely on the identifier for
-            // detecting hook calls.
-            return;
-        };
-        let is_hook = is_react_hook_name(callee_name);
 
-        if !is_hook {
+        if !is_react_hook(&call.callee) {
             return;
         }
 
@@ -81,6 +78,19 @@ impl Rule for RulesOfHooks {
             ctx.diagnostic(RulesOfHooksDiagnostic::TopLevelHook(call.span));
             return;
         };
+
+        // Check if our parent function is part of a class.
+        if matches!(
+            nodes.parent_kind(parent_func.id()),
+            Some(
+                AstKind::MethodDefinition(_)
+                    | AstKind::StaticBlock(_)
+                    | AstKind::PropertyDefinition(_)
+            )
+        ) {
+            ctx.diagnostic(RulesOfHooksDiagnostic::ClassComponent(call.span));
+            return;
+        }
 
         match parent_func.kind() {
             AstKind::Function(Function { id: Some(id), .. })
@@ -104,7 +114,7 @@ impl Rule for RulesOfHooks {
             _ => {}
         }
 
-        let is_use = callee_name == "use";
+        let is_use = call.callee_name().is_some_and(|name| name == "use");
         // `use(...)` can be called conditionally, And,
         // `use(...)` can be called within a loop.
         // So we don't need the following checks.
@@ -129,6 +139,7 @@ impl Rule for RulesOfHooks {
             return;
         }
 
+        // TODO: all `dijkstra` algorithms can be merged together for better performance.
         let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         // Is this node cyclic?
@@ -705,14 +716,14 @@ fn test() {
             Hook.use_hook();
         ",
         // errors: [classError('This.useHook'), classError('Super.useHook')],
-        // "
-        //     class C {
-        //          m() {
-        //              This.useHook();
-        //              Super.useHook();
-        //          }
-        //     }
-        // ",
+        "
+            class C {
+                 m() {
+                     This.useHook();
+                     Super.useHook();
+                 }
+            }
+        ",
         // This is a false positive (it's valid) that unfortunately
         // we cannot avoid. Prefer to rename it to not start with "use"
         // errors: [classError('FooStore.useFeatureFlag')],
@@ -1133,21 +1144,21 @@ fn test() {
                 }
         ",
         // errors: [classError('React.useState')],
-        // "
-        //         class ClassComponentWithHook extends React.Component {
-        //             render() {
-        //                 React.useState();
-        //             }
-        //         }
-        // ",
+        "
+                class ClassComponentWithHook extends React.Component {
+                    render() {
+                        React.useState();
+                    }
+                }
+        ",
         // errors: [classError('useState')],
-        // "(class {useHook = () => { useState(); }});",
+        "(class {useHook = () => { useState(); }});",
         // errors: [classError('useState')],
-        // "(class {useHook() { useState(); }});",
+        "(class {useHook() { useState(); }});",
         // errors: [classError('useState')],
-        // "(class {h = () => { useState(); }});",
+        "(class {h = () => { useState(); }});",
         // errors: [classError('useState')],
-        // "(class {i() { useState(); }});",
+        "(class {i() { useState(); }});",
         // errors: [asyncComponentHookError('useState')],
         "
                 async function AsyncComponent() {
@@ -1189,13 +1200,13 @@ fn test() {
             }
         ",
         // errors: [classError('use')],
-        // "
-        //     class C {
-        //         m() {
-        //             use(promise);
-        //         }
-        //     }
-        // ",
+        "
+            class C {
+                m() {
+                    use(promise);
+                }
+            }
+        ",
         // errors: [asyncComponentHookError('use')],
         "
             async function AsyncComponent() {
