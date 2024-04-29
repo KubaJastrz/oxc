@@ -123,6 +123,15 @@ expression: rules_of_hooks
    ╰────
   help: TODO: FunctionError
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: LoopHook
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     while (cond) {
+ 4 │                         useHookInsideLoop();
+   ·                         ───────────────────
+ 5 │                     }
+   ╰────
+  help: TODO: LoopHook
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
    ╭─[rules_of_hooks.tsx:4:25]
  3 │                     while (cond) {
@@ -197,6 +206,15 @@ expression: rules_of_hooks
    ╰────
   help: TODO: ConditionalHook
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: LoopHook
+   ╭─[rules_of_hooks.tsx:4:25]
+ 3 │                     while (a) {
+ 4 │                         useHook1();
+   ·                         ──────────
+ 5 │                         if (b) return;
+   ╰────
+  help: TODO: LoopHook
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
    ╭─[rules_of_hooks.tsx:4:25]
  3 │                     while (a) {
@@ -215,6 +233,15 @@ expression: rules_of_hooks
    ╰────
   help: TODO: ConditionalHook
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: LoopHook
+    ╭─[rules_of_hooks.tsx:9:25]
+  8 │                     while (c) {
+  9 │                         useHook3();
+    ·                         ──────────
+ 10 │                         if (d) return;
+    ╰────
+  help: TODO: LoopHook
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
     ╭─[rules_of_hooks.tsx:9:25]
   8 │                     while (c) {
@@ -232,6 +259,15 @@ expression: rules_of_hooks
  12 │                     }
     ╰────
   help: TODO: ConditionalHook
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: LoopHook
+   ╭─[rules_of_hooks.tsx:4:21]
+ 3 │                 while (a) {
+ 4 │                     useHook1();
+   ·                     ──────────
+ 5 │                     if (b) continue;
+   ╰────
+  help: TODO: LoopHook
 
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
    ╭─[rules_of_hooks.tsx:4:21]

@@ -4,7 +4,7 @@ use oxc_diagnostics::{
     thiserror::Error,
 };
 use oxc_macros::declare_oxc_lint;
-use oxc_semantic::{petgraph, AstNodeId, AstNodes};
+use oxc_semantic::{petgraph, AstNodeId, AstNodes, EdgeType};
 use oxc_span::{GetSpan, Span};
 
 // TODO: REMOVE ME PLS
@@ -43,6 +43,9 @@ enum RulesOfHooksDiagnostic {
     #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook")]
     #[diagnostic(severity(warning), help("TODO: ConditionalHook"))]
     ConditionalHook(#[label] Span),
+    #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: LoopHook")]
+    #[diagnostic(severity(warning), help("TODO: LoopHook"))]
+    LoopHook(#[label] Span),
     #[error("eslint-plugin-react-hooks(rules-of-hooks): TODO: TopLevelHook")]
     #[diagnostic(severity(warning), help("TODO: TopLevelHook"))]
     TopLevelHook(#[label] Span),
@@ -79,9 +82,6 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        // is `use(...)`?
-        let is_use = callee_name == "use";
-
         let semantic = ctx.semantic();
         let nodes = semantic.nodes();
 
@@ -114,6 +114,13 @@ impl Rule for RulesOfHooks {
             }
         }
 
+        // `use(...)` can be called conditionally, And,
+        // `use(...)` can be called within a loop.
+        // So we don't need the following checks.
+        if callee_name == "use" {
+            return;
+        }
+
         let graph = &semantic.cfg().graph;
         let node_cfg_ix = node.cfg_ix();
         let func_cfg_ix = parent_func.cfg_ix();
@@ -140,10 +147,19 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        if !is_use // `use(...)` can be called conditionally.
-            && dijkstra
-                .into_iter()
-                .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
+        // Is this node cyclic?
+        if petgraph::algo::dijkstra(graph, node_cfg_ix, None, |_| 0)
+            .into_keys()
+            .flat_map(|it| graph.edges_directed(it, petgraph::Direction::Outgoing))
+            .any(|edge| matches!(edge.weight(), EdgeType::Backedge))
+        {
+            ctx.diagnostic(RulesOfHooksDiagnostic::LoopHook(call.span));
+        }
+
+        // All nodes should be reachable from our hook, Otherwise we have a conditional/branching flow.
+        if dijkstra
+            .into_iter()
+            .any(|(f, _)| !petgraph::algo::has_path_connecting(graph, f, node_cfg_ix, None))
         {
             ctx.diagnostic(RulesOfHooksDiagnostic::ConditionalHook(call.span));
         }
