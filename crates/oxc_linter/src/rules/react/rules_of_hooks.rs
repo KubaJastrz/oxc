@@ -121,8 +121,7 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        if petgraph::algo::astar(graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0).is_none()
-        {
+        if !petgraph::algo::has_path_connecting(graph, func_cfg_ix, node_cfg_ix, None) {
             // There should always be a control flow path between a parent and child node.
             // If there is none it means we always do an early exit before reaching our hook call.
             // In some cases it might mean that we are operating on an invalid `cfg` but in either
