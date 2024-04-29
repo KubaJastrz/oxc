@@ -285,7 +285,7 @@ pub fn is_react_hook_name(name: &str) -> bool {
 ///
 /// Hook names must start with use followed by a capital letter,
 /// like useState (built-in) or useOnlineStatus (custom).
-pub fn is_react_hook<'a>(expr: &Expression<'a>) -> bool {
+pub fn is_react_hook(expr: &Expression) -> bool {
     match expr {
         match_member_expression!(Expression) => {
             // SAFETY: We already have checked that `expr` is a member expression using the
