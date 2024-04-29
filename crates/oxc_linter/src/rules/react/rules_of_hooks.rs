@@ -783,11 +783,11 @@ fn test() {
         // This *must* be invalid.
         // errors: [conditionalError('useTernaryHook')],
         // TODO: FIX ME.
-        // "
-        //         function ComponentWithTernaryHook() {
-        //             cond ? useTernaryHook() : null;
-        //         }
-        // ",
+        "
+                function ComponentWithTernaryHook() {
+                    cond ? useTernaryHook() : null;
+                }
+        ",
         // Invalid because it's a common misunderstanding.
         // We *could* make it valid but the runtime error could be confusing.
         // errors: [genericError('useHookInsideCallback')],

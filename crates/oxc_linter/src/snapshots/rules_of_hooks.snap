@@ -119,6 +119,15 @@ expression: rules_of_hooks
    ╰────
   help: TODO: ConditionalHook
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
+   ╭─[rules_of_hooks.tsx:3:28]
+ 2 │                 function ComponentWithTernaryHook() {
+ 3 │                     cond ? useTernaryHook() : null;
+   ·                            ────────────────
+ 4 │                 }
+   ╰────
+  help: TODO: ConditionalHook
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 131, end: 139 }" is called in function "Span { start: 91, end: 102 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
    ╭─[rules_of_hooks.tsx:3:30]
  2 │                 function ComponentWithHookInsideCallback() {
