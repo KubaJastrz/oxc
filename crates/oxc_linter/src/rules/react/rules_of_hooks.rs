@@ -114,10 +114,11 @@ impl Rule for RulesOfHooks {
             }
         }
 
+        let is_use = callee_name == "use";
         // `use(...)` can be called conditionally, And,
         // `use(...)` can be called within a loop.
         // So we don't need the following checks.
-        if callee_name == "use" {
+        if is_use {
             return;
         }
 
@@ -130,22 +131,16 @@ impl Rule for RulesOfHooks {
             return;
         }
 
-        let Some((_, astar)) =
-            petgraph::algo::astar(graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0)
-        else {
+        if petgraph::algo::astar(graph, func_cfg_ix, |it| it == node_cfg_ix, |_| 0, |_| 0).is_none()
+        {
             // There should always be a control flow path between a parent and child node.
             // If there is none it means we always do an early exit before reaching our hook call.
             // In some cases it might mean that we are operating on an invalid `cfg` but in either
             // case, It is somebody else's problem so we just return.
             return;
-        };
-
-        // TODO: this can be merged with the `astar` pass so we can avoid multiple iterations.
-        let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
-
-        if dijkstra.len() == astar.len() {
-            return;
         }
+
+        let dijkstra = petgraph::algo::dijkstra(graph, func_cfg_ix, Some(node_cfg_ix), |_| 0);
 
         // Is this node cyclic?
         if petgraph::algo::dijkstra(graph, node_cfg_ix, None, |_| 0)
