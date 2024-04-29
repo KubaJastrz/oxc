@@ -1,4 +1,7 @@
-use oxc_ast::{ast::Function, AstKind};
+use oxc_ast::{
+    ast::{ArrowFunctionExpression, Function},
+    AstKind,
+};
 use oxc_diagnostics::{
     miette::{self, Diagnostic},
     thiserror::Error,
@@ -117,6 +120,18 @@ impl Rule for RulesOfHooks {
                     ctx.diagnostic(RulesOfHooksDiagnostic::GenericError(call.span));
                 }
                 return;
+            }
+            AstKind::Function(Function { span, id: None, .. })
+            | AstKind::ArrowFunctionExpression(ArrowFunctionExpression { span, .. }) => {
+                if get_declaration_identifier(nodes, parent_func.id())
+                    .is_some_and(|name| !is_react_component_name(name) && !is_react_hook_name(name))
+                {
+                    return ctx.diagnostic(RulesOfHooksDiagnostic::FunctionError {
+                        span: *span,
+                        hook: call.callee.span(),
+                        func: *span,
+                    });
+                }
             }
             _ => {}
         }
@@ -667,39 +682,6 @@ fn test() {
               return <Child data={data} />
             }
         ",
-        // {
-        //   code: normalizeIndent`
-        //     export const notAComponent = () => {
-        //        return () => {
-        //         useState();
-        //       }
-        //     }
-        //   `,
-        //   // TODO: this should error but doesn't.
-        //   // errors: [functionError('use', 'notAComponent')],
-        // },
-        // {
-        //   code: normalizeIndent`
-        //     export default () => {
-        //       if (isVal) {
-        //         useState(0);
-        //       }
-        //     }
-        //   `,
-        //   // TODO: this should error but doesn't.
-        //   // errors: [genericError('useState')],
-        // },
-        // {
-        //   code: normalizeIndent`
-        //     function notAComponent() {
-        //       return new Promise.then(() => {
-        //         useState();
-        //       });
-        //     }
-        //   `,
-        //   // TODO: this should error but doesn't.
-        //   // errors: [genericError('useState')],
-        // },
     ];
 
     let fail = vec![
@@ -1256,6 +1238,38 @@ fn test() {
                     use();
             }
         ",
+        // errors: [functionError('use', 'notAComponent')],
+        "
+            export const notAComponent = () => {
+                return () => {
+                    useState();
+              }
+            }
+        ",
+        // errors: [functionError('use', 'notAComponent')],
+        "
+            const notAComponent = () => {
+                useState();
+            }
+        ",
+        // TODO: this should error but doesn't.
+        // errors: [genericError('useState')],
+        // "
+        //         export default () => {
+        //             if (isVal) {
+        //                 useState(0);
+        //             }
+        //         }
+        // ",
+        // TODO: this should error but doesn't.
+        // errors: [genericError('useState')],
+        // "
+        //     function notAComponent() {
+        //         return new Promise.then(() => {
+        //             useState();
+        //         });
+        //     }
+        // " ,
     ];
 
     Tester::new(RulesOfHooks::NAME, pass, fail).test_and_snapshot();

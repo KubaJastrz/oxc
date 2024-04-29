@@ -323,6 +323,24 @@ expression: rules_of_hooks
    ╰────
   help: TODO: FunctionError
 
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 131, end: 139 }" is called in function "Span { start: 123, end: 144 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:4:23]
+ 3 │             const whatever = function b() { useState(); };
+ 4 │             const c = () => { useState(); };
+   ·                       ───────────────────────
+ 5 │             let d = () => useState();
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 172, end: 180 }" is called in function "Span { start: 166, end: 182 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:5:21]
+ 4 │             const c = () => { useState(); };
+ 5 │             let d = () => useState();
+   ·                     ──────────────────
+ 6 │             e = () => { useState(); };
+   ╰────
+  help: TODO: FunctionError
+
   ⚠ eslint-plugin-react-hooks(rules-of-hooks): TODO: ConditionalHook
    ╭─[rules_of_hooks.tsx:4:21]
  3 │                     if (a) return;
@@ -606,3 +624,25 @@ expression: rules_of_hooks
  3 │                     use();
    ╰────
   help: TODO: AsyncComponent
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 101, end: 109 }" is called in function "Span { start: 73, end: 128 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:3:24]
+ 2 │                  export const notAComponent = () => {
+ 3 │ ╭──▶                 return () => {
+ 4 │ ││                       useState();
+   · ││                       ────────
+ 5 │ ╰──▶               }
+ 6 │                  }
+   ╰────
+  help: TODO: FunctionError
+
+  ⚠ eslint-plugin-react-hooks(rules-of-hooks): React Hook "Span { start: 59, end: 67 }" is called in function "Span { start: 35, end: 84 }" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+   ╭─[rules_of_hooks.tsx:2:35]
+ 1 │      
+ 2 │ ╭──▶             const notAComponent = () => {
+ 3 │ ││                   useState();
+   · ││                   ────────
+ 4 │ ╰──▶             }
+ 5 │              
+   ╰────
+  help: TODO: FunctionError
