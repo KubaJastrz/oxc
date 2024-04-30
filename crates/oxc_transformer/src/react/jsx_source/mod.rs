@@ -98,7 +98,7 @@ impl<'a> ReactJsxSource<'a> {
     }
 
     #[allow(clippy::cast_precision_loss)]
-    fn get_source_object(&self, line: usize, column: usize) -> Expression<'a> {
+    pub fn get_source_object(&self, line: usize, column: usize) -> Expression<'a> {
         let kind = PropertyKind::Init;
 
         let filename = {

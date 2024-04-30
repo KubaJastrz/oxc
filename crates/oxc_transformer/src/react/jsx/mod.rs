@@ -59,9 +59,15 @@ impl<'a> ReactJsx<'a> {
         let default_runtime = options.runtime;
         let jsx_runtime_importer =
             if options.import_source == "react" || default_runtime.is_classic() {
-                CompactStr::from("react/jsx-runtime")
+                let source =
+                    if options.development { "react/jsx-dev-runtime" } else { "react/jsx-runtime" };
+                CompactStr::from(source)
             } else {
-                CompactStr::from(format!("{}/jsx-runtime", options.import_source))
+                CompactStr::from(format!(
+                    "{}/jsx-{}runtime",
+                    options.import_source,
+                    if options.development { "dev-" } else { "" }
+                ))
             };
 
         Self {
@@ -153,17 +159,17 @@ impl<'a> ReactJsx<'a> {
     fn add_require_jsx_runtime(&mut self) {
         if !self.require_jsx_runtime {
             self.require_jsx_runtime = true;
-            self.add_require_statement(
-                "_reactJsxRuntime",
-                self.jsx_runtime_importer.clone(),
-                false,
-            );
+            let variable_name =
+                if self.options.development { "_reactJsxDevRuntime" } else { "_reactJsxRuntime" };
+            self.add_require_statement(variable_name, self.jsx_runtime_importer.clone(), false);
         }
     }
 
     fn add_import_jsx(&mut self) {
         if self.is_script() {
             self.add_require_jsx_runtime();
+        } else if self.options.development {
+            self.add_import_jsx_dev();
         } else if !self.import_jsx {
             self.import_jsx = true;
             self.add_import_statement("jsx", "_jsx", self.jsx_runtime_importer.clone());
@@ -173,9 +179,20 @@ impl<'a> ReactJsx<'a> {
     fn add_import_jsxs(&mut self) {
         if self.is_script() {
             self.add_require_jsx_runtime();
+        } else if self.options.development {
+            self.add_import_jsx_dev();
         } else if !self.import_jsxs {
             self.import_jsxs = true;
             self.add_import_statement("jsxs", "_jsxs", self.jsx_runtime_importer.clone());
+        }
+    }
+
+    fn add_import_jsx_dev(&mut self) {
+        if self.is_script() {
+            self.add_require_jsx_runtime();
+        } else if !self.import_jsx {
+            self.import_jsx = true;
+            self.add_import_statement("jsxDEV", "_jsxDEV", self.jsx_runtime_importer.clone());
         }
     }
 
@@ -262,6 +279,7 @@ impl<'a> ReactJsx<'a> {
     fn transform_jsx<'b>(&mut self, e: &JSXElementOrFragment<'a, 'b>) -> Expression<'a> {
         let is_classic = self.default_runtime.is_classic();
         let is_automatic = self.default_runtime.is_automatic();
+        let is_fragement = matches!(e, JSXElementOrFragment::Fragment(_));
         let has_key_after_props_spread = e.has_key_after_props_spread();
 
         let mut arguments = self.ast().new_vec();
@@ -363,21 +381,24 @@ impl<'a> ReactJsx<'a> {
                 properties.push(ObjectPropertyKind::ObjectProperty(object_property));
             }
         }
-
-        if self.options.is_jsx_self_plugin_enabled() {
-            if let Some(span) = self_attr_span {
-                self.jsx_self.report_error(span);
-            } else {
-                properties.push(self.jsx_self.get_object_property_kind_for_jsx_plugin());
+        if has_key_after_props_spread || self.options.runtime.is_classic() {
+            if self.options.is_jsx_self_plugin_enabled() {
+                if let Some(span) = self_attr_span {
+                    self.jsx_self.report_error(span);
+                } else {
+                    properties.push(self.jsx_self.get_object_property_kind_for_jsx_plugin());
+                }
             }
-        }
-        if self.options.is_jsx_source_plugin_enabled() {
-            if let Some(span) = source_attr_span {
-                self.jsx_source.report_error(span);
-            } else {
-                let (line, column) = get_line_column(e.span().start, self.ctx.source_text);
-                properties
-                    .push(self.jsx_source.get_object_property_kind_for_jsx_plugin(line, column));
+
+            if self.options.is_jsx_source_plugin_enabled() {
+                if let Some(span) = source_attr_span {
+                    self.jsx_source.report_error(span);
+                } else {
+                    let (line, column) = get_line_column(e.span().start, self.ctx.source_text);
+                    properties.push(
+                        self.jsx_source.get_object_property_kind_for_jsx_plugin(line, column),
+                    );
+                }
             }
         }
 
@@ -388,8 +409,41 @@ impl<'a> ReactJsx<'a> {
             arguments.push(Argument::from(object_expression));
         }
 
-        if is_automatic && key_prop.is_some() {
-            arguments.push(Argument::from(self.transform_jsx_attribute_value(key_prop)));
+        if is_automatic {
+            if key_prop.is_some() {
+                arguments.push(Argument::from(self.transform_jsx_attribute_value(key_prop)));
+            } else if self.options.development {
+                arguments.push(Argument::from(self.ctx.ast.void_0()));
+            }
+
+            if !has_key_after_props_spread {
+                if self.options.development {
+                    let literal = self.ctx.ast.boolean_literal(SPAN, children.len() > 1);
+                    arguments
+                        .push(Argument::from(self.ctx.ast.literal_boolean_expression(literal)));
+                }
+
+                if !is_fragement {
+                    if self.options.is_jsx_source_plugin_enabled() {
+                        if let Some(span) = source_attr_span {
+                            self.jsx_source.report_error(span);
+                        } else {
+                            let (line, column) =
+                                get_line_column(e.span().start, self.ctx.source_text);
+                            let expr = self.jsx_source.get_source_object(line, column);
+                            arguments.push(Argument::from(expr));
+                        }
+                    }
+
+                    if self.options.is_jsx_self_plugin_enabled() {
+                        if let Some(span) = self_attr_span {
+                            self.jsx_self.report_error(span);
+                        } else {
+                            arguments.push(Argument::from(self.ctx.ast.this_expression(SPAN)));
+                        }
+                    }
+                }
+            }
         }
 
         if is_classic && !children.is_empty() {
@@ -445,7 +499,12 @@ impl<'a> ReactJsx<'a> {
             }
             ReactJsxRuntime::Automatic => {
                 if self.is_script() {
-                    self.get_static_member_expression("_reactJsxRuntime", "Fragment")
+                    let object_name = if self.options.development {
+                        "_reactJsxDevRuntime"
+                    } else {
+                        "_reactJsxRuntime"
+                    };
+                    self.get_static_member_expression(object_name, "Fragment")
                 } else {
                     let ident = IdentifierReference::new(SPAN, "_Fragment".into());
                     self.ast().identifier_reference_expression(ident)
@@ -469,6 +528,8 @@ impl<'a> ReactJsx<'a> {
                 let name = if self.is_script() {
                     if has_key_after_props_spread {
                         "createElement"
+                    } else if self.options.development {
+                        "jsxDEV"
                     } else if jsxs {
                         "jsxs"
                     } else {
@@ -476,14 +537,21 @@ impl<'a> ReactJsx<'a> {
                     }
                 } else if has_key_after_props_spread {
                     "_createElement"
+                } else if self.options.development {
+                    "_jsxDEV"
                 } else if jsxs {
                     "_jsxs"
                 } else {
                     "_jsx"
                 };
                 if self.is_script() {
-                    let object_ident_name =
-                        if has_key_after_props_spread { "_react" } else { "_reactJsxRuntime" };
+                    let object_ident_name = if has_key_after_props_spread {
+                        "_react"
+                    } else if self.options.development {
+                        "_reactJsxDevRuntime"
+                    } else {
+                        "_reactJsxRuntime"
+                    };
                     self.get_static_member_expression(object_ident_name, name)
                 } else {
                     let ident = IdentifierReference::new(SPAN, name.into());
