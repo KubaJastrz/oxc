@@ -9,6 +9,7 @@ use std::{
 };
 
 use bitflags::bitflags;
+use oxc_macros::visited_node;
 use oxc_span::{Atom, Span};
 use oxc_syntax::number::{BigintBase, NumberBase};
 #[cfg(feature = "serialize")]
@@ -16,6 +17,7 @@ use serde::Serialize;
 #[cfg(feature = "serialize")]
 use tsify::Tsify;
 
+#[visited_node]
 #[derive(Debug, Clone, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]
@@ -39,6 +41,7 @@ impl BooleanLiteral {
     }
 }
 
+#[visited_node]
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]
@@ -59,6 +62,7 @@ impl NullLiteral {
     }
 }
 
+#[visited_node]
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]
@@ -110,6 +114,7 @@ impl<'a> Hash for NumericLiteral<'a> {
     }
 }
 
+#[visited_node]
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]
@@ -127,6 +132,7 @@ impl<'a> BigIntLiteral<'a> {
     }
 }
 
+#[visited_node]
 #[derive(Debug, Clone, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]
@@ -234,6 +240,7 @@ impl fmt::Display for RegExpFlags {
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 pub struct EmptyObject;
 
+#[visited_node]
 #[derive(Debug, Clone, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(tag = "type"))]

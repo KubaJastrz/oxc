@@ -1,8 +1,9 @@
 use proc_macro::TokenStream;
-use syn::parse_macro_input;
+use syn::{parse_macro_input, Item};
 
 mod declare_all_lint_rules;
 mod declare_oxc_lint;
+mod visited_node;
 
 /// Macro used to declare an oxc lint rule
 ///
@@ -55,4 +56,10 @@ pub fn declare_oxc_lint_test(input: TokenStream) -> TokenStream {
 pub fn declare_all_lint_rules(input: TokenStream) -> TokenStream {
     let metadata = parse_macro_input!(input as declare_all_lint_rules::AllLintRulesMeta);
     declare_all_lint_rules::declare_all_lint_rules(metadata)
+}
+
+#[proc_macro_attribute]
+pub fn visited_node(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as Item);
+    visited_node::visited_node(input).into()
 }

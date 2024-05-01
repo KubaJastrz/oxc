@@ -1249,6 +1249,7 @@ dependencies = [
  "bitflags 2.5.0",
  "num-bigint",
  "oxc_allocator",
+ "oxc_macros",
  "oxc_span",
  "oxc_syntax",
  "serde",
