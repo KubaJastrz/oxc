@@ -213,14 +213,12 @@ function generateWalkFunctionsCode(types) {
             const fieldsCodes = visitedFields.map((field, index) => {
                 const otherField = field.index === 0 ? type.fields[1] : type.fields[field.index - 1],
                     fieldCamelName = snakeToCamel(field.name);
-                const getCode = `let field = &mut node.${field.rawName};\n`;
                 const pushCode = `
-                    let other_field = &mut node.${otherField.rawName};
                     ctx.push_stack(
                         Ancestor::${type.name}${fieldCamelName}(
                             ancestor::${type.name}Without${fieldCamelName}(
                                 unsafe {
-                                    (other_field as *const _ as *const u8)
+                                    (&mut node.${otherField.rawName} as *const _ as *const u8)
                                         .sub(offset_of!(${type.name}, ${otherField.rawName}))
                                 }${field.ancestorHasLifetime ? ', PhantomData' : ''}
                             )
@@ -235,25 +233,26 @@ function generateWalkFunctionsCode(types) {
                     const remainingWrappers = fieldTypeWrappers.slice(1);
                     if (remainingWrappers[0] === 'Box') remainingWrappers.shift();
 
-                    let walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);`;
+                    let walkCode;
                     if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Vec') {
                         if (fieldTypeName === 'Statement') {
                             // Special case for `Option<Vec<Statement>>`
                             walkCode = `walk_statements(traverser, field, ctx);`;
                         } else {
                             walkCode = `
-                                for field in field.iter_mut() {
-                                    ${walkCode}
+                                for item in field.iter_mut() {
+                                    walk_${camelToSnake(fieldTypeName)}(traverser, item, ctx);
                                 }
                             `.trim();
                         }
                     } else if (remainingWrappers.length > 0) {
                         walkCode = `todo!("TODO: ${field.type}");`;
+                    } else {
+                        walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);`;
                     }
 
                     return `
-                        ${getCode}
-                        if let Some(field) = field {
+                        if let Some(field) = &mut node.${field.rawName} {
                             ${pushCode}
                             ${walkCode}
                             ${popCode}
@@ -267,9 +266,9 @@ function generateWalkFunctionsCode(types) {
                     let walkVecCode;
                     if (remainingWrappers.length === 0 && fieldTypeName === 'Statement') {
                         // Special case for `Vec<Statement>`
-                        walkVecCode = `walk_statements(traverser, field, ctx);`
+                        walkVecCode = `walk_statements(traverser, &mut node.${field.rawName}, ctx);`
                     } else {
-                        let walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);`,
+                        let walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, item, ctx);`,
                             iterModifier = '';
                         if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Option') {
                             iterModifier = '.flatten()';
@@ -277,14 +276,13 @@ function generateWalkFunctionsCode(types) {
                             walkCode = `todo!("TODO: ${field.type}");`;
                         }
                         walkVecCode = `
-                            for field in field.iter_mut()${iterModifier} {
+                            for item in node.${field.rawName}.iter_mut()${iterModifier} {
                                 ${walkCode}
                             }
                         `.trim();
                     }
 
                     return `
-                        ${getCode}
                         ${pushCode}
                         ${walkVecCode}
                         ${popCode}
@@ -292,9 +290,8 @@ function generateWalkFunctionsCode(types) {
                 }
 
                 return `
-                    ${getCode}
                     ${pushCode}
-                    walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);
+                    walk_${camelToSnake(fieldTypeName)}(traverser, &mut node.${field.rawName}, ctx);
                     ${popCode}
                 `;
             });
@@ -351,7 +348,8 @@ function generateWalkFunctionsCode(types) {
             clippy::missing_panics_doc,
             clippy::undocumented_unsafe_blocks,
             clippy::semicolon_if_nothing_returned,
-            clippy::ptr_as_ptr
+            clippy::ptr_as_ptr,
+            clippy::borrow_as_ptr
         )]
 
         use std::{marker::PhantomData, mem::offset_of};

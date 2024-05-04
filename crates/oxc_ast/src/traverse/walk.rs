@@ -6,7 +6,8 @@
     clippy::missing_panics_doc,
     clippy::undocumented_unsafe_blocks,
     clippy::semicolon_if_nothing_returned,
-    clippy::ptr_as_ptr
+    clippy::ptr_as_ptr,
+    clippy::borrow_as_ptr
 )]
 
 use std::{marker::PhantomData, mem::offset_of};
@@ -22,33 +23,31 @@ pub(super) fn walk_program<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_program(node, ctx);
-    let field = &mut node.directives;
-    let other_field = &mut node.source_type;
     ctx.push_stack(Ancestor::ProgramDirectives(ancestor::ProgramWithoutDirectives(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Program, source_type)) },
+        unsafe {
+            (&mut node.source_type as *const _ as *const u8).sub(offset_of!(Program, source_type))
+        },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_directive(traverser, field, ctx);
+    for item in node.directives.iter_mut() {
+        walk_directive(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.hashbang;
-    if let Some(field) = field {
-        let other_field = &mut node.directives;
+    if let Some(field) = &mut node.hashbang {
         ctx.push_stack(Ancestor::ProgramHashbang(ancestor::ProgramWithoutHashbang(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Program, directives)) },
+            unsafe {
+                (&mut node.directives as *const _ as *const u8).sub(offset_of!(Program, directives))
+            },
             PhantomData,
         )));
         walk_hashbang(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.body;
-    let other_field = &mut node.hashbang;
     ctx.push_stack(Ancestor::ProgramBody(ancestor::ProgramWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Program, hashbang)) },
+        unsafe { (&mut node.hashbang as *const _ as *const u8).sub(offset_of!(Program, hashbang)) },
         PhantomData,
     )));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_program(node, ctx);
 }
@@ -169,13 +168,11 @@ pub(super) fn walk_array_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_array_expression(node, ctx);
-    let field = &mut node.elements;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ArrayExpressionElements(ancestor::ArrayExpressionWithoutElements(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ArrayExpression, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ArrayExpression, span)) },
     )));
-    for field in field.iter_mut() {
-        walk_array_expression_element(traverser, field, ctx);
+    for item in node.elements.iter_mut() {
+        walk_array_expression_element(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_array_expression(node, ctx);
@@ -212,15 +209,13 @@ pub(super) fn walk_object_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_object_expression(node, ctx);
-    let field = &mut node.properties;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ObjectExpressionProperties(
         ancestor::ObjectExpressionWithoutProperties(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ObjectExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ObjectExpression, span))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_object_property_kind(traverser, field, ctx);
+    for item in node.properties.iter_mut() {
+        walk_object_property_kind(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_object_expression(node, ctx);
@@ -245,28 +240,22 @@ pub(super) fn walk_object_property<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_object_property(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ObjectPropertyKey(ancestor::ObjectPropertyWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ObjectProperty, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ObjectProperty, span)) },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    let other_field = &mut node.key;
     ctx.push_stack(Ancestor::ObjectPropertyValue(ancestor::ObjectPropertyWithoutValue(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ObjectProperty, key)) },
+        unsafe { (&mut node.key as *const _ as *const u8).sub(offset_of!(ObjectProperty, key)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.value, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.init;
-    if let Some(field) = field {
-        let other_field = &mut node.value;
+    if let Some(field) = &mut node.init {
         ctx.push_stack(Ancestor::ObjectPropertyInit(ancestor::ObjectPropertyWithoutInit(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ObjectProperty, value))
+                (&mut node.value as *const _ as *const u8).sub(offset_of!(ObjectProperty, value))
             },
             PhantomData,
         )));
@@ -296,28 +285,24 @@ pub(super) fn walk_template_literal<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_template_literal(node, ctx);
-    let field = &mut node.quasis;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TemplateLiteralQuasis(ancestor::TemplateLiteralWithoutQuasis(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TemplateLiteral, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TemplateLiteral, span)) },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_template_element(traverser, field, ctx);
+    for item in node.quasis.iter_mut() {
+        walk_template_element(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.expressions;
-    let other_field = &mut node.quasis;
     ctx.push_stack(Ancestor::TemplateLiteralExpressions(
         ancestor::TemplateLiteralWithoutExpressions(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TemplateLiteral, quasis))
+                (&mut node.quasis as *const _ as *const u8).sub(offset_of!(TemplateLiteral, quasis))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_expression(traverser, field, ctx);
+    for item in node.expressions.iter_mut() {
+        walk_expression(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_template_literal(node, ctx);
@@ -329,39 +314,33 @@ pub(super) fn walk_tagged_template_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_tagged_template_expression(node, ctx);
-    let field = &mut node.tag;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TaggedTemplateExpressionTag(
         ancestor::TaggedTemplateExpressionWithoutTag(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(TaggedTemplateExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.tag, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.quasi;
-    let other_field = &mut node.tag;
     ctx.push_stack(Ancestor::TaggedTemplateExpressionQuasi(
         ancestor::TaggedTemplateExpressionWithoutQuasi(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.tag as *const _ as *const u8)
                     .sub(offset_of!(TaggedTemplateExpression, tag))
             },
             PhantomData,
         ),
     ));
-    walk_template_literal(traverser, field, ctx);
+    walk_template_literal(traverser, &mut node.quasi, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.quasi;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TaggedTemplateExpressionTypeParameters(
             ancestor::TaggedTemplateExpressionWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.quasi as *const _ as *const u8)
                         .sub(offset_of!(TaggedTemplateExpression, quasi))
                 },
                 PhantomData,
@@ -408,31 +387,27 @@ pub(super) fn walk_computed_member_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_computed_member_expression(node, ctx);
-    let field = &mut node.object;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ComputedMemberExpressionObject(
         ancestor::ComputedMemberExpressionWithoutObject(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(ComputedMemberExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.object, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.expression;
-    let other_field = &mut node.object;
     ctx.push_stack(Ancestor::ComputedMemberExpressionExpression(
         ancestor::ComputedMemberExpressionWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.object as *const _ as *const u8)
                     .sub(offset_of!(ComputedMemberExpression, object))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_computed_member_expression(node, ctx);
 }
@@ -443,30 +418,27 @@ pub(super) fn walk_static_member_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_static_member_expression(node, ctx);
-    let field = &mut node.object;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::StaticMemberExpressionObject(
         ancestor::StaticMemberExpressionWithoutObject(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(StaticMemberExpression, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(StaticMemberExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.object, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.property;
-    let other_field = &mut node.object;
     ctx.push_stack(Ancestor::StaticMemberExpressionProperty(
         ancestor::StaticMemberExpressionWithoutProperty(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.object as *const _ as *const u8)
                     .sub(offset_of!(StaticMemberExpression, object))
             },
             PhantomData,
         ),
     ));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.property, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_static_member_expression(node, ctx);
 }
@@ -477,30 +449,27 @@ pub(super) fn walk_private_field_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_private_field_expression(node, ctx);
-    let field = &mut node.object;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::PrivateFieldExpressionObject(
         ancestor::PrivateFieldExpressionWithoutObject(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(PrivateFieldExpression, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(PrivateFieldExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.object, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.field;
-    let other_field = &mut node.object;
     ctx.push_stack(Ancestor::PrivateFieldExpressionField(
         ancestor::PrivateFieldExpressionWithoutField(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.object as *const _ as *const u8)
                     .sub(offset_of!(PrivateFieldExpression, object))
             },
             PhantomData,
         ),
     ));
-    walk_private_identifier(traverser, field, ctx);
+    walk_private_identifier(traverser, &mut node.field, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_private_field_expression(node, ctx);
 }
@@ -511,31 +480,28 @@ pub(super) fn walk_call_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_call_expression(node, ctx);
-    let field = &mut node.callee;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::CallExpressionCallee(ancestor::CallExpressionWithoutCallee(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(CallExpression, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(CallExpression, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.callee, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.arguments;
-    let other_field = &mut node.callee;
     ctx.push_stack(Ancestor::CallExpressionArguments(ancestor::CallExpressionWithoutArguments(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(CallExpression, callee)) },
+        unsafe {
+            (&mut node.callee as *const _ as *const u8).sub(offset_of!(CallExpression, callee))
+        },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_argument(traverser, field, ctx);
+    for item in node.arguments.iter_mut() {
+        walk_argument(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.optional;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::CallExpressionTypeParameters(
             ancestor::CallExpressionWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(CallExpression, optional))
+                    (&mut node.optional as *const _ as *const u8)
+                        .sub(offset_of!(CallExpression, optional))
                 },
                 PhantomData,
             ),
@@ -552,31 +518,28 @@ pub(super) fn walk_new_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_new_expression(node, ctx);
-    let field = &mut node.callee;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::NewExpressionCallee(ancestor::NewExpressionWithoutCallee(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(NewExpression, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(NewExpression, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.callee, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.arguments;
-    let other_field = &mut node.callee;
     ctx.push_stack(Ancestor::NewExpressionArguments(ancestor::NewExpressionWithoutArguments(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(NewExpression, callee)) },
+        unsafe {
+            (&mut node.callee as *const _ as *const u8).sub(offset_of!(NewExpression, callee))
+        },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_argument(traverser, field, ctx);
+    for item in node.arguments.iter_mut() {
+        walk_argument(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.arguments;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::NewExpressionTypeParameters(
             ancestor::NewExpressionWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(NewExpression, arguments))
+                    (&mut node.arguments as *const _ as *const u8)
+                        .sub(offset_of!(NewExpression, arguments))
                 },
                 PhantomData,
             ),
@@ -593,21 +556,17 @@ pub(super) fn walk_meta_property<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_meta_property(node, ctx);
-    let field = &mut node.meta;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::MetaPropertyMeta(ancestor::MetaPropertyWithoutMeta(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(MetaProperty, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(MetaProperty, span)) },
         PhantomData,
     )));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.meta, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.property;
-    let other_field = &mut node.meta;
     ctx.push_stack(Ancestor::MetaPropertyProperty(ancestor::MetaPropertyWithoutProperty(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(MetaProperty, meta)) },
+        unsafe { (&mut node.meta as *const _ as *const u8).sub(offset_of!(MetaProperty, meta)) },
         PhantomData,
     )));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.property, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_meta_property(node, ctx);
 }
@@ -618,12 +577,10 @@ pub(super) fn walk_spread_element<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_spread_element(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::SpreadElementArgument(ancestor::SpreadElementWithoutArgument(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(SpreadElement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(SpreadElement, span)) },
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_spread_element(node, ctx);
 }
@@ -647,12 +604,12 @@ pub(super) fn walk_update_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_update_expression(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.prefix;
     ctx.push_stack(Ancestor::UpdateExpressionArgument(ancestor::UpdateExpressionWithoutArgument(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(UpdateExpression, prefix)) },
+        unsafe {
+            (&mut node.prefix as *const _ as *const u8).sub(offset_of!(UpdateExpression, prefix))
+        },
     )));
-    walk_simple_assignment_target(traverser, field, ctx);
+    walk_simple_assignment_target(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_update_expression(node, ctx);
 }
@@ -663,14 +620,12 @@ pub(super) fn walk_unary_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_unary_expression(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.operator;
     ctx.push_stack(Ancestor::UnaryExpressionArgument(ancestor::UnaryExpressionWithoutArgument(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(UnaryExpression, operator))
+            (&mut node.operator as *const _ as *const u8).sub(offset_of!(UnaryExpression, operator))
         },
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_unary_expression(node, ctx);
 }
@@ -681,23 +636,22 @@ pub(super) fn walk_binary_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_binary_expression(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::BinaryExpressionLeft(ancestor::BinaryExpressionWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(BinaryExpression, span)) },
-        PhantomData,
-    )));
-    walk_expression(traverser, field, ctx);
-    unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.operator;
-    ctx.push_stack(Ancestor::BinaryExpressionRight(ancestor::BinaryExpressionWithoutRight(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(BinaryExpression, operator))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(BinaryExpression, span))
         },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.left, ctx);
+    unsafe { ctx.pop_stack() };
+    ctx.push_stack(Ancestor::BinaryExpressionRight(ancestor::BinaryExpressionWithoutRight(
+        unsafe {
+            (&mut node.operator as *const _ as *const u8)
+                .sub(offset_of!(BinaryExpression, operator))
+        },
+        PhantomData,
+    )));
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_binary_expression(node, ctx);
 }
@@ -708,25 +662,22 @@ pub(super) fn walk_private_in_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_private_in_expression(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::PrivateInExpressionLeft(ancestor::PrivateInExpressionWithoutLeft(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(PrivateInExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(PrivateInExpression, span))
         },
         PhantomData,
     )));
-    walk_private_identifier(traverser, field, ctx);
+    walk_private_identifier(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.operator;
     ctx.push_stack(Ancestor::PrivateInExpressionRight(ancestor::PrivateInExpressionWithoutRight(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(PrivateInExpression, operator))
+            (&mut node.operator as *const _ as *const u8)
+                .sub(offset_of!(PrivateInExpression, operator))
         },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_private_in_expression(node, ctx);
 }
@@ -737,23 +688,22 @@ pub(super) fn walk_logical_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_logical_expression(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::LogicalExpressionLeft(ancestor::LogicalExpressionWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(LogicalExpression, span)) },
-        PhantomData,
-    )));
-    walk_expression(traverser, field, ctx);
-    unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.operator;
-    ctx.push_stack(Ancestor::LogicalExpressionRight(ancestor::LogicalExpressionWithoutRight(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(LogicalExpression, operator))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(LogicalExpression, span))
         },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.left, ctx);
+    unsafe { ctx.pop_stack() };
+    ctx.push_stack(Ancestor::LogicalExpressionRight(ancestor::LogicalExpressionWithoutRight(
+        unsafe {
+            (&mut node.operator as *const _ as *const u8)
+                .sub(offset_of!(LogicalExpression, operator))
+        },
+        PhantomData,
+    )));
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_logical_expression(node, ctx);
 }
@@ -764,42 +714,38 @@ pub(super) fn walk_conditional_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_conditional_expression(node, ctx);
-    let field = &mut node.test;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ConditionalExpressionTest(
         ancestor::ConditionalExpressionWithoutTest(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ConditionalExpression, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(ConditionalExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.test, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.consequent;
-    let other_field = &mut node.test;
     ctx.push_stack(Ancestor::ConditionalExpressionConsequent(
         ancestor::ConditionalExpressionWithoutConsequent(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ConditionalExpression, test))
+                (&mut node.test as *const _ as *const u8)
+                    .sub(offset_of!(ConditionalExpression, test))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.consequent, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.alternate;
-    let other_field = &mut node.consequent;
     ctx.push_stack(Ancestor::ConditionalExpressionAlternate(
         ancestor::ConditionalExpressionWithoutAlternate(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.consequent as *const _ as *const u8)
                     .sub(offset_of!(ConditionalExpression, consequent))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.alternate, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_conditional_expression(node, ctx);
 }
@@ -810,27 +756,25 @@ pub(super) fn walk_assignment_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_expression(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.operator;
     ctx.push_stack(Ancestor::AssignmentExpressionLeft(ancestor::AssignmentExpressionWithoutLeft(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(AssignmentExpression, operator))
+            (&mut node.operator as *const _ as *const u8)
+                .sub(offset_of!(AssignmentExpression, operator))
         },
         PhantomData,
     )));
-    walk_assignment_target(traverser, field, ctx);
+    walk_assignment_target(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.left;
     ctx.push_stack(Ancestor::AssignmentExpressionRight(
         ancestor::AssignmentExpressionWithoutRight(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(AssignmentExpression, left))
+                (&mut node.left as *const _ as *const u8)
+                    .sub(offset_of!(AssignmentExpression, left))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_assignment_expression(node, ctx);
 }
@@ -902,27 +846,24 @@ pub(super) fn walk_array_assignment_target<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_array_assignment_target(node, ctx);
-    let field = &mut node.elements;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ArrayAssignmentTargetElements(
         ancestor::ArrayAssignmentTargetWithoutElements(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ArrayAssignmentTarget, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(ArrayAssignmentTarget, span))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut().flatten() {
-        walk_assignment_target_maybe_default(traverser, field, ctx);
+    for item in node.elements.iter_mut().flatten() {
+        walk_assignment_target_maybe_default(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.rest;
-    if let Some(field) = field {
-        let other_field = &mut node.elements;
+    if let Some(field) = &mut node.rest {
         ctx.push_stack(Ancestor::ArrayAssignmentTargetRest(
             ancestor::ArrayAssignmentTargetWithoutRest(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.elements as *const _ as *const u8)
                         .sub(offset_of!(ArrayAssignmentTarget, elements))
                 },
                 PhantomData,
@@ -940,27 +881,24 @@ pub(super) fn walk_object_assignment_target<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_object_assignment_target(node, ctx);
-    let field = &mut node.properties;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ObjectAssignmentTargetProperties(
         ancestor::ObjectAssignmentTargetWithoutProperties(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ObjectAssignmentTarget, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(ObjectAssignmentTarget, span))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_assignment_target_property(traverser, field, ctx);
+    for item in node.properties.iter_mut() {
+        walk_assignment_target_property(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.rest;
-    if let Some(field) = field {
-        let other_field = &mut node.properties;
+    if let Some(field) = &mut node.rest {
         ctx.push_stack(Ancestor::ObjectAssignmentTargetRest(
             ancestor::ObjectAssignmentTargetWithoutRest(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.properties as *const _ as *const u8)
                         .sub(offset_of!(ObjectAssignmentTarget, properties))
                 },
                 PhantomData,
@@ -978,14 +916,12 @@ pub(super) fn walk_assignment_target_rest<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_target_rest(node, ctx);
-    let field = &mut node.target;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AssignmentTargetRestTarget(
         ancestor::AssignmentTargetRestWithoutTarget(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(AssignmentTargetRest, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(AssignmentTargetRest, span))
         }),
     ));
-    walk_assignment_target(traverser, field, ctx);
+    walk_assignment_target(traverser, &mut node.target, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_assignment_target_rest(node, ctx);
 }
@@ -1013,31 +949,27 @@ pub(super) fn walk_assignment_target_with_default<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_target_with_default(node, ctx);
-    let field = &mut node.binding;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AssignmentTargetWithDefaultBinding(
         ancestor::AssignmentTargetWithDefaultWithoutBinding(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(AssignmentTargetWithDefault, span))
             },
             PhantomData,
         ),
     ));
-    walk_assignment_target(traverser, field, ctx);
+    walk_assignment_target(traverser, &mut node.binding, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.init;
-    let other_field = &mut node.binding;
     ctx.push_stack(Ancestor::AssignmentTargetWithDefaultInit(
         ancestor::AssignmentTargetWithDefaultWithoutInit(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.binding as *const _ as *const u8)
                     .sub(offset_of!(AssignmentTargetWithDefault, binding))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.init, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_assignment_target_with_default(node, ctx);
 }
@@ -1065,26 +997,22 @@ pub(super) fn walk_assignment_target_property_identifier<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_target_property_identifier(node, ctx);
-    let field = &mut node.binding;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AssignmentTargetPropertyIdentifierBinding(
         ancestor::AssignmentTargetPropertyIdentifierWithoutBinding(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(AssignmentTargetPropertyIdentifier, span))
             },
             PhantomData,
         ),
     ));
-    walk_identifier_reference(traverser, field, ctx);
+    walk_identifier_reference(traverser, &mut node.binding, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.init;
-    if let Some(field) = field {
-        let other_field = &mut node.binding;
+    if let Some(field) = &mut node.init {
         ctx.push_stack(Ancestor::AssignmentTargetPropertyIdentifierInit(
             ancestor::AssignmentTargetPropertyIdentifierWithoutInit(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.binding as *const _ as *const u8)
                         .sub(offset_of!(AssignmentTargetPropertyIdentifier, binding))
                 },
                 PhantomData,
@@ -1102,31 +1030,27 @@ pub(super) fn walk_assignment_target_property_property<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_target_property_property(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AssignmentTargetPropertyPropertyName(
         ancestor::AssignmentTargetPropertyPropertyWithoutName(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(AssignmentTargetPropertyProperty, span))
             },
             PhantomData,
         ),
     ));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.binding;
-    let other_field = &mut node.name;
     ctx.push_stack(Ancestor::AssignmentTargetPropertyPropertyBinding(
         ancestor::AssignmentTargetPropertyPropertyWithoutBinding(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.name as *const _ as *const u8)
                     .sub(offset_of!(AssignmentTargetPropertyProperty, name))
             },
             PhantomData,
         ),
     ));
-    walk_assignment_target_maybe_default(traverser, field, ctx);
+    walk_assignment_target_maybe_default(traverser, &mut node.binding, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_assignment_target_property_property(node, ctx);
 }
@@ -1137,15 +1061,13 @@ pub(super) fn walk_sequence_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_sequence_expression(node, ctx);
-    let field = &mut node.expressions;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::SequenceExpressionExpressions(
         ancestor::SequenceExpressionWithoutExpressions(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(SequenceExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(SequenceExpression, span))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_expression(traverser, field, ctx);
+    for item in node.expressions.iter_mut() {
+        walk_expression(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_sequence_expression(node, ctx);
@@ -1166,12 +1088,10 @@ pub(super) fn walk_await_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_await_expression(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AwaitExpressionArgument(ancestor::AwaitExpressionWithoutArgument(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(AwaitExpression, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(AwaitExpression, span)) },
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_await_expression(node, ctx);
 }
@@ -1182,14 +1102,12 @@ pub(super) fn walk_chain_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_chain_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ChainExpressionExpression(
         ancestor::ChainExpressionWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ChainExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ChainExpression, span))
         }),
     ));
-    walk_chain_element(traverser, field, ctx);
+    walk_chain_element(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_chain_expression(node, ctx);
 }
@@ -1215,14 +1133,12 @@ pub(super) fn walk_parenthesized_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_parenthesized_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ParenthesizedExpressionExpression(
         ancestor::ParenthesizedExpressionWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ParenthesizedExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ParenthesizedExpression, span))
         }),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_parenthesized_expression(node, ctx);
 }
@@ -1268,13 +1184,11 @@ pub(super) fn walk_directive<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_directive(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::DirectiveExpression(ancestor::DirectiveWithoutExpression(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Directive, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(Directive, span)) },
         PhantomData,
     )));
-    walk_string_literal(traverser, field, ctx);
+    walk_string_literal(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_directive(node, ctx);
 }
@@ -1294,12 +1208,10 @@ pub(super) fn walk_block_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_block_statement(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::BlockStatementBody(ancestor::BlockStatementWithoutBody(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(BlockStatement, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(BlockStatement, span))
     })));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_block_statement(node, ctx);
 }
@@ -1336,18 +1248,16 @@ pub(super) fn walk_variable_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_variable_declaration(node, ctx);
-    let field = &mut node.declarations;
-    let other_field = &mut node.kind;
     ctx.push_stack(Ancestor::VariableDeclarationDeclarations(
         ancestor::VariableDeclarationWithoutDeclarations(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(VariableDeclaration, kind))
+                (&mut node.kind as *const _ as *const u8).sub(offset_of!(VariableDeclaration, kind))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_variable_declarator(traverser, field, ctx);
+    for item in node.declarations.iter_mut() {
+        walk_variable_declarator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_variable_declaration(node, ctx);
@@ -1359,20 +1269,18 @@ pub(super) fn walk_variable_declarator<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_variable_declarator(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::VariableDeclaratorId(ancestor::VariableDeclaratorWithoutId(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(VariableDeclarator, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(VariableDeclarator, span))
+        },
         PhantomData,
     )));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.init;
-    if let Some(field) = field {
-        let other_field = &mut node.id;
+    if let Some(field) = &mut node.init {
         ctx.push_stack(Ancestor::VariableDeclaratorInit(ancestor::VariableDeclaratorWithoutInit(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(VariableDeclarator, id))
+                (&mut node.id as *const _ as *const u8).sub(offset_of!(VariableDeclarator, id))
             },
             PhantomData,
         )));
@@ -1388,15 +1296,14 @@ pub(super) fn walk_using_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_using_declaration(node, ctx);
-    let field = &mut node.declarations;
-    let other_field = &mut node.is_await;
     ctx.push_stack(Ancestor::UsingDeclarationDeclarations(
         ancestor::UsingDeclarationWithoutDeclarations(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(UsingDeclaration, is_await))
+            (&mut node.is_await as *const _ as *const u8)
+                .sub(offset_of!(UsingDeclaration, is_await))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_variable_declarator(traverser, field, ctx);
+    for item in node.declarations.iter_mut() {
+        walk_variable_declarator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_using_declaration(node, ctx);
@@ -1417,14 +1324,12 @@ pub(super) fn walk_expression_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_expression_statement(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ExpressionStatementExpression(
         ancestor::ExpressionStatementWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ExpressionStatement, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ExpressionStatement, span))
         }),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_expression_statement(node, ctx);
 }
@@ -1435,28 +1340,23 @@ pub(super) fn walk_if_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_if_statement(node, ctx);
-    let field = &mut node.test;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::IfStatementTest(ancestor::IfStatementWithoutTest(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(IfStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(IfStatement, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.test, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.consequent;
-    let other_field = &mut node.test;
     ctx.push_stack(Ancestor::IfStatementConsequent(ancestor::IfStatementWithoutConsequent(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(IfStatement, test)) },
+        unsafe { (&mut node.test as *const _ as *const u8).sub(offset_of!(IfStatement, test)) },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.consequent, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.alternate;
-    if let Some(field) = field {
-        let other_field = &mut node.consequent;
+    if let Some(field) = &mut node.alternate {
         ctx.push_stack(Ancestor::IfStatementAlternate(ancestor::IfStatementWithoutAlternate(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(IfStatement, consequent))
+                (&mut node.consequent as *const _ as *const u8)
+                    .sub(offset_of!(IfStatement, consequent))
             },
             PhantomData,
         )));
@@ -1472,21 +1372,21 @@ pub(super) fn walk_do_while_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_do_while_statement(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::DoWhileStatementBody(ancestor::DoWhileStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(DoWhileStatement, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(DoWhileStatement, span))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.test;
-    let other_field = &mut node.body;
     ctx.push_stack(Ancestor::DoWhileStatementTest(ancestor::DoWhileStatementWithoutTest(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(DoWhileStatement, body)) },
+        unsafe {
+            (&mut node.body as *const _ as *const u8).sub(offset_of!(DoWhileStatement, body))
+        },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.test, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_do_while_statement(node, ctx);
 }
@@ -1497,21 +1397,17 @@ pub(super) fn walk_while_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_while_statement(node, ctx);
-    let field = &mut node.test;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::WhileStatementTest(ancestor::WhileStatementWithoutTest(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(WhileStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(WhileStatement, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.test, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.test;
     ctx.push_stack(Ancestor::WhileStatementBody(ancestor::WhileStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(WhileStatement, test)) },
+        unsafe { (&mut node.test as *const _ as *const u8).sub(offset_of!(WhileStatement, test)) },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_while_statement(node, ctx);
 }
@@ -1522,43 +1418,43 @@ pub(super) fn walk_for_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_for_statement(node, ctx);
-    let field = &mut node.init;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.init {
         ctx.push_stack(Ancestor::ForStatementInit(ancestor::ForStatementWithoutInit(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForStatement, span)) },
+            unsafe {
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(ForStatement, span))
+            },
             PhantomData,
         )));
         walk_for_statement_init(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.test;
-    if let Some(field) = field {
-        let other_field = &mut node.init;
+    if let Some(field) = &mut node.test {
         ctx.push_stack(Ancestor::ForStatementTest(ancestor::ForStatementWithoutTest(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForStatement, init)) },
+            unsafe {
+                (&mut node.init as *const _ as *const u8).sub(offset_of!(ForStatement, init))
+            },
             PhantomData,
         )));
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.update;
-    if let Some(field) = field {
-        let other_field = &mut node.test;
+    if let Some(field) = &mut node.update {
         ctx.push_stack(Ancestor::ForStatementUpdate(ancestor::ForStatementWithoutUpdate(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForStatement, test)) },
+            unsafe {
+                (&mut node.test as *const _ as *const u8).sub(offset_of!(ForStatement, test))
+            },
             PhantomData,
         )));
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.body;
-    let other_field = &mut node.update;
     ctx.push_stack(Ancestor::ForStatementBody(ancestor::ForStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForStatement, update)) },
+        unsafe {
+            (&mut node.update as *const _ as *const u8).sub(offset_of!(ForStatement, update))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_for_statement(node, ctx);
 }
@@ -1587,29 +1483,25 @@ pub(super) fn walk_for_in_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_for_in_statement(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ForInStatementLeft(ancestor::ForInStatementWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForInStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ForInStatement, span)) },
         PhantomData,
     )));
-    walk_for_statement_left(traverser, field, ctx);
+    walk_for_statement_left(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.left;
     ctx.push_stack(Ancestor::ForInStatementRight(ancestor::ForInStatementWithoutRight(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForInStatement, left)) },
+        unsafe { (&mut node.left as *const _ as *const u8).sub(offset_of!(ForInStatement, left)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.right;
     ctx.push_stack(Ancestor::ForInStatementBody(ancestor::ForInStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForInStatement, right)) },
+        unsafe {
+            (&mut node.right as *const _ as *const u8).sub(offset_of!(ForInStatement, right))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_for_in_statement(node, ctx);
 }
@@ -1620,29 +1512,27 @@ pub(super) fn walk_for_of_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_for_of_statement(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.r#await;
     ctx.push_stack(Ancestor::ForOfStatementLeft(ancestor::ForOfStatementWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForOfStatement, r#await)) },
+        unsafe {
+            (&mut node.r#await as *const _ as *const u8).sub(offset_of!(ForOfStatement, r#await))
+        },
         PhantomData,
     )));
-    walk_for_statement_left(traverser, field, ctx);
+    walk_for_statement_left(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.left;
     ctx.push_stack(Ancestor::ForOfStatementRight(ancestor::ForOfStatementWithoutRight(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForOfStatement, left)) },
+        unsafe { (&mut node.left as *const _ as *const u8).sub(offset_of!(ForOfStatement, left)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.right;
     ctx.push_stack(Ancestor::ForOfStatementBody(ancestor::ForOfStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ForOfStatement, right)) },
+        unsafe {
+            (&mut node.right as *const _ as *const u8).sub(offset_of!(ForOfStatement, right))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_for_of_statement(node, ctx);
 }
@@ -1671,12 +1561,10 @@ pub(super) fn walk_continue_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_continue_statement(node, ctx);
-    let field = &mut node.label;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.label {
         ctx.push_stack(Ancestor::ContinueStatementLabel(ancestor::ContinueStatementWithoutLabel(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ContinueStatement, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(ContinueStatement, span))
             },
         )));
         walk_label_identifier(traverser, field, ctx);
@@ -1691,11 +1579,11 @@ pub(super) fn walk_break_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_break_statement(node, ctx);
-    let field = &mut node.label;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.label {
         ctx.push_stack(Ancestor::BreakStatementLabel(ancestor::BreakStatementWithoutLabel(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(BreakStatement, span)) },
+            unsafe {
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(BreakStatement, span))
+            },
         )));
         walk_label_identifier(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
@@ -1709,12 +1597,10 @@ pub(super) fn walk_return_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_return_statement(node, ctx);
-    let field = &mut node.argument;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.argument {
         ctx.push_stack(Ancestor::ReturnStatementArgument(
             ancestor::ReturnStatementWithoutArgument(unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ReturnStatement, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(ReturnStatement, span))
             }),
         ));
         walk_expression(traverser, field, ctx);
@@ -1729,21 +1615,19 @@ pub(super) fn walk_with_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_with_statement(node, ctx);
-    let field = &mut node.object;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::WithStatementObject(ancestor::WithStatementWithoutObject(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(WithStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(WithStatement, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.object, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.object;
     ctx.push_stack(Ancestor::WithStatementBody(ancestor::WithStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(WithStatement, object)) },
+        unsafe {
+            (&mut node.object as *const _ as *const u8).sub(offset_of!(WithStatement, object))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_with_statement(node, ctx);
 }
@@ -1754,28 +1638,25 @@ pub(super) fn walk_switch_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_switch_statement(node, ctx);
-    let field = &mut node.discriminant;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::SwitchStatementDiscriminant(
         ancestor::SwitchStatementWithoutDiscriminant(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(SwitchStatement, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(SwitchStatement, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.discriminant, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.cases;
-    let other_field = &mut node.discriminant;
     ctx.push_stack(Ancestor::SwitchStatementCases(ancestor::SwitchStatementWithoutCases(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(SwitchStatement, discriminant))
+            (&mut node.discriminant as *const _ as *const u8)
+                .sub(offset_of!(SwitchStatement, discriminant))
         },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_switch_case(traverser, field, ctx);
+    for item in node.cases.iter_mut() {
+        walk_switch_case(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_switch_statement(node, ctx);
@@ -1787,23 +1668,19 @@ pub(super) fn walk_switch_case<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_switch_case(node, ctx);
-    let field = &mut node.test;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.test {
         ctx.push_stack(Ancestor::SwitchCaseTest(ancestor::SwitchCaseWithoutTest(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(SwitchCase, span)) },
+            unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(SwitchCase, span)) },
             PhantomData,
         )));
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.consequent;
-    let other_field = &mut node.test;
     ctx.push_stack(Ancestor::SwitchCaseConsequent(ancestor::SwitchCaseWithoutConsequent(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(SwitchCase, test)) },
+        unsafe { (&mut node.test as *const _ as *const u8).sub(offset_of!(SwitchCase, test)) },
         PhantomData,
     )));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.consequent, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_switch_case(node, ctx);
 }
@@ -1814,21 +1691,21 @@ pub(super) fn walk_labeled_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_labeled_statement(node, ctx);
-    let field = &mut node.label;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::LabeledStatementLabel(ancestor::LabeledStatementWithoutLabel(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(LabeledStatement, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(LabeledStatement, span))
+        },
         PhantomData,
     )));
-    walk_label_identifier(traverser, field, ctx);
+    walk_label_identifier(traverser, &mut node.label, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.label;
     ctx.push_stack(Ancestor::LabeledStatementBody(ancestor::LabeledStatementWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(LabeledStatement, label)) },
+        unsafe {
+            (&mut node.label as *const _ as *const u8).sub(offset_of!(LabeledStatement, label))
+        },
         PhantomData,
     )));
-    walk_statement(traverser, field, ctx);
+    walk_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_labeled_statement(node, ctx);
 }
@@ -1839,12 +1716,10 @@ pub(super) fn walk_throw_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_throw_statement(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ThrowStatementArgument(ancestor::ThrowStatementWithoutArgument(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ThrowStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ThrowStatement, span)) },
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_throw_statement(node, ctx);
 }
@@ -1855,30 +1730,26 @@ pub(super) fn walk_try_statement<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_try_statement(node, ctx);
-    let field = &mut node.block;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TryStatementBlock(ancestor::TryStatementWithoutBlock(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TryStatement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TryStatement, span)) },
         PhantomData,
     )));
-    walk_block_statement(traverser, field, ctx);
+    walk_block_statement(traverser, &mut node.block, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.handler;
-    if let Some(field) = field {
-        let other_field = &mut node.block;
+    if let Some(field) = &mut node.handler {
         ctx.push_stack(Ancestor::TryStatementHandler(ancestor::TryStatementWithoutHandler(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TryStatement, block)) },
+            unsafe {
+                (&mut node.block as *const _ as *const u8).sub(offset_of!(TryStatement, block))
+            },
             PhantomData,
         )));
         walk_catch_clause(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.finalizer;
-    if let Some(field) = field {
-        let other_field = &mut node.handler;
+    if let Some(field) = &mut node.finalizer {
         ctx.push_stack(Ancestor::TryStatementFinalizer(ancestor::TryStatementWithoutFinalizer(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TryStatement, handler))
+                (&mut node.handler as *const _ as *const u8).sub(offset_of!(TryStatement, handler))
             },
             PhantomData,
         )));
@@ -1894,23 +1765,19 @@ pub(super) fn walk_catch_clause<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_catch_clause(node, ctx);
-    let field = &mut node.param;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.param {
         ctx.push_stack(Ancestor::CatchClauseParam(ancestor::CatchClauseWithoutParam(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(CatchClause, span)) },
+            unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(CatchClause, span)) },
             PhantomData,
         )));
         walk_catch_parameter(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.body;
-    let other_field = &mut node.param;
     ctx.push_stack(Ancestor::CatchClauseBody(ancestor::CatchClauseWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(CatchClause, param)) },
+        unsafe { (&mut node.param as *const _ as *const u8).sub(offset_of!(CatchClause, param)) },
         PhantomData,
     )));
-    walk_block_statement(traverser, field, ctx);
+    walk_block_statement(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_catch_clause(node, ctx);
 }
@@ -1921,12 +1788,10 @@ pub(super) fn walk_catch_parameter<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_catch_parameter(node, ctx);
-    let field = &mut node.pattern;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::CatchParameterPattern(ancestor::CatchParameterWithoutPattern(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(CatchParameter, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(CatchParameter, span)) },
     )));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.pattern, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_catch_parameter(node, ctx);
 }
@@ -1946,23 +1811,20 @@ pub(super) fn walk_binding_pattern<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_binding_pattern(node, ctx);
-    let field = &mut node.kind;
-    let other_field = &mut node.type_annotation;
     ctx.push_stack(Ancestor::BindingPatternKind(ancestor::BindingPatternWithoutKind(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(BindingPattern, type_annotation))
+            (&mut node.type_annotation as *const _ as *const u8)
+                .sub(offset_of!(BindingPattern, type_annotation))
         },
         PhantomData,
     )));
-    walk_binding_pattern_kind(traverser, field, ctx);
+    walk_binding_pattern_kind(traverser, &mut node.kind, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.kind;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::BindingPatternTypeAnnotation(
             ancestor::BindingPatternWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(BindingPattern, kind))
+                    (&mut node.kind as *const _ as *const u8).sub(offset_of!(BindingPattern, kind))
                 },
                 PhantomData,
             ),
@@ -1998,21 +1860,21 @@ pub(super) fn walk_assignment_pattern<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_assignment_pattern(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AssignmentPatternLeft(ancestor::AssignmentPatternWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(AssignmentPattern, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(AssignmentPattern, span))
+        },
         PhantomData,
     )));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.left;
     ctx.push_stack(Ancestor::AssignmentPatternRight(ancestor::AssignmentPatternWithoutRight(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(AssignmentPattern, left)) },
+        unsafe {
+            (&mut node.left as *const _ as *const u8).sub(offset_of!(AssignmentPattern, left))
+        },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_assignment_pattern(node, ctx);
 }
@@ -2023,22 +1885,19 @@ pub(super) fn walk_object_pattern<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_object_pattern(node, ctx);
-    let field = &mut node.properties;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ObjectPatternProperties(ancestor::ObjectPatternWithoutProperties(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ObjectPattern, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ObjectPattern, span)) },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_binding_property(traverser, field, ctx);
+    for item in node.properties.iter_mut() {
+        walk_binding_property(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.rest;
-    if let Some(field) = field {
-        let other_field = &mut node.properties;
+    if let Some(field) = &mut node.rest {
         ctx.push_stack(Ancestor::ObjectPatternRest(ancestor::ObjectPatternWithoutRest(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ObjectPattern, properties))
+                (&mut node.properties as *const _ as *const u8)
+                    .sub(offset_of!(ObjectPattern, properties))
             },
             PhantomData,
         )));
@@ -2054,21 +1913,17 @@ pub(super) fn walk_binding_property<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_binding_property(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::BindingPropertyKey(ancestor::BindingPropertyWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(BindingProperty, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(BindingProperty, span)) },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    let other_field = &mut node.key;
     ctx.push_stack(Ancestor::BindingPropertyValue(ancestor::BindingPropertyWithoutValue(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(BindingProperty, key)) },
+        unsafe { (&mut node.key as *const _ as *const u8).sub(offset_of!(BindingProperty, key)) },
         PhantomData,
     )));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.value, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_binding_property(node, ctx);
 }
@@ -2079,22 +1934,19 @@ pub(super) fn walk_array_pattern<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_array_pattern(node, ctx);
-    let field = &mut node.elements;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ArrayPatternElements(ancestor::ArrayPatternWithoutElements(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ArrayPattern, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ArrayPattern, span)) },
         PhantomData,
     )));
-    for field in field.iter_mut().flatten() {
-        walk_binding_pattern(traverser, field, ctx);
+    for item in node.elements.iter_mut().flatten() {
+        walk_binding_pattern(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.rest;
-    if let Some(field) = field {
-        let other_field = &mut node.elements;
+    if let Some(field) = &mut node.rest {
         ctx.push_stack(Ancestor::ArrayPatternRest(ancestor::ArrayPatternWithoutRest(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ArrayPattern, elements))
+                (&mut node.elements as *const _ as *const u8)
+                    .sub(offset_of!(ArrayPattern, elements))
             },
             PhantomData,
         )));
@@ -2110,14 +1962,12 @@ pub(super) fn walk_binding_rest_element<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_binding_rest_element(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::BindingRestElementArgument(
         ancestor::BindingRestElementWithoutArgument(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(BindingRestElement, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(BindingRestElement, span))
         }),
     ));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_binding_rest_element(node, ctx);
 }
@@ -2128,60 +1978,55 @@ pub(super) fn walk_function<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_function(node, ctx);
-    let field = &mut node.id;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.id {
         ctx.push_stack(Ancestor::FunctionId(ancestor::FunctionWithoutId(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Function, span)) },
+            unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(Function, span)) },
             PhantomData,
         )));
         walk_binding_identifier(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.this_param;
-    if let Some(field) = field {
-        let other_field = &mut node.r#async;
+    if let Some(field) = &mut node.this_param {
         ctx.push_stack(Ancestor::FunctionThisParam(ancestor::FunctionWithoutThisParam(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Function, r#async)) },
+            unsafe {
+                (&mut node.r#async as *const _ as *const u8).sub(offset_of!(Function, r#async))
+            },
             PhantomData,
         )));
         walk_ts_this_parameter(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.params;
-    let other_field = &mut node.this_param;
     ctx.push_stack(Ancestor::FunctionParams(ancestor::FunctionWithoutParams(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Function, this_param)) },
+        unsafe {
+            (&mut node.this_param as *const _ as *const u8).sub(offset_of!(Function, this_param))
+        },
         PhantomData,
     )));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    if let Some(field) = field {
-        let other_field = &mut node.params;
+    if let Some(field) = &mut node.body {
         ctx.push_stack(Ancestor::FunctionBody(ancestor::FunctionWithoutBody(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Function, params)) },
+            unsafe {
+                (&mut node.params as *const _ as *const u8).sub(offset_of!(Function, params))
+            },
             PhantomData,
         )));
         walk_function_body(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.body;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::FunctionTypeParameters(ancestor::FunctionWithoutTypeParameters(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Function, body)) },
+            unsafe { (&mut node.body as *const _ as *const u8).sub(offset_of!(Function, body)) },
             PhantomData,
         )));
         walk_ts_type_parameter_declaration(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.return_type;
-    if let Some(field) = field {
-        let other_field = &mut node.type_parameters;
+    if let Some(field) = &mut node.return_type {
         ctx.push_stack(Ancestor::FunctionReturnType(ancestor::FunctionWithoutReturnType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(Function, type_parameters))
+                (&mut node.type_parameters as *const _ as *const u8)
+                    .sub(offset_of!(Function, type_parameters))
             },
             PhantomData,
         )));
@@ -2197,22 +2042,20 @@ pub(super) fn walk_formal_parameters<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_formal_parameters(node, ctx);
-    let field = &mut node.items;
-    let other_field = &mut node.kind;
     ctx.push_stack(Ancestor::FormalParametersItems(ancestor::FormalParametersWithoutItems(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(FormalParameters, kind)) },
+        unsafe {
+            (&mut node.kind as *const _ as *const u8).sub(offset_of!(FormalParameters, kind))
+        },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_formal_parameter(traverser, field, ctx);
+    for item in node.items.iter_mut() {
+        walk_formal_parameter(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.rest;
-    if let Some(field) = field {
-        let other_field = &mut node.items;
+    if let Some(field) = &mut node.rest {
         ctx.push_stack(Ancestor::FormalParametersRest(ancestor::FormalParametersWithoutRest(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(FormalParameters, items))
+                (&mut node.items as *const _ as *const u8).sub(offset_of!(FormalParameters, items))
             },
             PhantomData,
         )));
@@ -2228,26 +2071,23 @@ pub(super) fn walk_formal_parameter<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_formal_parameter(node, ctx);
-    let field = &mut node.pattern;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::FormalParameterPattern(ancestor::FormalParameterWithoutPattern(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(FormalParameter, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(FormalParameter, span)) },
         PhantomData,
     )));
-    walk_binding_pattern(traverser, field, ctx);
+    walk_binding_pattern(traverser, &mut node.pattern, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.decorators;
-    let other_field = &mut node.r#override;
     ctx.push_stack(Ancestor::FormalParameterDecorators(
         ancestor::FormalParameterWithoutDecorators(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(FormalParameter, r#override))
+                (&mut node.r#override as *const _ as *const u8)
+                    .sub(offset_of!(FormalParameter, r#override))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_decorator(traverser, field, ctx);
+    for item in node.decorators.iter_mut() {
+        walk_decorator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_formal_parameter(node, ctx);
@@ -2259,23 +2099,22 @@ pub(super) fn walk_function_body<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_function_body(node, ctx);
-    let field = &mut node.directives;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::FunctionBodyDirectives(ancestor::FunctionBodyWithoutDirectives(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(FunctionBody, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(FunctionBody, span)) },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_directive(traverser, field, ctx);
+    for item in node.directives.iter_mut() {
+        walk_directive(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.statements;
-    let other_field = &mut node.directives;
     ctx.push_stack(Ancestor::FunctionBodyStatements(ancestor::FunctionBodyWithoutStatements(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(FunctionBody, directives)) },
+        unsafe {
+            (&mut node.directives as *const _ as *const u8)
+                .sub(offset_of!(FunctionBody, directives))
+        },
         PhantomData,
     )));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.statements, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_function_body(node, ctx);
 }
@@ -2286,39 +2125,33 @@ pub(super) fn walk_arrow_function_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_arrow_function_expression(node, ctx);
-    let field = &mut node.params;
-    let other_field = &mut node.r#async;
     ctx.push_stack(Ancestor::ArrowFunctionExpressionParams(
         ancestor::ArrowFunctionExpressionWithoutParams(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.r#async as *const _ as *const u8)
                     .sub(offset_of!(ArrowFunctionExpression, r#async))
             },
             PhantomData,
         ),
     ));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.params;
     ctx.push_stack(Ancestor::ArrowFunctionExpressionBody(
         ancestor::ArrowFunctionExpressionWithoutBody(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.params as *const _ as *const u8)
                     .sub(offset_of!(ArrowFunctionExpression, params))
             },
             PhantomData,
         ),
     ));
-    walk_function_body(traverser, field, ctx);
+    walk_function_body(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.body;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::ArrowFunctionExpressionTypeParameters(
             ancestor::ArrowFunctionExpressionWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.body as *const _ as *const u8)
                         .sub(offset_of!(ArrowFunctionExpression, body))
                 },
                 PhantomData,
@@ -2327,13 +2160,11 @@ pub(super) fn walk_arrow_function_expression<'a, Tr: Traverse<'a>>(
         walk_ts_type_parameter_declaration(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.return_type;
-    if let Some(field) = field {
-        let other_field = &mut node.type_parameters;
+    if let Some(field) = &mut node.return_type {
         ctx.push_stack(Ancestor::ArrowFunctionExpressionReturnType(
             ancestor::ArrowFunctionExpressionWithoutReturnType(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.type_parameters as *const _ as *const u8)
                         .sub(offset_of!(ArrowFunctionExpression, type_parameters))
                 },
                 PhantomData,
@@ -2351,12 +2182,11 @@ pub(super) fn walk_yield_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_yield_expression(node, ctx);
-    let field = &mut node.argument;
-    if let Some(field) = field {
-        let other_field = &mut node.delegate;
+    if let Some(field) = &mut node.argument {
         ctx.push_stack(Ancestor::YieldExpressionArgument(
             ancestor::YieldExpressionWithoutArgument(unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(YieldExpression, delegate))
+                (&mut node.delegate as *const _ as *const u8)
+                    .sub(offset_of!(YieldExpression, delegate))
             }),
         ));
         walk_expression(traverser, field, ctx);
@@ -2371,51 +2201,44 @@ pub(super) fn walk_class<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_class(node, ctx);
-    let field = &mut node.id;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.id {
         ctx.push_stack(Ancestor::ClassId(ancestor::ClassWithoutId(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Class, span)) },
+            unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(Class, span)) },
             PhantomData,
         )));
         walk_binding_identifier(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.super_class;
-    if let Some(field) = field {
-        let other_field = &mut node.id;
+    if let Some(field) = &mut node.super_class {
         ctx.push_stack(Ancestor::ClassSuperClass(ancestor::ClassWithoutSuperClass(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Class, id)) },
+            unsafe { (&mut node.id as *const _ as *const u8).sub(offset_of!(Class, id)) },
             PhantomData,
         )));
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.body;
-    let other_field = &mut node.super_class;
     ctx.push_stack(Ancestor::ClassBody(ancestor::ClassWithoutBody(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Class, super_class)) },
+        unsafe {
+            (&mut node.super_class as *const _ as *const u8).sub(offset_of!(Class, super_class))
+        },
         PhantomData,
     )));
-    walk_class_body(traverser, field, ctx);
+    walk_class_body(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.body;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::ClassTypeParameters(ancestor::ClassWithoutTypeParameters(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Class, body)) },
+            unsafe { (&mut node.body as *const _ as *const u8).sub(offset_of!(Class, body)) },
             PhantomData,
         )));
         walk_ts_type_parameter_declaration(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.super_type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.type_parameters;
+    if let Some(field) = &mut node.super_type_parameters {
         ctx.push_stack(Ancestor::ClassSuperTypeParameters(
             ancestor::ClassWithoutSuperTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(Class, type_parameters))
+                    (&mut node.type_parameters as *const _ as *const u8)
+                        .sub(offset_of!(Class, type_parameters))
                 },
                 PhantomData,
             ),
@@ -2423,28 +2246,27 @@ pub(super) fn walk_class<'a, Tr: Traverse<'a>>(
         walk_ts_type_parameter_instantiation(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.implements;
-    if let Some(field) = field {
-        let other_field = &mut node.super_type_parameters;
+    if let Some(field) = &mut node.implements {
         ctx.push_stack(Ancestor::ClassImplements(ancestor::ClassWithoutImplements(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(Class, super_type_parameters))
+                (&mut node.super_type_parameters as *const _ as *const u8)
+                    .sub(offset_of!(Class, super_type_parameters))
             },
             PhantomData,
         )));
-        for field in field.iter_mut() {
-            walk_ts_class_implements(traverser, field, ctx);
+        for item in field.iter_mut() {
+            walk_ts_class_implements(traverser, item, ctx);
         }
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.decorators;
-    let other_field = &mut node.implements;
     ctx.push_stack(Ancestor::ClassDecorators(ancestor::ClassWithoutDecorators(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(Class, implements)) },
+        unsafe {
+            (&mut node.implements as *const _ as *const u8).sub(offset_of!(Class, implements))
+        },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_decorator(traverser, field, ctx);
+    for item in node.decorators.iter_mut() {
+        walk_decorator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_class(node, ctx);
@@ -2456,13 +2278,11 @@ pub(super) fn walk_class_body<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_class_body(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ClassBodyBody(ancestor::ClassBodyWithoutBody(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(ClassBody, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(ClassBody, span))
     })));
-    for field in field.iter_mut() {
-        walk_class_element(traverser, field, ctx);
+    for item in node.body.iter_mut() {
+        walk_class_element(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_class_body(node, ctx);
@@ -2490,35 +2310,31 @@ pub(super) fn walk_method_definition<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_method_definition(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::MethodDefinitionKey(ancestor::MethodDefinitionWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(MethodDefinition, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(MethodDefinition, span))
+        },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    let other_field = &mut node.key;
     ctx.push_stack(Ancestor::MethodDefinitionValue(ancestor::MethodDefinitionWithoutValue(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(MethodDefinition, key)) },
+        unsafe { (&mut node.key as *const _ as *const u8).sub(offset_of!(MethodDefinition, key)) },
         PhantomData,
     )));
-    walk_function(traverser, field, ctx);
+    walk_function(traverser, &mut node.value, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.decorators;
-    let other_field = &mut node.accessibility;
     ctx.push_stack(Ancestor::MethodDefinitionDecorators(
         ancestor::MethodDefinitionWithoutDecorators(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.accessibility as *const _ as *const u8)
                     .sub(offset_of!(MethodDefinition, accessibility))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_decorator(traverser, field, ctx);
+    for item in node.decorators.iter_mut() {
+        walk_decorator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_method_definition(node, ctx);
@@ -2530,21 +2346,20 @@ pub(super) fn walk_property_definition<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_property_definition(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::PropertyDefinitionKey(ancestor::PropertyDefinitionWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(PropertyDefinition, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(PropertyDefinition, span))
+        },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    if let Some(field) = field {
-        let other_field = &mut node.key;
+    if let Some(field) = &mut node.value {
         ctx.push_stack(Ancestor::PropertyDefinitionValue(
             ancestor::PropertyDefinitionWithoutValue(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(PropertyDefinition, key))
+                    (&mut node.key as *const _ as *const u8)
+                        .sub(offset_of!(PropertyDefinition, key))
                 },
                 PhantomData,
             ),
@@ -2552,13 +2367,11 @@ pub(super) fn walk_property_definition<'a, Tr: Traverse<'a>>(
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.readonly;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::PropertyDefinitionTypeAnnotation(
             ancestor::PropertyDefinitionWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.readonly as *const _ as *const u8)
                         .sub(offset_of!(PropertyDefinition, readonly))
                 },
                 PhantomData,
@@ -2567,19 +2380,17 @@ pub(super) fn walk_property_definition<'a, Tr: Traverse<'a>>(
         walk_ts_type_annotation(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.decorators;
-    let other_field = &mut node.accessibility;
     ctx.push_stack(Ancestor::PropertyDefinitionDecorators(
         ancestor::PropertyDefinitionWithoutDecorators(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.accessibility as *const _ as *const u8)
                     .sub(offset_of!(PropertyDefinition, accessibility))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_decorator(traverser, field, ctx);
+    for item in node.decorators.iter_mut() {
+        walk_decorator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_property_definition(node, ctx);
@@ -2600,12 +2411,10 @@ pub(super) fn walk_static_block<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_static_block(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::StaticBlockBody(ancestor::StaticBlockWithoutBody(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(StaticBlock, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(StaticBlock, span))
     })));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_static_block(node, ctx);
 }
@@ -2643,38 +2452,35 @@ pub(super) fn walk_accessor_property<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_accessor_property(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::AccessorPropertyKey(ancestor::AccessorPropertyWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(AccessorProperty, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(AccessorProperty, span))
+        },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    if let Some(field) = field {
-        let other_field = &mut node.key;
+    if let Some(field) = &mut node.value {
         ctx.push_stack(Ancestor::AccessorPropertyValue(ancestor::AccessorPropertyWithoutValue(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(AccessorProperty, key))
+                (&mut node.key as *const _ as *const u8).sub(offset_of!(AccessorProperty, key))
             },
             PhantomData,
         )));
         walk_expression(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.decorators;
-    let other_field = &mut node.r#static;
     ctx.push_stack(Ancestor::AccessorPropertyDecorators(
         ancestor::AccessorPropertyWithoutDecorators(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(AccessorProperty, r#static))
+                (&mut node.r#static as *const _ as *const u8)
+                    .sub(offset_of!(AccessorProperty, r#static))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_decorator(traverser, field, ctx);
+    for item in node.decorators.iter_mut() {
+        walk_decorator(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_accessor_property(node, ctx);
@@ -2686,26 +2492,25 @@ pub(super) fn walk_import_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_expression(node, ctx);
-    let field = &mut node.source;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ImportExpressionSource(ancestor::ImportExpressionWithoutSource(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ImportExpression, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ImportExpression, span))
+        },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.source, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.arguments;
-    let other_field = &mut node.source;
     ctx.push_stack(Ancestor::ImportExpressionArguments(
         ancestor::ImportExpressionWithoutArguments(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(ImportExpression, source))
+                (&mut node.source as *const _ as *const u8)
+                    .sub(offset_of!(ImportExpression, source))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_expression(traverser, field, ctx);
+    for item in node.arguments.iter_mut() {
+        walk_expression(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_import_expression(node, ctx);
@@ -2717,39 +2522,35 @@ pub(super) fn walk_import_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_declaration(node, ctx);
-    let field = &mut node.specifiers;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.specifiers {
         ctx.push_stack(Ancestor::ImportDeclarationSpecifiers(
             ancestor::ImportDeclarationWithoutSpecifiers(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(ImportDeclaration, span))
+                    (&mut node.span as *const _ as *const u8)
+                        .sub(offset_of!(ImportDeclaration, span))
                 },
                 PhantomData,
             ),
         ));
-        for field in field.iter_mut() {
-            walk_import_declaration_specifier(traverser, field, ctx);
+        for item in field.iter_mut() {
+            walk_import_declaration_specifier(traverser, item, ctx);
         }
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.source;
-    let other_field = &mut node.specifiers;
     ctx.push_stack(Ancestor::ImportDeclarationSource(ancestor::ImportDeclarationWithoutSource(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ImportDeclaration, specifiers))
+            (&mut node.specifiers as *const _ as *const u8)
+                .sub(offset_of!(ImportDeclaration, specifiers))
         },
         PhantomData,
     )));
-    walk_string_literal(traverser, field, ctx);
+    walk_string_literal(traverser, &mut node.source, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.with_clause;
-    if let Some(field) = field {
-        let other_field = &mut node.source;
+    if let Some(field) = &mut node.with_clause {
         ctx.push_stack(Ancestor::ImportDeclarationWithClause(
             ancestor::ImportDeclarationWithoutWithClause(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.source as *const _ as *const u8)
                         .sub(offset_of!(ImportDeclaration, source))
                 },
                 PhantomData,
@@ -2787,23 +2588,19 @@ pub(super) fn walk_import_specifier<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_specifier(node, ctx);
-    let field = &mut node.imported;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ImportSpecifierImported(ancestor::ImportSpecifierWithoutImported(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ImportSpecifier, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ImportSpecifier, span)) },
         PhantomData,
     )));
-    walk_module_export_name(traverser, field, ctx);
+    walk_module_export_name(traverser, &mut node.imported, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.local;
-    let other_field = &mut node.imported;
     ctx.push_stack(Ancestor::ImportSpecifierLocal(ancestor::ImportSpecifierWithoutLocal(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ImportSpecifier, imported))
+            (&mut node.imported as *const _ as *const u8).sub(offset_of!(ImportSpecifier, imported))
         },
         PhantomData,
     )));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.local, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_import_specifier(node, ctx);
 }
@@ -2814,14 +2611,12 @@ pub(super) fn walk_import_default_specifier<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_default_specifier(node, ctx);
-    let field = &mut node.local;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ImportDefaultSpecifierLocal(
         ancestor::ImportDefaultSpecifierWithoutLocal(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ImportDefaultSpecifier, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(ImportDefaultSpecifier, span))
         }),
     ));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.local, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_import_default_specifier(node, ctx);
 }
@@ -2832,14 +2627,13 @@ pub(super) fn walk_import_namespace_specifier<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_namespace_specifier(node, ctx);
-    let field = &mut node.local;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ImportNamespaceSpecifierLocal(
         ancestor::ImportNamespaceSpecifierWithoutLocal(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(ImportNamespaceSpecifier, span))
+            (&mut node.span as *const _ as *const u8)
+                .sub(offset_of!(ImportNamespaceSpecifier, span))
         }),
     ));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.local, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_import_namespace_specifier(node, ctx);
 }
@@ -2850,26 +2644,23 @@ pub(super) fn walk_with_clause<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_with_clause(node, ctx);
-    let field = &mut node.attributes_keyword;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::WithClauseAttributesKeyword(
         ancestor::WithClauseWithoutAttributesKeyword(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(WithClause, span)) },
+            unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(WithClause, span)) },
             PhantomData,
         ),
     ));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.attributes_keyword, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.with_entries;
-    let other_field = &mut node.attributes_keyword;
     ctx.push_stack(Ancestor::WithClauseWithEntries(ancestor::WithClauseWithoutWithEntries(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(WithClause, attributes_keyword))
+            (&mut node.attributes_keyword as *const _ as *const u8)
+                .sub(offset_of!(WithClause, attributes_keyword))
         },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_import_attribute(traverser, field, ctx);
+    for item in node.with_entries.iter_mut() {
+        walk_import_attribute(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_with_clause(node, ctx);
@@ -2881,21 +2672,17 @@ pub(super) fn walk_import_attribute<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_import_attribute(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ImportAttributeKey(ancestor::ImportAttributeWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ImportAttribute, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ImportAttribute, span)) },
         PhantomData,
     )));
-    walk_import_attribute_key(traverser, field, ctx);
+    walk_import_attribute_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    let other_field = &mut node.key;
     ctx.push_stack(Ancestor::ImportAttributeValue(ancestor::ImportAttributeWithoutValue(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ImportAttribute, key)) },
+        unsafe { (&mut node.key as *const _ as *const u8).sub(offset_of!(ImportAttribute, key)) },
         PhantomData,
     )));
-    walk_string_literal(traverser, field, ctx);
+    walk_string_literal(traverser, &mut node.value, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_import_attribute(node, ctx);
 }
@@ -2919,13 +2706,11 @@ pub(super) fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_export_named_declaration(node, ctx);
-    let field = &mut node.declaration;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.declaration {
         ctx.push_stack(Ancestor::ExportNamedDeclarationDeclaration(
             ancestor::ExportNamedDeclarationWithoutDeclaration(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.span as *const _ as *const u8)
                         .sub(offset_of!(ExportNamedDeclaration, span))
                 },
                 PhantomData,
@@ -2934,28 +2719,24 @@ pub(super) fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
         walk_declaration(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.specifiers;
-    let other_field = &mut node.declaration;
     ctx.push_stack(Ancestor::ExportNamedDeclarationSpecifiers(
         ancestor::ExportNamedDeclarationWithoutSpecifiers(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.declaration as *const _ as *const u8)
                     .sub(offset_of!(ExportNamedDeclaration, declaration))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_export_specifier(traverser, field, ctx);
+    for item in node.specifiers.iter_mut() {
+        walk_export_specifier(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.source;
-    if let Some(field) = field {
-        let other_field = &mut node.specifiers;
+    if let Some(field) = &mut node.source {
         ctx.push_stack(Ancestor::ExportNamedDeclarationSource(
             ancestor::ExportNamedDeclarationWithoutSource(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.specifiers as *const _ as *const u8)
                         .sub(offset_of!(ExportNamedDeclaration, specifiers))
                 },
                 PhantomData,
@@ -2964,13 +2745,11 @@ pub(super) fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
         walk_string_literal(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.with_clause;
-    if let Some(field) = field {
-        let other_field = &mut node.export_kind;
+    if let Some(field) = &mut node.with_clause {
         ctx.push_stack(Ancestor::ExportNamedDeclarationWithClause(
             ancestor::ExportNamedDeclarationWithoutWithClause(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.export_kind as *const _ as *const u8)
                         .sub(offset_of!(ExportNamedDeclaration, export_kind))
                 },
                 PhantomData,
@@ -2988,31 +2767,27 @@ pub(super) fn walk_export_default_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_export_default_declaration(node, ctx);
-    let field = &mut node.declaration;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ExportDefaultDeclarationDeclaration(
         ancestor::ExportDefaultDeclarationWithoutDeclaration(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(ExportDefaultDeclaration, span))
             },
             PhantomData,
         ),
     ));
-    walk_export_default_declaration_kind(traverser, field, ctx);
+    walk_export_default_declaration_kind(traverser, &mut node.declaration, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.exported;
-    let other_field = &mut node.declaration;
     ctx.push_stack(Ancestor::ExportDefaultDeclarationExported(
         ancestor::ExportDefaultDeclarationWithoutExported(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.declaration as *const _ as *const u8)
                     .sub(offset_of!(ExportDefaultDeclaration, declaration))
             },
             PhantomData,
         ),
     ));
-    walk_module_export_name(traverser, field, ctx);
+    walk_module_export_name(traverser, &mut node.exported, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_export_default_declaration(node, ctx);
 }
@@ -3023,13 +2798,11 @@ pub(super) fn walk_export_all_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_export_all_declaration(node, ctx);
-    let field = &mut node.exported;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.exported {
         ctx.push_stack(Ancestor::ExportAllDeclarationExported(
             ancestor::ExportAllDeclarationWithoutExported(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.span as *const _ as *const u8)
                         .sub(offset_of!(ExportAllDeclaration, span))
                 },
                 PhantomData,
@@ -3038,26 +2811,22 @@ pub(super) fn walk_export_all_declaration<'a, Tr: Traverse<'a>>(
         walk_module_export_name(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.source;
-    let other_field = &mut node.exported;
     ctx.push_stack(Ancestor::ExportAllDeclarationSource(
         ancestor::ExportAllDeclarationWithoutSource(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.exported as *const _ as *const u8)
                     .sub(offset_of!(ExportAllDeclaration, exported))
             },
             PhantomData,
         ),
     ));
-    walk_string_literal(traverser, field, ctx);
+    walk_string_literal(traverser, &mut node.source, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.with_clause;
-    if let Some(field) = field {
-        let other_field = &mut node.source;
+    if let Some(field) = &mut node.with_clause {
         ctx.push_stack(Ancestor::ExportAllDeclarationWithClause(
             ancestor::ExportAllDeclarationWithoutWithClause(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.source as *const _ as *const u8)
                         .sub(offset_of!(ExportAllDeclaration, source))
                 },
                 PhantomData,
@@ -3075,21 +2844,19 @@ pub(super) fn walk_export_specifier<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_export_specifier(node, ctx);
-    let field = &mut node.local;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::ExportSpecifierLocal(ancestor::ExportSpecifierWithoutLocal(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ExportSpecifier, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(ExportSpecifier, span)) },
         PhantomData,
     )));
-    walk_module_export_name(traverser, field, ctx);
+    walk_module_export_name(traverser, &mut node.local, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.exported;
-    let other_field = &mut node.local;
     ctx.push_stack(Ancestor::ExportSpecifierExported(ancestor::ExportSpecifierWithoutExported(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(ExportSpecifier, local)) },
+        unsafe {
+            (&mut node.local as *const _ as *const u8).sub(offset_of!(ExportSpecifier, local))
+        },
         PhantomData,
     )));
-    walk_module_export_name(traverser, field, ctx);
+    walk_module_export_name(traverser, &mut node.exported, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_export_specifier(node, ctx);
 }
@@ -3137,21 +2904,17 @@ pub(super) fn walk_jsx_element<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_element(node, ctx);
-    let field = &mut node.opening_element;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXElementOpeningElement(ancestor::JSXElementWithoutOpeningElement(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(JSXElement, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXElement, span)) },
         PhantomData,
     )));
-    walk_jsx_opening_element(traverser, field, ctx);
+    walk_jsx_opening_element(traverser, &mut node.opening_element, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.closing_element;
-    if let Some(field) = field {
-        let other_field = &mut node.opening_element;
+    if let Some(field) = &mut node.closing_element {
         ctx.push_stack(Ancestor::JSXElementClosingElement(
             ancestor::JSXElementWithoutClosingElement(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.opening_element as *const _ as *const u8)
                         .sub(offset_of!(JSXElement, opening_element))
                 },
                 PhantomData,
@@ -3160,16 +2923,15 @@ pub(super) fn walk_jsx_element<'a, Tr: Traverse<'a>>(
         walk_jsx_closing_element(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.children;
-    let other_field = &mut node.closing_element;
     ctx.push_stack(Ancestor::JSXElementChildren(ancestor::JSXElementWithoutChildren(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(JSXElement, closing_element))
+            (&mut node.closing_element as *const _ as *const u8)
+                .sub(offset_of!(JSXElement, closing_element))
         },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_jsx_child(traverser, field, ctx);
+    for item in node.children.iter_mut() {
+        walk_jsx_child(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_element(node, ctx);
@@ -3181,37 +2943,32 @@ pub(super) fn walk_jsx_opening_element<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_opening_element(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.self_closing;
     ctx.push_stack(Ancestor::JSXOpeningElementName(ancestor::JSXOpeningElementWithoutName(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(JSXOpeningElement, self_closing))
+            (&mut node.self_closing as *const _ as *const u8)
+                .sub(offset_of!(JSXOpeningElement, self_closing))
         },
         PhantomData,
     )));
-    walk_jsx_element_name(traverser, field, ctx);
+    walk_jsx_element_name(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.attributes;
-    let other_field = &mut node.name;
     ctx.push_stack(Ancestor::JSXOpeningElementAttributes(
         ancestor::JSXOpeningElementWithoutAttributes(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(JSXOpeningElement, name))
+                (&mut node.name as *const _ as *const u8).sub(offset_of!(JSXOpeningElement, name))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_jsx_attribute_item(traverser, field, ctx);
+    for item in node.attributes.iter_mut() {
+        walk_jsx_attribute_item(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.attributes;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::JSXOpeningElementTypeParameters(
             ancestor::JSXOpeningElementWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.attributes as *const _ as *const u8)
                         .sub(offset_of!(JSXOpeningElement, attributes))
                 },
                 PhantomData,
@@ -3229,12 +2986,12 @@ pub(super) fn walk_jsx_closing_element<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_closing_element(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXClosingElementName(ancestor::JSXClosingElementWithoutName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(JSXClosingElement, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXClosingElement, span))
+        },
     )));
-    walk_jsx_element_name(traverser, field, ctx);
+    walk_jsx_element_name(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_closing_element(node, ctx);
 }
@@ -3245,13 +3002,12 @@ pub(super) fn walk_jsx_fragment<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_fragment(node, ctx);
-    let field = &mut node.children;
-    let other_field = &mut node.closing_fragment;
     ctx.push_stack(Ancestor::JSXFragmentChildren(ancestor::JSXFragmentWithoutChildren(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(JSXFragment, closing_fragment))
+        (&mut node.closing_fragment as *const _ as *const u8)
+            .sub(offset_of!(JSXFragment, closing_fragment))
     })));
-    for field in field.iter_mut() {
-        walk_jsx_child(traverser, field, ctx);
+    for item in node.children.iter_mut() {
+        walk_jsx_child(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_fragment(node, ctx);
@@ -3277,29 +3033,26 @@ pub(super) fn walk_jsx_namespaced_name<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_namespaced_name(node, ctx);
-    let field = &mut node.namespace;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXNamespacedNameNamespace(
         ancestor::JSXNamespacedNameWithoutNamespace(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(JSXNamespacedName, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXNamespacedName, span))
             },
             PhantomData,
         ),
     ));
-    walk_jsx_identifier(traverser, field, ctx);
+    walk_jsx_identifier(traverser, &mut node.namespace, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.property;
-    let other_field = &mut node.namespace;
     ctx.push_stack(Ancestor::JSXNamespacedNameProperty(
         ancestor::JSXNamespacedNameWithoutProperty(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(JSXNamespacedName, namespace))
+                (&mut node.namespace as *const _ as *const u8)
+                    .sub(offset_of!(JSXNamespacedName, namespace))
             },
             PhantomData,
         ),
     ));
-    walk_jsx_identifier(traverser, field, ctx);
+    walk_jsx_identifier(traverser, &mut node.property, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_namespaced_name(node, ctx);
 }
@@ -3310,29 +3063,26 @@ pub(super) fn walk_jsx_member_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_member_expression(node, ctx);
-    let field = &mut node.object;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXMemberExpressionObject(
         ancestor::JSXMemberExpressionWithoutObject(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(JSXMemberExpression, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXMemberExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_jsx_member_expression_object(traverser, field, ctx);
+    walk_jsx_member_expression_object(traverser, &mut node.object, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.property;
-    let other_field = &mut node.object;
     ctx.push_stack(Ancestor::JSXMemberExpressionProperty(
         ancestor::JSXMemberExpressionWithoutProperty(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(JSXMemberExpression, object))
+                (&mut node.object as *const _ as *const u8)
+                    .sub(offset_of!(JSXMemberExpression, object))
             },
             PhantomData,
         ),
     ));
-    walk_jsx_identifier(traverser, field, ctx);
+    walk_jsx_identifier(traverser, &mut node.property, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_member_expression(node, ctx);
 }
@@ -3358,14 +3108,12 @@ pub(super) fn walk_jsx_expression_container<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_expression_container(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXExpressionContainerExpression(
         ancestor::JSXExpressionContainerWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(JSXExpressionContainer, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXExpressionContainer, span))
         }),
     ));
-    walk_jsx_expression(traverser, field, ctx);
+    walk_jsx_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_expression_container(node, ctx);
 }
@@ -3413,19 +3161,17 @@ pub(super) fn walk_jsx_attribute<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_attribute(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXAttributeName(ancestor::JSXAttributeWithoutName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(JSXAttribute, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXAttribute, span)) },
         PhantomData,
     )));
-    walk_jsx_attribute_name(traverser, field, ctx);
+    walk_jsx_attribute_name(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    if let Some(field) = field {
-        let other_field = &mut node.name;
+    if let Some(field) = &mut node.value {
         ctx.push_stack(Ancestor::JSXAttributeValue(ancestor::JSXAttributeWithoutValue(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(JSXAttribute, name)) },
+            unsafe {
+                (&mut node.name as *const _ as *const u8).sub(offset_of!(JSXAttribute, name))
+            },
             PhantomData,
         )));
         walk_jsx_attribute_value(traverser, field, ctx);
@@ -3440,14 +3186,12 @@ pub(super) fn walk_jsx_spread_attribute<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_spread_attribute(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXSpreadAttributeArgument(
         ancestor::JSXSpreadAttributeWithoutArgument(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(JSXSpreadAttribute, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXSpreadAttribute, span))
         }),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_spread_attribute(node, ctx);
 }
@@ -3513,12 +3257,10 @@ pub(super) fn walk_jsx_spread_child<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_jsx_spread_child(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSXSpreadChildExpression(ancestor::JSXSpreadChildWithoutExpression(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(JSXSpreadChild, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(JSXSpreadChild, span)) },
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_jsx_spread_child(node, ctx);
 }
@@ -3592,21 +3334,17 @@ pub(super) fn walk_ts_this_parameter<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_this_parameter(node, ctx);
-    let field = &mut node.this;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSThisParameterThis(ancestor::TSThisParameterWithoutThis(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSThisParameter, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSThisParameter, span)) },
         PhantomData,
     )));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.this, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.this;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::TSThisParameterTypeAnnotation(
             ancestor::TSThisParameterWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSThisParameter, this))
+                    (&mut node.this as *const _ as *const u8).sub(offset_of!(TSThisParameter, this))
                 },
                 PhantomData,
             ),
@@ -3623,22 +3361,20 @@ pub(super) fn walk_ts_enum_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_enum_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSEnumDeclarationId(ancestor::TSEnumDeclarationWithoutId(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSEnumDeclaration, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSEnumDeclaration, span))
+        },
         PhantomData,
     )));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.members;
-    let other_field = &mut node.id;
     ctx.push_stack(Ancestor::TSEnumDeclarationMembers(ancestor::TSEnumDeclarationWithoutMembers(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSEnumDeclaration, id)) },
+        unsafe { (&mut node.id as *const _ as *const u8).sub(offset_of!(TSEnumDeclaration, id)) },
         PhantomData,
     )));
-    for field in field.iter_mut() {
-        walk_ts_enum_member(traverser, field, ctx);
+    for item in node.members.iter_mut() {
+        walk_ts_enum_member(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_enum_declaration(node, ctx);
@@ -3650,20 +3386,18 @@ pub(super) fn walk_ts_enum_member<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_enum_member(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSEnumMemberId(ancestor::TSEnumMemberWithoutId(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSEnumMember, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSEnumMember, span)) },
         PhantomData,
     )));
-    walk_ts_enum_member_name(traverser, field, ctx);
+    walk_ts_enum_member_name(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.initializer;
-    if let Some(field) = field {
-        let other_field = &mut node.id;
+    if let Some(field) = &mut node.initializer {
         ctx.push_stack(Ancestor::TSEnumMemberInitializer(
             ancestor::TSEnumMemberWithoutInitializer(
-                unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSEnumMember, id)) },
+                unsafe {
+                    (&mut node.id as *const _ as *const u8).sub(offset_of!(TSEnumMember, id))
+                },
                 PhantomData,
             ),
         ));
@@ -3696,14 +3430,12 @@ pub(super) fn walk_ts_type_annotation<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_annotation(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeAnnotationTypeAnnotation(
         ancestor::TSTypeAnnotationWithoutTypeAnnotation(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSTypeAnnotation, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeAnnotation, span))
         }),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_annotation(node, ctx);
 }
@@ -3714,12 +3446,10 @@ pub(super) fn walk_ts_literal_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_literal_type(node, ctx);
-    let field = &mut node.literal;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSLiteralTypeLiteral(ancestor::TSLiteralTypeWithoutLiteral(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(TSLiteralType, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(TSLiteralType, span))
     })));
-    walk_ts_literal(traverser, field, ctx);
+    walk_ts_literal(traverser, &mut node.literal, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_literal_type(node, ctx);
 }
@@ -3795,55 +3525,48 @@ pub(super) fn walk_ts_conditional_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_conditional_type(node, ctx);
-    let field = &mut node.check_type;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSConditionalTypeCheckType(
         ancestor::TSConditionalTypeWithoutCheckType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSConditionalType, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSConditionalType, span))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.check_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.extends_type;
-    let other_field = &mut node.check_type;
     ctx.push_stack(Ancestor::TSConditionalTypeExtendsType(
         ancestor::TSConditionalTypeWithoutExtendsType(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.check_type as *const _ as *const u8)
                     .sub(offset_of!(TSConditionalType, check_type))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.extends_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.true_type;
-    let other_field = &mut node.extends_type;
     ctx.push_stack(Ancestor::TSConditionalTypeTrueType(
         ancestor::TSConditionalTypeWithoutTrueType(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.extends_type as *const _ as *const u8)
                     .sub(offset_of!(TSConditionalType, extends_type))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.true_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.false_type;
-    let other_field = &mut node.true_type;
     ctx.push_stack(Ancestor::TSConditionalTypeFalseType(
         ancestor::TSConditionalTypeWithoutFalseType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSConditionalType, true_type))
+                (&mut node.true_type as *const _ as *const u8)
+                    .sub(offset_of!(TSConditionalType, true_type))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.false_type, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_conditional_type(node, ctx);
 }
@@ -3854,13 +3577,11 @@ pub(super) fn walk_ts_union_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_union_type(node, ctx);
-    let field = &mut node.types;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSUnionTypeTypes(ancestor::TSUnionTypeWithoutTypes(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(TSUnionType, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(TSUnionType, span))
     })));
-    for field in field.iter_mut() {
-        walk_ts_type(traverser, field, ctx);
+    for item in node.types.iter_mut() {
+        walk_ts_type(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_union_type(node, ctx);
@@ -3872,13 +3593,13 @@ pub(super) fn walk_ts_intersection_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_intersection_type(node, ctx);
-    let field = &mut node.types;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSIntersectionTypeTypes(ancestor::TSIntersectionTypeWithoutTypes(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSIntersectionType, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSIntersectionType, span))
+        },
     )));
-    for field in field.iter_mut() {
-        walk_ts_type(traverser, field, ctx);
+    for item in node.types.iter_mut() {
+        walk_ts_type(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_intersection_type(node, ctx);
@@ -3890,14 +3611,12 @@ pub(super) fn walk_ts_type_operator<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_operator(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.operator;
     ctx.push_stack(Ancestor::TSTypeOperatorTypeAnnotation(
         ancestor::TSTypeOperatorWithoutTypeAnnotation(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSTypeOperator, operator))
+            (&mut node.operator as *const _ as *const u8).sub(offset_of!(TSTypeOperator, operator))
         }),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_operator(node, ctx);
 }
@@ -3908,12 +3627,10 @@ pub(super) fn walk_ts_array_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_array_type(node, ctx);
-    let field = &mut node.element_type;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSArrayTypeElementType(ancestor::TSArrayTypeWithoutElementType(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSArrayType, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSArrayType, span)) },
     )));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.element_type, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_array_type(node, ctx);
 }
@@ -3924,30 +3641,26 @@ pub(super) fn walk_ts_indexed_access_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_indexed_access_type(node, ctx);
-    let field = &mut node.object_type;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSIndexedAccessTypeObjectType(
         ancestor::TSIndexedAccessTypeWithoutObjectType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSIndexedAccessType, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSIndexedAccessType, span))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.object_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.index_type;
-    let other_field = &mut node.object_type;
     ctx.push_stack(Ancestor::TSIndexedAccessTypeIndexType(
         ancestor::TSIndexedAccessTypeWithoutIndexType(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.object_type as *const _ as *const u8)
                     .sub(offset_of!(TSIndexedAccessType, object_type))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.index_type, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_indexed_access_type(node, ctx);
 }
@@ -3958,13 +3671,11 @@ pub(super) fn walk_ts_tuple_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_tuple_type(node, ctx);
-    let field = &mut node.element_types;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTupleTypeElementTypes(ancestor::TSTupleTypeWithoutElementTypes(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSTupleType, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTupleType, span)) },
     )));
-    for field in field.iter_mut() {
-        walk_ts_tuple_element(traverser, field, ctx);
+    for item in node.element_types.iter_mut() {
+        walk_ts_tuple_element(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_tuple_type(node, ctx);
@@ -3976,27 +3687,24 @@ pub(super) fn walk_ts_named_tuple_member<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_named_tuple_member(node, ctx);
-    let field = &mut node.element_type;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSNamedTupleMemberElementType(
         ancestor::TSNamedTupleMemberWithoutElementType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSNamedTupleMember, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSNamedTupleMember, span))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.element_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.label;
-    let other_field = &mut node.element_type;
     ctx.push_stack(Ancestor::TSNamedTupleMemberLabel(ancestor::TSNamedTupleMemberWithoutLabel(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSNamedTupleMember, element_type))
+            (&mut node.element_type as *const _ as *const u8)
+                .sub(offset_of!(TSNamedTupleMember, element_type))
         },
         PhantomData,
     )));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.label, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_named_tuple_member(node, ctx);
 }
@@ -4007,14 +3715,12 @@ pub(super) fn walk_ts_optional_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_optional_type(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSOptionalTypeTypeAnnotation(
         ancestor::TSOptionalTypeWithoutTypeAnnotation(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSOptionalType, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSOptionalType, span))
         }),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_optional_type(node, ctx);
 }
@@ -4025,12 +3731,10 @@ pub(super) fn walk_ts_rest_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_rest_type(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSRestTypeTypeAnnotation(ancestor::TSRestTypeWithoutTypeAnnotation(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSRestType, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSRestType, span)) },
     )));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_rest_type(node, ctx);
 }
@@ -4172,21 +3876,17 @@ pub(super) fn walk_ts_type_reference<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_reference(node, ctx);
-    let field = &mut node.type_name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeReferenceTypeName(ancestor::TSTypeReferenceWithoutTypeName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSTypeReference, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeReference, span)) },
         PhantomData,
     )));
-    walk_ts_type_name(traverser, field, ctx);
+    walk_ts_type_name(traverser, &mut node.type_name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.type_name;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSTypeReferenceTypeParameters(
             ancestor::TSTypeReferenceWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.type_name as *const _ as *const u8)
                         .sub(offset_of!(TSTypeReference, type_name))
                 },
                 PhantomData,
@@ -4217,21 +3917,17 @@ pub(super) fn walk_ts_qualified_name<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_qualified_name(node, ctx);
-    let field = &mut node.left;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSQualifiedNameLeft(ancestor::TSQualifiedNameWithoutLeft(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSQualifiedName, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSQualifiedName, span)) },
         PhantomData,
     )));
-    walk_ts_type_name(traverser, field, ctx);
+    walk_ts_type_name(traverser, &mut node.left, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.right;
-    let other_field = &mut node.left;
     ctx.push_stack(Ancestor::TSQualifiedNameRight(ancestor::TSQualifiedNameWithoutRight(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSQualifiedName, left)) },
+        unsafe { (&mut node.left as *const _ as *const u8).sub(offset_of!(TSQualifiedName, left)) },
         PhantomData,
     )));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.right, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_qualified_name(node, ctx);
 }
@@ -4242,16 +3938,14 @@ pub(super) fn walk_ts_type_parameter_instantiation<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_parameter_instantiation(node, ctx);
-    let field = &mut node.params;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeParameterInstantiationParams(
         ancestor::TSTypeParameterInstantiationWithoutParams(unsafe {
-            (other_field as *const _ as *const u8)
+            (&mut node.span as *const _ as *const u8)
                 .sub(offset_of!(TSTypeParameterInstantiation, span))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_ts_type(traverser, field, ctx);
+    for item in node.params.iter_mut() {
+        walk_ts_type(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_parameter_instantiation(node, ctx);
@@ -4263,21 +3957,17 @@ pub(super) fn walk_ts_type_parameter<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_parameter(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeParameterName(ancestor::TSTypeParameterWithoutName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSTypeParameter, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeParameter, span)) },
         PhantomData,
     )));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.constraint;
-    if let Some(field) = field {
-        let other_field = &mut node.name;
+    if let Some(field) = &mut node.constraint {
         ctx.push_stack(Ancestor::TSTypeParameterConstraint(
             ancestor::TSTypeParameterWithoutConstraint(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSTypeParameter, name))
+                    (&mut node.name as *const _ as *const u8).sub(offset_of!(TSTypeParameter, name))
                 },
                 PhantomData,
             ),
@@ -4285,12 +3975,11 @@ pub(super) fn walk_ts_type_parameter<'a, Tr: Traverse<'a>>(
         walk_ts_type(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.default;
-    if let Some(field) = field {
-        let other_field = &mut node.constraint;
+    if let Some(field) = &mut node.default {
         ctx.push_stack(Ancestor::TSTypeParameterDefault(ancestor::TSTypeParameterWithoutDefault(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTypeParameter, constraint))
+                (&mut node.constraint as *const _ as *const u8)
+                    .sub(offset_of!(TSTypeParameter, constraint))
             },
             PhantomData,
         )));
@@ -4306,15 +3995,14 @@ pub(super) fn walk_ts_type_parameter_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_parameter_declaration(node, ctx);
-    let field = &mut node.params;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeParameterDeclarationParams(
         ancestor::TSTypeParameterDeclarationWithoutParams(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSTypeParameterDeclaration, span))
+            (&mut node.span as *const _ as *const u8)
+                .sub(offset_of!(TSTypeParameterDeclaration, span))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_ts_type_parameter(traverser, field, ctx);
+    for item in node.params.iter_mut() {
+        walk_ts_type_parameter(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_parameter_declaration(node, ctx);
@@ -4326,35 +4014,29 @@ pub(super) fn walk_ts_type_alias_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_alias_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeAliasDeclarationId(ancestor::TSTypeAliasDeclarationWithoutId(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSTypeAliasDeclaration, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeAliasDeclaration, span))
         },
         PhantomData,
     )));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.id;
     ctx.push_stack(Ancestor::TSTypeAliasDeclarationTypeAnnotation(
         ancestor::TSTypeAliasDeclarationWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTypeAliasDeclaration, id))
+                (&mut node.id as *const _ as *const u8).sub(offset_of!(TSTypeAliasDeclaration, id))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.type_annotation;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSTypeAliasDeclarationTypeParameters(
             ancestor::TSTypeAliasDeclarationWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.type_annotation as *const _ as *const u8)
                         .sub(offset_of!(TSTypeAliasDeclaration, type_annotation))
                 },
                 PhantomData,
@@ -4372,25 +4054,21 @@ pub(super) fn walk_ts_class_implements<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_class_implements(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSClassImplementsExpression(
         ancestor::TSClassImplementsWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSClassImplements, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSClassImplements, span))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_name(traverser, field, ctx);
+    walk_ts_type_name(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.expression;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSClassImplementsTypeParameters(
             ancestor::TSClassImplementsWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.expression as *const _ as *const u8)
                         .sub(offset_of!(TSClassImplements, expression))
                 },
                 PhantomData,
@@ -4408,35 +4086,29 @@ pub(super) fn walk_ts_interface_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_interface_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSInterfaceDeclarationId(ancestor::TSInterfaceDeclarationWithoutId(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSInterfaceDeclaration, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSInterfaceDeclaration, span))
         },
         PhantomData,
     )));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    let other_field = &mut node.id;
     ctx.push_stack(Ancestor::TSInterfaceDeclarationBody(
         ancestor::TSInterfaceDeclarationWithoutBody(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSInterfaceDeclaration, id))
+                (&mut node.id as *const _ as *const u8).sub(offset_of!(TSInterfaceDeclaration, id))
             },
             PhantomData,
         ),
     ));
-    walk_ts_interface_body(traverser, field, ctx);
+    walk_ts_interface_body(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.body;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSInterfaceDeclarationTypeParameters(
             ancestor::TSInterfaceDeclarationWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.body as *const _ as *const u8)
                         .sub(offset_of!(TSInterfaceDeclaration, body))
                 },
                 PhantomData,
@@ -4445,20 +4117,18 @@ pub(super) fn walk_ts_interface_declaration<'a, Tr: Traverse<'a>>(
         walk_ts_type_parameter_declaration(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.extends;
-    if let Some(field) = field {
-        let other_field = &mut node.type_parameters;
+    if let Some(field) = &mut node.extends {
         ctx.push_stack(Ancestor::TSInterfaceDeclarationExtends(
             ancestor::TSInterfaceDeclarationWithoutExtends(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.type_parameters as *const _ as *const u8)
                         .sub(offset_of!(TSInterfaceDeclaration, type_parameters))
                 },
                 PhantomData,
             ),
         ));
-        for field in field.iter_mut() {
-            walk_ts_interface_heritage(traverser, field, ctx);
+        for item in field.iter_mut() {
+            walk_ts_interface_heritage(traverser, item, ctx);
         }
         unsafe { ctx.pop_stack() };
     }
@@ -4471,13 +4141,11 @@ pub(super) fn walk_ts_interface_body<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_interface_body(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSInterfaceBodyBody(ancestor::TSInterfaceBodyWithoutBody(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(TSInterfaceBody, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(TSInterfaceBody, span))
     })));
-    for field in field.iter_mut() {
-        walk_ts_signature(traverser, field, ctx);
+    for item in node.body.iter_mut() {
+        walk_ts_signature(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_interface_body(node, ctx);
@@ -4489,23 +4157,21 @@ pub(super) fn walk_ts_property_signature<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_property_signature(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.readonly;
     ctx.push_stack(Ancestor::TSPropertySignatureKey(ancestor::TSPropertySignatureWithoutKey(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSPropertySignature, readonly))
+            (&mut node.readonly as *const _ as *const u8)
+                .sub(offset_of!(TSPropertySignature, readonly))
         },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.key;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::TSPropertySignatureTypeAnnotation(
             ancestor::TSPropertySignatureWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSPropertySignature, key))
+                    (&mut node.key as *const _ as *const u8)
+                        .sub(offset_of!(TSPropertySignature, key))
                 },
                 PhantomData,
             ),
@@ -4542,31 +4208,28 @@ pub(super) fn walk_ts_index_signature<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_index_signature(node, ctx);
-    let field = &mut node.parameters;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSIndexSignatureParameters(
         ancestor::TSIndexSignatureWithoutParameters(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSIndexSignature, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSIndexSignature, span))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_ts_index_signature_name(traverser, field, ctx);
+    for item in node.parameters.iter_mut() {
+        walk_ts_index_signature_name(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.parameters;
     ctx.push_stack(Ancestor::TSIndexSignatureTypeAnnotation(
         ancestor::TSIndexSignatureWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSIndexSignature, parameters))
+                (&mut node.parameters as *const _ as *const u8)
+                    .sub(offset_of!(TSIndexSignature, parameters))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_annotation(traverser, field, ctx);
+    walk_ts_type_annotation(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_index_signature(node, ctx);
 }
@@ -4577,13 +4240,11 @@ pub(super) fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_call_signature_declaration(node, ctx);
-    let field = &mut node.this_param;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.this_param {
         ctx.push_stack(Ancestor::TSCallSignatureDeclarationThisParam(
             ancestor::TSCallSignatureDeclarationWithoutThisParam(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.span as *const _ as *const u8)
                         .sub(offset_of!(TSCallSignatureDeclaration, span))
                 },
                 PhantomData,
@@ -4592,26 +4253,22 @@ pub(super) fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
         walk_ts_this_parameter(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.params;
-    let other_field = &mut node.this_param;
     ctx.push_stack(Ancestor::TSCallSignatureDeclarationParams(
         ancestor::TSCallSignatureDeclarationWithoutParams(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.this_param as *const _ as *const u8)
                     .sub(offset_of!(TSCallSignatureDeclaration, this_param))
             },
             PhantomData,
         ),
     ));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.return_type;
-    if let Some(field) = field {
-        let other_field = &mut node.params;
+    if let Some(field) = &mut node.return_type {
         ctx.push_stack(Ancestor::TSCallSignatureDeclarationReturnType(
             ancestor::TSCallSignatureDeclarationWithoutReturnType(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.params as *const _ as *const u8)
                         .sub(offset_of!(TSCallSignatureDeclaration, params))
                 },
                 PhantomData,
@@ -4620,13 +4277,11 @@ pub(super) fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
         walk_ts_type_annotation(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.return_type;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSCallSignatureDeclarationTypeParameters(
             ancestor::TSCallSignatureDeclarationWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.return_type as *const _ as *const u8)
                         .sub(offset_of!(TSCallSignatureDeclaration, return_type))
                 },
                 PhantomData,
@@ -4644,21 +4299,20 @@ pub(super) fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_method_signature(node, ctx);
-    let field = &mut node.key;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSMethodSignatureKey(ancestor::TSMethodSignatureWithoutKey(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSMethodSignature, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSMethodSignature, span))
+        },
         PhantomData,
     )));
-    walk_property_key(traverser, field, ctx);
+    walk_property_key(traverser, &mut node.key, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.this_param;
-    if let Some(field) = field {
-        let other_field = &mut node.kind;
+    if let Some(field) = &mut node.this_param {
         ctx.push_stack(Ancestor::TSMethodSignatureThisParam(
             ancestor::TSMethodSignatureWithoutThisParam(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSMethodSignature, kind))
+                    (&mut node.kind as *const _ as *const u8)
+                        .sub(offset_of!(TSMethodSignature, kind))
                 },
                 PhantomData,
             ),
@@ -4666,23 +4320,20 @@ pub(super) fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
         walk_ts_this_parameter(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.params;
-    let other_field = &mut node.this_param;
     ctx.push_stack(Ancestor::TSMethodSignatureParams(ancestor::TSMethodSignatureWithoutParams(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSMethodSignature, this_param))
+            (&mut node.this_param as *const _ as *const u8)
+                .sub(offset_of!(TSMethodSignature, this_param))
         },
         PhantomData,
     )));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.return_type;
-    if let Some(field) = field {
-        let other_field = &mut node.params;
+    if let Some(field) = &mut node.return_type {
         ctx.push_stack(Ancestor::TSMethodSignatureReturnType(
             ancestor::TSMethodSignatureWithoutReturnType(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.params as *const _ as *const u8)
                         .sub(offset_of!(TSMethodSignature, params))
                 },
                 PhantomData,
@@ -4691,13 +4342,11 @@ pub(super) fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
         walk_ts_type_annotation(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.return_type;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSMethodSignatureTypeParameters(
             ancestor::TSMethodSignatureWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.return_type as *const _ as *const u8)
                         .sub(offset_of!(TSMethodSignature, return_type))
                 },
                 PhantomData,
@@ -4715,26 +4364,22 @@ pub(super) fn walk_ts_construct_signature_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_construct_signature_declaration(node, ctx);
-    let field = &mut node.params;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSConstructSignatureDeclarationParams(
         ancestor::TSConstructSignatureDeclarationWithoutParams(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(TSConstructSignatureDeclaration, span))
             },
             PhantomData,
         ),
     ));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.return_type;
-    if let Some(field) = field {
-        let other_field = &mut node.params;
+    if let Some(field) = &mut node.return_type {
         ctx.push_stack(Ancestor::TSConstructSignatureDeclarationReturnType(
             ancestor::TSConstructSignatureDeclarationWithoutReturnType(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.params as *const _ as *const u8)
                         .sub(offset_of!(TSConstructSignatureDeclaration, params))
                 },
                 PhantomData,
@@ -4743,13 +4388,11 @@ pub(super) fn walk_ts_construct_signature_declaration<'a, Tr: Traverse<'a>>(
         walk_ts_type_annotation(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.return_type;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSConstructSignatureDeclarationTypeParameters(
             ancestor::TSConstructSignatureDeclarationWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.return_type as *const _ as *const u8)
                         .sub(offset_of!(TSConstructSignatureDeclaration, return_type))
                 },
                 PhantomData,
@@ -4767,17 +4410,16 @@ pub(super) fn walk_ts_index_signature_name<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_index_signature_name(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.name;
     ctx.push_stack(Ancestor::TSIndexSignatureNameTypeAnnotation(
         ancestor::TSIndexSignatureNameWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSIndexSignatureName, name))
+                (&mut node.name as *const _ as *const u8)
+                    .sub(offset_of!(TSIndexSignatureName, name))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_annotation(traverser, field, ctx);
+    walk_ts_type_annotation(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_index_signature_name(node, ctx);
 }
@@ -4788,25 +4430,21 @@ pub(super) fn walk_ts_interface_heritage<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_interface_heritage(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSInterfaceHeritageExpression(
         ancestor::TSInterfaceHeritageWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSInterfaceHeritage, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSInterfaceHeritage, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.expression;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSInterfaceHeritageTypeParameters(
             ancestor::TSInterfaceHeritageWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.expression as *const _ as *const u8)
                         .sub(offset_of!(TSInterfaceHeritage, expression))
                 },
                 PhantomData,
@@ -4824,25 +4462,22 @@ pub(super) fn walk_ts_type_predicate<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_predicate(node, ctx);
-    let field = &mut node.parameter_name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypePredicateParameterName(
         ancestor::TSTypePredicateWithoutParameterName(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTypePredicate, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypePredicate, span))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_predicate_name(traverser, field, ctx);
+    walk_ts_type_predicate_name(traverser, &mut node.parameter_name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.asserts;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::TSTypePredicateTypeAnnotation(
             ancestor::TSTypePredicateWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSTypePredicate, asserts))
+                    (&mut node.asserts as *const _ as *const u8)
+                        .sub(offset_of!(TSTypePredicate, asserts))
                 },
                 PhantomData,
             ),
@@ -4872,23 +4507,19 @@ pub(super) fn walk_ts_module_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_module_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSModuleDeclarationId(ancestor::TSModuleDeclarationWithoutId(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSModuleDeclaration, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSModuleDeclaration, span))
         },
         PhantomData,
     )));
-    walk_ts_module_declaration_name(traverser, field, ctx);
+    walk_ts_module_declaration_name(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.body;
-    if let Some(field) = field {
-        let other_field = &mut node.id;
+    if let Some(field) = &mut node.body {
         ctx.push_stack(Ancestor::TSModuleDeclarationBody(
             ancestor::TSModuleDeclarationWithoutBody(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSModuleDeclaration, id))
+                    (&mut node.id as *const _ as *const u8).sub(offset_of!(TSModuleDeclaration, id))
                 },
                 PhantomData,
             ),
@@ -4933,12 +4564,10 @@ pub(super) fn walk_ts_module_block<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_module_block(node, ctx);
-    let field = &mut node.body;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSModuleBlockBody(ancestor::TSModuleBlockWithoutBody(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(TSModuleBlock, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(TSModuleBlock, span))
     })));
-    walk_statements(traverser, field, ctx);
+    walk_statements(traverser, &mut node.body, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_module_block(node, ctx);
 }
@@ -4949,13 +4578,11 @@ pub(super) fn walk_ts_type_literal<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_literal(node, ctx);
-    let field = &mut node.members;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeLiteralMembers(ancestor::TSTypeLiteralWithoutMembers(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(TSTypeLiteral, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeLiteral, span))
     })));
-    for field in field.iter_mut() {
-        walk_ts_signature(traverser, field, ctx);
+    for item in node.members.iter_mut() {
+        walk_ts_signature(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_literal(node, ctx);
@@ -4967,12 +4594,10 @@ pub(super) fn walk_ts_infer_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_infer_type(node, ctx);
-    let field = &mut node.type_parameter;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSInferTypeTypeParameter(ancestor::TSInferTypeWithoutTypeParameter(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSInferType, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSInferType, span)) },
     )));
-    walk_ts_type_parameter(traverser, field, ctx);
+    walk_ts_type_parameter(traverser, &mut node.type_parameter, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_infer_type(node, ctx);
 }
@@ -4983,21 +4608,18 @@ pub(super) fn walk_ts_type_query<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_query(node, ctx);
-    let field = &mut node.expr_name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeQueryExprName(ancestor::TSTypeQueryWithoutExprName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSTypeQuery, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeQuery, span)) },
         PhantomData,
     )));
-    walk_ts_type_query_expr_name(traverser, field, ctx);
+    walk_ts_type_query_expr_name(traverser, &mut node.expr_name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.expr_name;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSTypeQueryTypeParameters(
             ancestor::TSTypeQueryWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSTypeQuery, expr_name))
+                    (&mut node.expr_name as *const _ as *const u8)
+                        .sub(offset_of!(TSTypeQuery, expr_name))
                 },
                 PhantomData,
             ),
@@ -5029,45 +4651,40 @@ pub(super) fn walk_ts_import_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_import_type(node, ctx);
-    let field = &mut node.argument;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSImportTypeArgument(ancestor::TSImportTypeWithoutArgument(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSImportType, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSImportType, span)) },
         PhantomData,
     )));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.argument, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.qualifier;
-    if let Some(field) = field {
-        let other_field = &mut node.argument;
+    if let Some(field) = &mut node.qualifier {
         ctx.push_stack(Ancestor::TSImportTypeQualifier(ancestor::TSImportTypeWithoutQualifier(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSImportType, argument))
+                (&mut node.argument as *const _ as *const u8)
+                    .sub(offset_of!(TSImportType, argument))
             },
             PhantomData,
         )));
         walk_ts_type_name(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.attributes;
-    if let Some(field) = field {
-        let other_field = &mut node.qualifier;
+    if let Some(field) = &mut node.attributes {
         ctx.push_stack(Ancestor::TSImportTypeAttributes(ancestor::TSImportTypeWithoutAttributes(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSImportType, qualifier))
+                (&mut node.qualifier as *const _ as *const u8)
+                    .sub(offset_of!(TSImportType, qualifier))
             },
             PhantomData,
         )));
         walk_ts_import_attributes(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.attributes;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSImportTypeTypeParameters(
             ancestor::TSImportTypeWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSImportType, attributes))
+                    (&mut node.attributes as *const _ as *const u8)
+                        .sub(offset_of!(TSImportType, attributes))
                 },
                 PhantomData,
             ),
@@ -5084,15 +4701,13 @@ pub(super) fn walk_ts_import_attributes<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_import_attributes(node, ctx);
-    let field = &mut node.elements;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSImportAttributesElements(
         ancestor::TSImportAttributesWithoutElements(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSImportAttributes, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSImportAttributes, span))
         }),
     ));
-    for field in field.iter_mut() {
-        walk_ts_import_attribute(traverser, field, ctx);
+    for item in node.elements.iter_mut() {
+        walk_ts_import_attribute(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_import_attributes(node, ctx);
@@ -5104,21 +4719,21 @@ pub(super) fn walk_ts_import_attribute<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_import_attribute(node, ctx);
-    let field = &mut node.name;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSImportAttributeName(ancestor::TSImportAttributeWithoutName(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSImportAttribute, span)) },
+        unsafe {
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSImportAttribute, span))
+        },
         PhantomData,
     )));
-    walk_ts_import_attribute_name(traverser, field, ctx);
+    walk_ts_import_attribute_name(traverser, &mut node.name, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.value;
-    let other_field = &mut node.name;
     ctx.push_stack(Ancestor::TSImportAttributeValue(ancestor::TSImportAttributeWithoutValue(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSImportAttribute, name)) },
+        unsafe {
+            (&mut node.name as *const _ as *const u8).sub(offset_of!(TSImportAttribute, name))
+        },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.value, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_import_attribute(node, ctx);
 }
@@ -5142,13 +4757,11 @@ pub(super) fn walk_ts_function_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_function_type(node, ctx);
-    let field = &mut node.this_param;
-    if let Some(field) = field {
-        let other_field = &mut node.span;
+    if let Some(field) = &mut node.this_param {
         ctx.push_stack(Ancestor::TSFunctionTypeThisParam(
             ancestor::TSFunctionTypeWithoutThisParam(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSFunctionType, span))
+                    (&mut node.span as *const _ as *const u8).sub(offset_of!(TSFunctionType, span))
                 },
                 PhantomData,
             ),
@@ -5156,31 +4769,28 @@ pub(super) fn walk_ts_function_type<'a, Tr: Traverse<'a>>(
         walk_ts_this_parameter(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.params;
-    let other_field = &mut node.this_param;
     ctx.push_stack(Ancestor::TSFunctionTypeParams(ancestor::TSFunctionTypeWithoutParams(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSFunctionType, this_param))
+            (&mut node.this_param as *const _ as *const u8)
+                .sub(offset_of!(TSFunctionType, this_param))
         },
         PhantomData,
     )));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.return_type;
-    let other_field = &mut node.params;
     ctx.push_stack(Ancestor::TSFunctionTypeReturnType(ancestor::TSFunctionTypeWithoutReturnType(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSFunctionType, params)) },
+        unsafe {
+            (&mut node.params as *const _ as *const u8).sub(offset_of!(TSFunctionType, params))
+        },
         PhantomData,
     )));
-    walk_ts_type_annotation(traverser, field, ctx);
+    walk_ts_type_annotation(traverser, &mut node.return_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.return_type;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSFunctionTypeTypeParameters(
             ancestor::TSFunctionTypeWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.return_type as *const _ as *const u8)
                         .sub(offset_of!(TSFunctionType, return_type))
                 },
                 PhantomData,
@@ -5198,35 +4808,31 @@ pub(super) fn walk_ts_constructor_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_constructor_type(node, ctx);
-    let field = &mut node.params;
-    let other_field = &mut node.r#abstract;
     ctx.push_stack(Ancestor::TSConstructorTypeParams(ancestor::TSConstructorTypeWithoutParams(
         unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSConstructorType, r#abstract))
+            (&mut node.r#abstract as *const _ as *const u8)
+                .sub(offset_of!(TSConstructorType, r#abstract))
         },
         PhantomData,
     )));
-    walk_formal_parameters(traverser, field, ctx);
+    walk_formal_parameters(traverser, &mut node.params, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.return_type;
-    let other_field = &mut node.params;
     ctx.push_stack(Ancestor::TSConstructorTypeReturnType(
         ancestor::TSConstructorTypeWithoutReturnType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSConstructorType, params))
+                (&mut node.params as *const _ as *const u8)
+                    .sub(offset_of!(TSConstructorType, params))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_annotation(traverser, field, ctx);
+    walk_ts_type_annotation(traverser, &mut node.return_type, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    if let Some(field) = field {
-        let other_field = &mut node.return_type;
+    if let Some(field) = &mut node.type_parameters {
         ctx.push_stack(Ancestor::TSConstructorTypeTypeParameters(
             ancestor::TSConstructorTypeWithoutTypeParameters(
                 unsafe {
-                    (other_field as *const _ as *const u8)
+                    (&mut node.return_type as *const _ as *const u8)
                         .sub(offset_of!(TSConstructorType, return_type))
                 },
                 PhantomData,
@@ -5244,35 +4850,33 @@ pub(super) fn walk_ts_mapped_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_mapped_type(node, ctx);
-    let field = &mut node.type_parameter;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSMappedTypeTypeParameter(
         ancestor::TSMappedTypeWithoutTypeParameter(
-            unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSMappedType, span)) },
+            unsafe {
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSMappedType, span))
+            },
             PhantomData,
         ),
     ));
-    walk_ts_type_parameter(traverser, field, ctx);
+    walk_ts_type_parameter(traverser, &mut node.type_parameter, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.name_type;
-    if let Some(field) = field {
-        let other_field = &mut node.type_parameter;
+    if let Some(field) = &mut node.name_type {
         ctx.push_stack(Ancestor::TSMappedTypeNameType(ancestor::TSMappedTypeWithoutNameType(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSMappedType, type_parameter))
+                (&mut node.type_parameter as *const _ as *const u8)
+                    .sub(offset_of!(TSMappedType, type_parameter))
             },
             PhantomData,
         )));
         walk_ts_type(traverser, field, ctx);
         unsafe { ctx.pop_stack() };
     }
-    let field = &mut node.type_annotation;
-    if let Some(field) = field {
-        let other_field = &mut node.name_type;
+    if let Some(field) = &mut node.type_annotation {
         ctx.push_stack(Ancestor::TSMappedTypeTypeAnnotation(
             ancestor::TSMappedTypeWithoutTypeAnnotation(
                 unsafe {
-                    (other_field as *const _ as *const u8).sub(offset_of!(TSMappedType, name_type))
+                    (&mut node.name_type as *const _ as *const u8)
+                        .sub(offset_of!(TSMappedType, name_type))
                 },
                 PhantomData,
             ),
@@ -5289,33 +4893,30 @@ pub(super) fn walk_ts_template_literal_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_template_literal_type(node, ctx);
-    let field = &mut node.quasis;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTemplateLiteralTypeQuasis(
         ancestor::TSTemplateLiteralTypeWithoutQuasis(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTemplateLiteralType, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(TSTemplateLiteralType, span))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_template_element(traverser, field, ctx);
+    for item in node.quasis.iter_mut() {
+        walk_template_element(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
-    let field = &mut node.types;
-    let other_field = &mut node.quasis;
     ctx.push_stack(Ancestor::TSTemplateLiteralTypeTypes(
         ancestor::TSTemplateLiteralTypeWithoutTypes(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.quasis as *const _ as *const u8)
                     .sub(offset_of!(TSTemplateLiteralType, quasis))
             },
             PhantomData,
         ),
     ));
-    for field in field.iter_mut() {
-        walk_ts_type(traverser, field, ctx);
+    for item in node.types.iter_mut() {
+        walk_ts_type(traverser, item, ctx);
     }
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_template_literal_type(node, ctx);
@@ -5327,25 +4928,22 @@ pub(super) fn walk_ts_as_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_as_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSAsExpressionExpression(ancestor::TSAsExpressionWithoutExpression(
-        unsafe { (other_field as *const _ as *const u8).sub(offset_of!(TSAsExpression, span)) },
+        unsafe { (&mut node.span as *const _ as *const u8).sub(offset_of!(TSAsExpression, span)) },
         PhantomData,
     )));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.expression;
     ctx.push_stack(Ancestor::TSAsExpressionTypeAnnotation(
         ancestor::TSAsExpressionWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSAsExpression, expression))
+                (&mut node.expression as *const _ as *const u8)
+                    .sub(offset_of!(TSAsExpression, expression))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_as_expression(node, ctx);
 }
@@ -5356,30 +4954,27 @@ pub(super) fn walk_ts_satisfies_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_satisfies_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSSatisfiesExpressionExpression(
         ancestor::TSSatisfiesExpressionWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSSatisfiesExpression, span))
+                (&mut node.span as *const _ as *const u8)
+                    .sub(offset_of!(TSSatisfiesExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.expression;
     ctx.push_stack(Ancestor::TSSatisfiesExpressionTypeAnnotation(
         ancestor::TSSatisfiesExpressionWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.expression as *const _ as *const u8)
                     .sub(offset_of!(TSSatisfiesExpression, expression))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_satisfies_expression(node, ctx);
 }
@@ -5390,29 +4985,26 @@ pub(super) fn walk_ts_type_assertion<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_type_assertion(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSTypeAssertionExpression(
         ancestor::TSTypeAssertionWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTypeAssertion, span))
+                (&mut node.span as *const _ as *const u8).sub(offset_of!(TSTypeAssertion, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.expression;
     ctx.push_stack(Ancestor::TSTypeAssertionTypeAnnotation(
         ancestor::TSTypeAssertionWithoutTypeAnnotation(
             unsafe {
-                (other_field as *const _ as *const u8).sub(offset_of!(TSTypeAssertion, expression))
+                (&mut node.expression as *const _ as *const u8)
+                    .sub(offset_of!(TSTypeAssertion, expression))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_type_assertion(node, ctx);
 }
@@ -5423,31 +5015,27 @@ pub(super) fn walk_ts_import_equals_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_import_equals_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSImportEqualsDeclarationId(
         ancestor::TSImportEqualsDeclarationWithoutId(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(TSImportEqualsDeclaration, span))
             },
             PhantomData,
         ),
     ));
-    walk_binding_identifier(traverser, field, ctx);
+    walk_binding_identifier(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.module_reference;
-    let other_field = &mut node.id;
     ctx.push_stack(Ancestor::TSImportEqualsDeclarationModuleReference(
         ancestor::TSImportEqualsDeclarationWithoutModuleReference(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.id as *const _ as *const u8)
                     .sub(offset_of!(TSImportEqualsDeclaration, id))
             },
             PhantomData,
         ),
     ));
-    walk_ts_module_reference(traverser, field, ctx);
+    walk_ts_module_reference(traverser, &mut node.module_reference, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_import_equals_declaration(node, ctx);
 }
@@ -5475,14 +5063,13 @@ pub(super) fn walk_ts_external_module_reference<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_external_module_reference(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSExternalModuleReferenceExpression(
         ancestor::TSExternalModuleReferenceWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSExternalModuleReference, span))
+            (&mut node.span as *const _ as *const u8)
+                .sub(offset_of!(TSExternalModuleReference, span))
         }),
     ));
-    walk_string_literal(traverser, field, ctx);
+    walk_string_literal(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_external_module_reference(node, ctx);
 }
@@ -5493,14 +5080,12 @@ pub(super) fn walk_ts_non_null_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_non_null_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSNonNullExpressionExpression(
         ancestor::TSNonNullExpressionWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSNonNullExpression, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSNonNullExpression, span))
         }),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_non_null_expression(node, ctx);
 }
@@ -5511,12 +5096,10 @@ pub(super) fn walk_decorator<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_decorator(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::DecoratorExpression(ancestor::DecoratorWithoutExpression(unsafe {
-        (other_field as *const _ as *const u8).sub(offset_of!(Decorator, span))
+        (&mut node.span as *const _ as *const u8).sub(offset_of!(Decorator, span))
     })));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_decorator(node, ctx);
 }
@@ -5527,14 +5110,12 @@ pub(super) fn walk_ts_export_assignment<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_export_assignment(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSExportAssignmentExpression(
         ancestor::TSExportAssignmentWithoutExpression(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(TSExportAssignment, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(TSExportAssignment, span))
         }),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_export_assignment(node, ctx);
 }
@@ -5545,15 +5126,13 @@ pub(super) fn walk_ts_namespace_export_declaration<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_namespace_export_declaration(node, ctx);
-    let field = &mut node.id;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSNamespaceExportDeclarationId(
         ancestor::TSNamespaceExportDeclarationWithoutId(unsafe {
-            (other_field as *const _ as *const u8)
+            (&mut node.span as *const _ as *const u8)
                 .sub(offset_of!(TSNamespaceExportDeclaration, span))
         }),
     ));
-    walk_identifier_name(traverser, field, ctx);
+    walk_identifier_name(traverser, &mut node.id, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_namespace_export_declaration(node, ctx);
 }
@@ -5564,31 +5143,27 @@ pub(super) fn walk_ts_instantiation_expression<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_ts_instantiation_expression(node, ctx);
-    let field = &mut node.expression;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::TSInstantiationExpressionExpression(
         ancestor::TSInstantiationExpressionWithoutExpression(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.span as *const _ as *const u8)
                     .sub(offset_of!(TSInstantiationExpression, span))
             },
             PhantomData,
         ),
     ));
-    walk_expression(traverser, field, ctx);
+    walk_expression(traverser, &mut node.expression, ctx);
     unsafe { ctx.pop_stack() };
-    let field = &mut node.type_parameters;
-    let other_field = &mut node.expression;
     ctx.push_stack(Ancestor::TSInstantiationExpressionTypeParameters(
         ancestor::TSInstantiationExpressionWithoutTypeParameters(
             unsafe {
-                (other_field as *const _ as *const u8)
+                (&mut node.expression as *const _ as *const u8)
                     .sub(offset_of!(TSInstantiationExpression, expression))
             },
             PhantomData,
         ),
     ));
-    walk_ts_type_parameter_instantiation(traverser, field, ctx);
+    walk_ts_type_parameter_instantiation(traverser, &mut node.type_parameters, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_ts_instantiation_expression(node, ctx);
 }
@@ -5599,14 +5174,12 @@ pub(super) fn walk_js_doc_nullable_type<'a, Tr: Traverse<'a>>(
     ctx: &mut TraverseCtx<'a>,
 ) {
     traverser.enter_js_doc_nullable_type(node, ctx);
-    let field = &mut node.type_annotation;
-    let other_field = &mut node.span;
     ctx.push_stack(Ancestor::JSDocNullableTypeTypeAnnotation(
         ancestor::JSDocNullableTypeWithoutTypeAnnotation(unsafe {
-            (other_field as *const _ as *const u8).sub(offset_of!(JSDocNullableType, span))
+            (&mut node.span as *const _ as *const u8).sub(offset_of!(JSDocNullableType, span))
         }),
     ));
-    walk_ts_type(traverser, field, ctx);
+    walk_ts_type(traverser, &mut node.type_annotation, ctx);
     unsafe { ctx.pop_stack() };
     traverser.exit_js_doc_nullable_type(node, ctx);
 }
