@@ -239,7 +239,7 @@ function generateWalkFunctionsCode(types) {
                     if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Vec') {
                         if (fieldTypeName === 'Statement') {
                             // Special case for `Option<Vec<Statement>>`
-                            walkVecCode = `walk_statements(traverser, field, ctx);`;
+                            walkCode = `walk_statements(traverser, field, ctx);`;
                         } else {
                             walkCode = `
                                 for field in field.iter_mut() {
