@@ -213,8 +213,8 @@ function generateWalkFunctionsCode(types) {
             const fieldsCodes = visitedFields.map((field, index) => {
                 const otherField = field.index === 0 ? type.fields[1] : type.fields[field.index - 1],
                     fieldCamelName = snakeToCamel(field.name);
+                const getCode = `let field = &mut node.${field.rawName};\n`;
                 const pushCode = `
-                    let field = &mut node.${field.rawName};
                     let other_field = &mut node.${otherField.rawName};
                     ctx.push_stack(
                         Ancestor::${type.name}${fieldCamelName}(
@@ -252,9 +252,9 @@ function generateWalkFunctionsCode(types) {
                     }
 
                     return `
-                        if node.${field.name}.is_some() {
+                        ${getCode}
+                        if let Some(field) = field {
                             ${pushCode}
-                            let field = field.as_mut().unwrap();
                             ${walkCode}
                             ${popCode}
                         }
@@ -284,6 +284,7 @@ function generateWalkFunctionsCode(types) {
                     }
 
                     return `
+                        ${getCode}
                         ${pushCode}
                         ${walkVecCode}
                         ${popCode}
@@ -291,6 +292,7 @@ function generateWalkFunctionsCode(types) {
                 }
 
                 return `
+                    ${getCode}
                     ${pushCode}
                     walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);
                     ${popCode}
