@@ -296,6 +296,7 @@ function generateWalkFunctionsCode(types) {
             if (fieldsCodes.length > 0) fieldsCodes.push('unsafe { ctx.pop_stack() };');
 
             walkMethods += `
+                ${fieldsCodes.length === 0 ? '#[inline]' : ''}
                 pub(super) fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
                     traverser: &mut Tr,
                     node: &mut ${ty},

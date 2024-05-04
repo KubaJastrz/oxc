@@ -118,6 +118,7 @@ pub(super) fn walk_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_expression(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_identifier_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut IdentifierName<'a>,
@@ -127,6 +128,7 @@ pub(super) fn walk_identifier_name<'a, Tr: Traverse<'a>>(
     traverser.exit_identifier_name(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_identifier_reference<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut IdentifierReference<'a>,
@@ -136,6 +138,7 @@ pub(super) fn walk_identifier_reference<'a, Tr: Traverse<'a>>(
     traverser.exit_identifier_reference(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_binding_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut BindingIdentifier<'a>,
@@ -145,6 +148,7 @@ pub(super) fn walk_binding_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_identifier(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_label_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut LabelIdentifier<'a>,
@@ -154,6 +158,7 @@ pub(super) fn walk_label_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_label_identifier(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_this_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut ThisExpression,
@@ -197,6 +202,7 @@ pub(super) fn walk_array_expression_element<'a, Tr: Traverse<'a>>(
     traverser.exit_array_expression_element(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_elision<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut Elision,
@@ -359,6 +365,7 @@ pub(super) fn walk_tagged_template_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_tagged_template_expression(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_template_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TemplateElement<'a>,
@@ -1090,6 +1097,7 @@ pub(super) fn walk_sequence_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_sequence_expression(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_super<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut Super,
@@ -1219,6 +1227,7 @@ pub(super) fn walk_directive<'a, Tr: Traverse<'a>>(
     traverser.exit_directive(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_hashbang<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut Hashbang<'a>,
@@ -1341,6 +1350,7 @@ pub(super) fn walk_using_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_using_declaration(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_empty_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut EmptyStatement,
@@ -1848,6 +1858,7 @@ pub(super) fn walk_catch_parameter<'a, Tr: Traverse<'a>>(
     traverser.exit_catch_parameter(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_debugger_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut DebuggerStatement,
@@ -2458,6 +2469,7 @@ pub(super) fn walk_property_definition<'a, Tr: Traverse<'a>>(
     traverser.exit_property_definition(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_private_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut PrivateIdentifier<'a>,
@@ -3207,6 +3219,7 @@ pub(super) fn walk_jsx_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_expression(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_jsx_empty_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut JSXEmptyExpression,
@@ -3303,6 +3316,7 @@ pub(super) fn walk_jsx_attribute_value<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_attribute_value(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_jsx_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut JSXIdentifier<'a>,
@@ -3346,6 +3360,7 @@ pub(super) fn walk_jsx_spread_child<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_spread_child(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_jsx_text<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut JSXText<'a>,
@@ -3355,6 +3370,7 @@ pub(super) fn walk_jsx_text<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_text(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_boolean_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut BooleanLiteral,
@@ -3364,6 +3380,7 @@ pub(super) fn walk_boolean_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_boolean_literal(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_null_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut NullLiteral,
@@ -3373,6 +3390,7 @@ pub(super) fn walk_null_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_null_literal(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_numeric_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut NumericLiteral<'a>,
@@ -3382,6 +3400,7 @@ pub(super) fn walk_numeric_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_numeric_literal(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_big_int_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut BigIntLiteral<'a>,
@@ -3391,6 +3410,7 @@ pub(super) fn walk_big_int_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_big_int_literal(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_reg_exp_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut RegExpLiteral<'a>,
@@ -3400,6 +3420,7 @@ pub(super) fn walk_reg_exp_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_reg_exp_literal(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_string_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut StringLiteral<'a>,
@@ -3857,6 +3878,7 @@ pub(super) fn walk_ts_tuple_element<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_tuple_element(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_any_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSAnyKeyword,
@@ -3866,6 +3888,7 @@ pub(super) fn walk_ts_any_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_any_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_string_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSStringKeyword,
@@ -3875,6 +3898,7 @@ pub(super) fn walk_ts_string_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_string_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_boolean_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSBooleanKeyword,
@@ -3884,6 +3908,7 @@ pub(super) fn walk_ts_boolean_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_boolean_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_number_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSNumberKeyword,
@@ -3893,6 +3918,7 @@ pub(super) fn walk_ts_number_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_number_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_never_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSNeverKeyword,
@@ -3902,6 +3928,7 @@ pub(super) fn walk_ts_never_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_never_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_unknown_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSUnknownKeyword,
@@ -3911,6 +3938,7 @@ pub(super) fn walk_ts_unknown_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_unknown_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_null_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSNullKeyword,
@@ -3920,6 +3948,7 @@ pub(super) fn walk_ts_null_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_null_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_undefined_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSUndefinedKeyword,
@@ -3929,6 +3958,7 @@ pub(super) fn walk_ts_undefined_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_undefined_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_void_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSVoidKeyword,
@@ -3938,6 +3968,7 @@ pub(super) fn walk_ts_void_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_void_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_symbol_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSSymbolKeyword,
@@ -3947,6 +3978,7 @@ pub(super) fn walk_ts_symbol_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_symbol_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_this_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSThisType,
@@ -3956,6 +3988,7 @@ pub(super) fn walk_ts_this_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_this_type(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_object_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSObjectKeyword,
@@ -3965,6 +3998,7 @@ pub(super) fn walk_ts_object_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_object_keyword(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_ts_big_int_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut TSBigIntKeyword,
@@ -5312,6 +5346,7 @@ pub(super) fn walk_js_doc_nullable_type<'a, Tr: Traverse<'a>>(
     traverser.exit_js_doc_nullable_type(node, ctx);
 }
 
+#[inline]
 pub(super) fn walk_js_doc_unknown_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: &mut JSDocUnknownType,
