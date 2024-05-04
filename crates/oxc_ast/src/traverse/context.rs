@@ -83,6 +83,15 @@ impl<'a> TraverseCtx<'a> {
         self.stack.pop().unwrap_unchecked();
     }
 
+    /// Replace last item on stack.
+    /// # SAFETY
+    /// Stack must not be empty.
+    #[inline]
+    #[allow(unsafe_code)]
+    pub(super) unsafe fn replace_stack(&mut self, ancestor: Ancestor<'a>) {
+        *self.stack.last_mut().unwrap_unchecked() = ancestor;
+    }
+
     /// Return if stack and stack arena are empty
     pub(super) fn stack_is_empty(&self) -> bool {
         self.stack.is_empty()

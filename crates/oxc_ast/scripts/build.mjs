@@ -213,20 +213,18 @@ function generateWalkFunctionsCode(types) {
             const fieldsCodes = visitedFields.map((field, index) => {
                 const otherField = field.index === 0 ? type.fields[1] : type.fields[field.index - 1],
                     fieldCamelName = snakeToCamel(field.name);
-                const pushCode = `
-                    ctx.push_stack(
+                const pushCode = `unsafe {
+                    ctx.${index === 0 ? 'push_stack' : 'replace_stack'}(
                         Ancestor::${type.name}${fieldCamelName}(
                             ancestor::${type.name}Without${fieldCamelName}(
-                                unsafe {
-                                    (&mut node.${otherField.rawName} as *const _ as *const u8)
-                                        .sub(offset_of!(${type.name}, ${otherField.rawName}))
-                                }${field.ancestorHasLifetime ? ', PhantomData' : ''}
+                                (&mut node.${otherField.rawName} as *const _ as *const u8)
+                                    .sub(offset_of!(${type.name}, ${otherField.rawName}))
+                                ${field.ancestorHasLifetime ? ', PhantomData' : ''}
                             )
                         )
-                    );
-                `;
-                const popCode = 'unsafe { ctx.pop_stack() };';
-
+                    )
+                };\n`;
+                
                 const {name: fieldTypeName, wrappers: fieldTypeWrappers} = typeAndWrappers(field.type);
 
                 if (fieldTypeWrappers[0] === 'Option') {
@@ -251,11 +249,12 @@ function generateWalkFunctionsCode(types) {
                         walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);`;
                     }
 
+                    const [preCode, postCode] = index === 0 ? [pushCode, ''] : ['', pushCode];
                     return `
+                        ${preCode}
                         if let Some(field) = &mut node.${field.rawName} {
-                            ${pushCode}
+                            ${postCode}
                             ${walkCode}
-                            ${popCode}
                         }
                     `;
                 }
@@ -285,16 +284,16 @@ function generateWalkFunctionsCode(types) {
                     return `
                         ${pushCode}
                         ${walkVecCode}
-                        ${popCode}
                     `;
                 }
 
                 return `
                     ${pushCode}
                     walk_${camelToSnake(fieldTypeName)}(traverser, &mut node.${field.rawName}, ctx);
-                    ${popCode}
                 `;
             });
+
+            if (fieldsCodes.length > 0) fieldsCodes.push('unsafe { ctx.pop_stack() };');
 
             walkMethods += `
                 pub(super) fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
