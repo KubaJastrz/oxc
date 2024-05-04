@@ -297,21 +297,6 @@ function generateWalkFunctionsCode(types) {
                 `;
             });
 
-            if (visitedFields.length > 0) {
-                const field = visitedFields[0],
-                    fieldCamelName = snakeToCamel(field.name);
-                /*
-                fieldsCodes.unshift(`
-                    ctx.push_stack(
-                        Ancestor::${type.name}${fieldCamelName}(
-                            unsafe { ancestor::${type.name}Without${fieldCamelName}::new(node) }
-                        )
-                    );
-                `);
-                fieldsCodes.push(`unsafe { ctx.pop_stack() };\n`);
-                */
-            }
-
             walkMethods += `
                 pub(super) fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
                     traverser: &mut Tr,
