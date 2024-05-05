@@ -50,7 +50,7 @@ function generateTraverseTraitCode(types) {
         #[allow(clippy::wildcard_imports)]
         use oxc_ast::ast::*;
 
-        use super::TraverseCtx;
+        use crate::TraverseCtx;
 
         #[allow(unused_variables)]
         pub trait Traverse<'a> {
@@ -79,7 +79,7 @@ function generateAncestorsCode(types) {
         for (const field of type.fields) {
             const offsetVarName = `OFFSET_${typeNameScreaming}_${field.name.toUpperCase()}`;
             field.offsetVarName = offsetVarName;
-            ancestorTypes += `pub(super) const ${offsetVarName}: usize = offset_of!(${type.name}, ${field.rawName});\n`;
+            ancestorTypes += `pub(crate) const ${offsetVarName}: usize = offset_of!(${type.name}, ${field.rawName});\n`;
         }
 
         const variantNames = [];
@@ -105,8 +105,8 @@ function generateAncestorsCode(types) {
 
             const lifetime = hasLifetime ? "<'a>" : '',
                 structName = `${type.name}Without${snakeToCamel(field.name)}${lifetime}`;
-            let structFields = 'pub(super) *const u8';
-            if (hasLifetime) structFields += ", pub(super) PhantomData<&'a ()>";
+            let structFields = 'pub(crate) *const u8';
+            if (hasLifetime) structFields += ", pub(crate) PhantomData<&'a ()>";
 
             ancestorTypes += `
                 #[repr(transparent)]
@@ -307,7 +307,7 @@ function generateWalkFunctionsCode(types) {
             }
 
             walkMethods += `
-                pub(super) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
+                pub(crate) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
                     traverser: &mut Tr,
                     node: *mut ${ty},
                     ctx: &mut TraverseCtx<'a>
@@ -364,7 +364,7 @@ function generateWalkFunctionsCode(types) {
             }
 
             walkMethods += `
-                pub(super) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(traverser: &mut Tr, node: *mut ${ty}, ctx: &mut TraverseCtx<'a>) {
+                pub(crate) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(traverser: &mut Tr, node: *mut ${ty}, ctx: &mut TraverseCtx<'a>) {
                     traverser.enter_${snakeName}(&mut *node, ctx);
                     match &mut *node {
                         ${variantCodes.join('\n')}
@@ -397,11 +397,11 @@ function generateWalkFunctionsCode(types) {
         #[allow(clippy::wildcard_imports)]
         use oxc_ast::ast::*;
 
-        use super::{ancestor, Ancestor, Traverse, TraverseCtx};
+        use crate::{ancestor, Ancestor, Traverse, TraverseCtx};
 
         ${walkMethods}
 
-        pub(super) unsafe fn walk_statements<'a, Tr: Traverse<'a>>(
+        pub(crate) unsafe fn walk_statements<'a, Tr: Traverse<'a>>(
             traverser: &mut Tr,
             stmts: *mut Vec<'a, Statement<'a>>,
             ctx: &mut TraverseCtx<'a>

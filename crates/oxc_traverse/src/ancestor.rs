@@ -1629,15 +1629,15 @@ impl<'a> Ancestor<'a> {
     }
 }
 
-pub(super) const OFFSET_PROGRAM_SPAN: usize = offset_of!(Program, span);
-pub(super) const OFFSET_PROGRAM_SOURCE_TYPE: usize = offset_of!(Program, source_type);
-pub(super) const OFFSET_PROGRAM_DIRECTIVES: usize = offset_of!(Program, directives);
-pub(super) const OFFSET_PROGRAM_HASHBANG: usize = offset_of!(Program, hashbang);
-pub(super) const OFFSET_PROGRAM_BODY: usize = offset_of!(Program, body);
+pub(crate) const OFFSET_PROGRAM_SPAN: usize = offset_of!(Program, span);
+pub(crate) const OFFSET_PROGRAM_SOURCE_TYPE: usize = offset_of!(Program, source_type);
+pub(crate) const OFFSET_PROGRAM_DIRECTIVES: usize = offset_of!(Program, directives);
+pub(crate) const OFFSET_PROGRAM_HASHBANG: usize = offset_of!(Program, hashbang);
+pub(crate) const OFFSET_PROGRAM_BODY: usize = offset_of!(Program, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutDirectives<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ProgramWithoutDirectives<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ProgramWithoutDirectives<'a> {
     #[inline]
@@ -1663,7 +1663,7 @@ impl<'a> ProgramWithoutDirectives<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutHashbang<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ProgramWithoutHashbang<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ProgramWithoutHashbang<'a> {
     #[inline]
@@ -1689,7 +1689,7 @@ impl<'a> ProgramWithoutHashbang<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ProgramWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ProgramWithoutBody<'a> {
     #[inline]
@@ -1712,29 +1712,29 @@ impl<'a> ProgramWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>) }
     }
 }
-pub(super) const OFFSET_IDENTIFIER_NAME_SPAN: usize = offset_of!(IdentifierName, span);
-pub(super) const OFFSET_IDENTIFIER_NAME_NAME: usize = offset_of!(IdentifierName, name);
-pub(super) const OFFSET_IDENTIFIER_REFERENCE_SPAN: usize = offset_of!(IdentifierReference, span);
-pub(super) const OFFSET_IDENTIFIER_REFERENCE_NAME: usize = offset_of!(IdentifierReference, name);
-pub(super) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_ID: usize =
+pub(crate) const OFFSET_IDENTIFIER_NAME_SPAN: usize = offset_of!(IdentifierName, span);
+pub(crate) const OFFSET_IDENTIFIER_NAME_NAME: usize = offset_of!(IdentifierName, name);
+pub(crate) const OFFSET_IDENTIFIER_REFERENCE_SPAN: usize = offset_of!(IdentifierReference, span);
+pub(crate) const OFFSET_IDENTIFIER_REFERENCE_NAME: usize = offset_of!(IdentifierReference, name);
+pub(crate) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_ID: usize =
     offset_of!(IdentifierReference, reference_id);
-pub(super) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_FLAG: usize =
+pub(crate) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_FLAG: usize =
     offset_of!(IdentifierReference, reference_flag);
-pub(super) const OFFSET_BINDING_IDENTIFIER_SPAN: usize = offset_of!(BindingIdentifier, span);
-pub(super) const OFFSET_BINDING_IDENTIFIER_NAME: usize = offset_of!(BindingIdentifier, name);
-pub(super) const OFFSET_BINDING_IDENTIFIER_SYMBOL_ID: usize =
+pub(crate) const OFFSET_BINDING_IDENTIFIER_SPAN: usize = offset_of!(BindingIdentifier, span);
+pub(crate) const OFFSET_BINDING_IDENTIFIER_NAME: usize = offset_of!(BindingIdentifier, name);
+pub(crate) const OFFSET_BINDING_IDENTIFIER_SYMBOL_ID: usize =
     offset_of!(BindingIdentifier, symbol_id);
-pub(super) const OFFSET_LABEL_IDENTIFIER_SPAN: usize = offset_of!(LabelIdentifier, span);
-pub(super) const OFFSET_LABEL_IDENTIFIER_NAME: usize = offset_of!(LabelIdentifier, name);
-pub(super) const OFFSET_THIS_EXPRESSION_SPAN: usize = offset_of!(ThisExpression, span);
-pub(super) const OFFSET_ARRAY_EXPRESSION_SPAN: usize = offset_of!(ArrayExpression, span);
-pub(super) const OFFSET_ARRAY_EXPRESSION_ELEMENTS: usize = offset_of!(ArrayExpression, elements);
-pub(super) const OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA: usize =
+pub(crate) const OFFSET_LABEL_IDENTIFIER_SPAN: usize = offset_of!(LabelIdentifier, span);
+pub(crate) const OFFSET_LABEL_IDENTIFIER_NAME: usize = offset_of!(LabelIdentifier, name);
+pub(crate) const OFFSET_THIS_EXPRESSION_SPAN: usize = offset_of!(ThisExpression, span);
+pub(crate) const OFFSET_ARRAY_EXPRESSION_SPAN: usize = offset_of!(ArrayExpression, span);
+pub(crate) const OFFSET_ARRAY_EXPRESSION_ELEMENTS: usize = offset_of!(ArrayExpression, elements);
+pub(crate) const OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA: usize =
     offset_of!(ArrayExpression, trailing_comma);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayExpressionWithoutElements(pub(super) *const u8);
+pub struct ArrayExpressionWithoutElements(pub(crate) *const u8);
 
 impl ArrayExpressionWithoutElements {
     #[inline]
@@ -1747,16 +1747,16 @@ impl ArrayExpressionWithoutElements {
         unsafe { &*(self.0.add(OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
     }
 }
-pub(super) const OFFSET_ELISION_SPAN: usize = offset_of!(Elision, span);
-pub(super) const OFFSET_OBJECT_EXPRESSION_SPAN: usize = offset_of!(ObjectExpression, span);
-pub(super) const OFFSET_OBJECT_EXPRESSION_PROPERTIES: usize =
+pub(crate) const OFFSET_ELISION_SPAN: usize = offset_of!(Elision, span);
+pub(crate) const OFFSET_OBJECT_EXPRESSION_SPAN: usize = offset_of!(ObjectExpression, span);
+pub(crate) const OFFSET_OBJECT_EXPRESSION_PROPERTIES: usize =
     offset_of!(ObjectExpression, properties);
-pub(super) const OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA: usize =
+pub(crate) const OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA: usize =
     offset_of!(ObjectExpression, trailing_comma);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectExpressionWithoutProperties(pub(super) *const u8);
+pub struct ObjectExpressionWithoutProperties(pub(crate) *const u8);
 
 impl ObjectExpressionWithoutProperties {
     #[inline]
@@ -1769,18 +1769,18 @@ impl ObjectExpressionWithoutProperties {
         unsafe { &*(self.0.add(OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
     }
 }
-pub(super) const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
-pub(super) const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
-pub(super) const OFFSET_OBJECT_PROPERTY_KEY: usize = offset_of!(ObjectProperty, key);
-pub(super) const OFFSET_OBJECT_PROPERTY_VALUE: usize = offset_of!(ObjectProperty, value);
-pub(super) const OFFSET_OBJECT_PROPERTY_INIT: usize = offset_of!(ObjectProperty, init);
-pub(super) const OFFSET_OBJECT_PROPERTY_METHOD: usize = offset_of!(ObjectProperty, method);
-pub(super) const OFFSET_OBJECT_PROPERTY_SHORTHAND: usize = offset_of!(ObjectProperty, shorthand);
-pub(super) const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectProperty, computed);
+pub(crate) const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
+pub(crate) const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
+pub(crate) const OFFSET_OBJECT_PROPERTY_KEY: usize = offset_of!(ObjectProperty, key);
+pub(crate) const OFFSET_OBJECT_PROPERTY_VALUE: usize = offset_of!(ObjectProperty, value);
+pub(crate) const OFFSET_OBJECT_PROPERTY_INIT: usize = offset_of!(ObjectProperty, init);
+pub(crate) const OFFSET_OBJECT_PROPERTY_METHOD: usize = offset_of!(ObjectProperty, method);
+pub(crate) const OFFSET_OBJECT_PROPERTY_SHORTHAND: usize = offset_of!(ObjectProperty, shorthand);
+pub(crate) const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectProperty, computed);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ObjectPropertyWithoutKey<'a> {
     #[inline]
@@ -1821,7 +1821,7 @@ impl<'a> ObjectPropertyWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ObjectPropertyWithoutValue<'a> {
     #[inline]
@@ -1862,7 +1862,7 @@ impl<'a> ObjectPropertyWithoutValue<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutInit<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ObjectPropertyWithoutInit<'a> {
     #[inline]
@@ -1900,14 +1900,14 @@ impl<'a> ObjectPropertyWithoutInit<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
     }
 }
-pub(super) const OFFSET_TEMPLATE_LITERAL_SPAN: usize = offset_of!(TemplateLiteral, span);
-pub(super) const OFFSET_TEMPLATE_LITERAL_QUASIS: usize = offset_of!(TemplateLiteral, quasis);
-pub(super) const OFFSET_TEMPLATE_LITERAL_EXPRESSIONS: usize =
+pub(crate) const OFFSET_TEMPLATE_LITERAL_SPAN: usize = offset_of!(TemplateLiteral, span);
+pub(crate) const OFFSET_TEMPLATE_LITERAL_QUASIS: usize = offset_of!(TemplateLiteral, quasis);
+pub(crate) const OFFSET_TEMPLATE_LITERAL_EXPRESSIONS: usize =
     offset_of!(TemplateLiteral, expressions);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TemplateLiteralWithoutQuasis<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TemplateLiteralWithoutQuasis<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TemplateLiteralWithoutQuasis<'a> {
     #[inline]
@@ -1926,8 +1926,8 @@ impl<'a> TemplateLiteralWithoutQuasis<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TemplateLiteralWithoutExpressions<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TemplateLiteralWithoutExpressions<'a> {
@@ -1943,20 +1943,20 @@ impl<'a> TemplateLiteralWithoutExpressions<'a> {
         }
     }
 }
-pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN: usize =
     offset_of!(TaggedTemplateExpression, span);
-pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG: usize =
+pub(crate) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG: usize =
     offset_of!(TaggedTemplateExpression, tag);
-pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI: usize =
+pub(crate) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI: usize =
     offset_of!(TaggedTemplateExpression, quasi);
-pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(TaggedTemplateExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TaggedTemplateExpressionWithoutTag<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TaggedTemplateExpressionWithoutTag<'a> {
@@ -1984,8 +1984,8 @@ impl<'a> TaggedTemplateExpressionWithoutTag<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TaggedTemplateExpressionWithoutQuasi<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TaggedTemplateExpressionWithoutQuasi<'a> {
@@ -2011,8 +2011,8 @@ impl<'a> TaggedTemplateExpressionWithoutQuasi<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TaggedTemplateExpressionWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TaggedTemplateExpressionWithoutTypeParameters<'a> {
@@ -2033,23 +2033,23 @@ impl<'a> TaggedTemplateExpressionWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TEMPLATE_ELEMENT_SPAN: usize = offset_of!(TemplateElement, span);
-pub(super) const OFFSET_TEMPLATE_ELEMENT_TAIL: usize = offset_of!(TemplateElement, tail);
-pub(super) const OFFSET_TEMPLATE_ELEMENT_VALUE: usize = offset_of!(TemplateElement, value);
-pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_TEMPLATE_ELEMENT_SPAN: usize = offset_of!(TemplateElement, span);
+pub(crate) const OFFSET_TEMPLATE_ELEMENT_TAIL: usize = offset_of!(TemplateElement, tail);
+pub(crate) const OFFSET_TEMPLATE_ELEMENT_VALUE: usize = offset_of!(TemplateElement, value);
+pub(crate) const OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN: usize =
     offset_of!(ComputedMemberExpression, span);
-pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT: usize =
+pub(crate) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT: usize =
     offset_of!(ComputedMemberExpression, object);
-pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION: usize =
     offset_of!(ComputedMemberExpression, expression);
-pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL: usize =
+pub(crate) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL: usize =
     offset_of!(ComputedMemberExpression, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ComputedMemberExpressionWithoutObject<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ComputedMemberExpressionWithoutObject<'a> {
@@ -2074,8 +2074,8 @@ impl<'a> ComputedMemberExpressionWithoutObject<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ComputedMemberExpressionWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ComputedMemberExpressionWithoutExpression<'a> {
@@ -2094,20 +2094,20 @@ impl<'a> ComputedMemberExpressionWithoutExpression<'a> {
         unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_SPAN: usize =
     offset_of!(StaticMemberExpression, span);
-pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT: usize =
+pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT: usize =
     offset_of!(StaticMemberExpression, object);
-pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY: usize =
+pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY: usize =
     offset_of!(StaticMemberExpression, property);
-pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL: usize =
+pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL: usize =
     offset_of!(StaticMemberExpression, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct StaticMemberExpressionWithoutObject<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> StaticMemberExpressionWithoutObject<'a> {
@@ -2132,8 +2132,8 @@ impl<'a> StaticMemberExpressionWithoutObject<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct StaticMemberExpressionWithoutProperty<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> StaticMemberExpressionWithoutProperty<'a> {
@@ -2152,20 +2152,20 @@ impl<'a> StaticMemberExpressionWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN: usize =
     offset_of!(PrivateFieldExpression, span);
-pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT: usize =
+pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT: usize =
     offset_of!(PrivateFieldExpression, object);
-pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD: usize =
+pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD: usize =
     offset_of!(PrivateFieldExpression, field);
-pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL: usize =
+pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL: usize =
     offset_of!(PrivateFieldExpression, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct PrivateFieldExpressionWithoutObject<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> PrivateFieldExpressionWithoutObject<'a> {
@@ -2190,8 +2190,8 @@ impl<'a> PrivateFieldExpressionWithoutObject<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct PrivateFieldExpressionWithoutField<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> PrivateFieldExpressionWithoutField<'a> {
@@ -2210,16 +2210,16 @@ impl<'a> PrivateFieldExpressionWithoutField<'a> {
         unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_CALL_EXPRESSION_SPAN: usize = offset_of!(CallExpression, span);
-pub(super) const OFFSET_CALL_EXPRESSION_CALLEE: usize = offset_of!(CallExpression, callee);
-pub(super) const OFFSET_CALL_EXPRESSION_ARGUMENTS: usize = offset_of!(CallExpression, arguments);
-pub(super) const OFFSET_CALL_EXPRESSION_OPTIONAL: usize = offset_of!(CallExpression, optional);
-pub(super) const OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_CALL_EXPRESSION_SPAN: usize = offset_of!(CallExpression, span);
+pub(crate) const OFFSET_CALL_EXPRESSION_CALLEE: usize = offset_of!(CallExpression, callee);
+pub(crate) const OFFSET_CALL_EXPRESSION_ARGUMENTS: usize = offset_of!(CallExpression, arguments);
+pub(crate) const OFFSET_CALL_EXPRESSION_OPTIONAL: usize = offset_of!(CallExpression, optional);
+pub(crate) const OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(CallExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CallExpressionWithoutCallee<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct CallExpressionWithoutCallee<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> CallExpressionWithoutCallee<'a> {
     #[inline]
@@ -2248,7 +2248,7 @@ impl<'a> CallExpressionWithoutCallee<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CallExpressionWithoutArguments<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct CallExpressionWithoutArguments<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> CallExpressionWithoutArguments<'a> {
     #[inline]
@@ -2278,8 +2278,8 @@ impl<'a> CallExpressionWithoutArguments<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct CallExpressionWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> CallExpressionWithoutTypeParameters<'a> {
@@ -2303,15 +2303,15 @@ impl<'a> CallExpressionWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_NEW_EXPRESSION_SPAN: usize = offset_of!(NewExpression, span);
-pub(super) const OFFSET_NEW_EXPRESSION_CALLEE: usize = offset_of!(NewExpression, callee);
-pub(super) const OFFSET_NEW_EXPRESSION_ARGUMENTS: usize = offset_of!(NewExpression, arguments);
-pub(super) const OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_NEW_EXPRESSION_SPAN: usize = offset_of!(NewExpression, span);
+pub(crate) const OFFSET_NEW_EXPRESSION_CALLEE: usize = offset_of!(NewExpression, callee);
+pub(crate) const OFFSET_NEW_EXPRESSION_ARGUMENTS: usize = offset_of!(NewExpression, arguments);
+pub(crate) const OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(NewExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct NewExpressionWithoutCallee<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct NewExpressionWithoutCallee<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> NewExpressionWithoutCallee<'a> {
     #[inline]
@@ -2335,7 +2335,7 @@ impl<'a> NewExpressionWithoutCallee<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct NewExpressionWithoutArguments<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct NewExpressionWithoutArguments<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> NewExpressionWithoutArguments<'a> {
     #[inline]
@@ -2360,8 +2360,8 @@ impl<'a> NewExpressionWithoutArguments<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct NewExpressionWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> NewExpressionWithoutTypeParameters<'a> {
@@ -2380,13 +2380,13 @@ impl<'a> NewExpressionWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
     }
 }
-pub(super) const OFFSET_META_PROPERTY_SPAN: usize = offset_of!(MetaProperty, span);
-pub(super) const OFFSET_META_PROPERTY_META: usize = offset_of!(MetaProperty, meta);
-pub(super) const OFFSET_META_PROPERTY_PROPERTY: usize = offset_of!(MetaProperty, property);
+pub(crate) const OFFSET_META_PROPERTY_SPAN: usize = offset_of!(MetaProperty, span);
+pub(crate) const OFFSET_META_PROPERTY_META: usize = offset_of!(MetaProperty, meta);
+pub(crate) const OFFSET_META_PROPERTY_PROPERTY: usize = offset_of!(MetaProperty, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MetaPropertyWithoutMeta<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct MetaPropertyWithoutMeta<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> MetaPropertyWithoutMeta<'a> {
     #[inline]
@@ -2402,7 +2402,7 @@ impl<'a> MetaPropertyWithoutMeta<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MetaPropertyWithoutProperty<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct MetaPropertyWithoutProperty<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> MetaPropertyWithoutProperty<'a> {
     #[inline]
@@ -2415,12 +2415,12 @@ impl<'a> MetaPropertyWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_META_PROPERTY_META) as *const IdentifierName<'a>) }
     }
 }
-pub(super) const OFFSET_SPREAD_ELEMENT_SPAN: usize = offset_of!(SpreadElement, span);
-pub(super) const OFFSET_SPREAD_ELEMENT_ARGUMENT: usize = offset_of!(SpreadElement, argument);
+pub(crate) const OFFSET_SPREAD_ELEMENT_SPAN: usize = offset_of!(SpreadElement, span);
+pub(crate) const OFFSET_SPREAD_ELEMENT_ARGUMENT: usize = offset_of!(SpreadElement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SpreadElementWithoutArgument(pub(super) *const u8);
+pub struct SpreadElementWithoutArgument(pub(crate) *const u8);
 
 impl SpreadElementWithoutArgument {
     #[inline]
@@ -2428,14 +2428,14 @@ impl SpreadElementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_SPREAD_ELEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_UPDATE_EXPRESSION_SPAN: usize = offset_of!(UpdateExpression, span);
-pub(super) const OFFSET_UPDATE_EXPRESSION_OPERATOR: usize = offset_of!(UpdateExpression, operator);
-pub(super) const OFFSET_UPDATE_EXPRESSION_PREFIX: usize = offset_of!(UpdateExpression, prefix);
-pub(super) const OFFSET_UPDATE_EXPRESSION_ARGUMENT: usize = offset_of!(UpdateExpression, argument);
+pub(crate) const OFFSET_UPDATE_EXPRESSION_SPAN: usize = offset_of!(UpdateExpression, span);
+pub(crate) const OFFSET_UPDATE_EXPRESSION_OPERATOR: usize = offset_of!(UpdateExpression, operator);
+pub(crate) const OFFSET_UPDATE_EXPRESSION_PREFIX: usize = offset_of!(UpdateExpression, prefix);
+pub(crate) const OFFSET_UPDATE_EXPRESSION_ARGUMENT: usize = offset_of!(UpdateExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UpdateExpressionWithoutArgument(pub(super) *const u8);
+pub struct UpdateExpressionWithoutArgument(pub(crate) *const u8);
 
 impl UpdateExpressionWithoutArgument {
     #[inline]
@@ -2453,13 +2453,13 @@ impl UpdateExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_UPDATE_EXPRESSION_PREFIX) as *const bool) }
     }
 }
-pub(super) const OFFSET_UNARY_EXPRESSION_SPAN: usize = offset_of!(UnaryExpression, span);
-pub(super) const OFFSET_UNARY_EXPRESSION_OPERATOR: usize = offset_of!(UnaryExpression, operator);
-pub(super) const OFFSET_UNARY_EXPRESSION_ARGUMENT: usize = offset_of!(UnaryExpression, argument);
+pub(crate) const OFFSET_UNARY_EXPRESSION_SPAN: usize = offset_of!(UnaryExpression, span);
+pub(crate) const OFFSET_UNARY_EXPRESSION_OPERATOR: usize = offset_of!(UnaryExpression, operator);
+pub(crate) const OFFSET_UNARY_EXPRESSION_ARGUMENT: usize = offset_of!(UnaryExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UnaryExpressionWithoutArgument(pub(super) *const u8);
+pub struct UnaryExpressionWithoutArgument(pub(crate) *const u8);
 
 impl UnaryExpressionWithoutArgument {
     #[inline]
@@ -2472,14 +2472,14 @@ impl UnaryExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_UNARY_EXPRESSION_OPERATOR) as *const UnaryOperator) }
     }
 }
-pub(super) const OFFSET_BINARY_EXPRESSION_SPAN: usize = offset_of!(BinaryExpression, span);
-pub(super) const OFFSET_BINARY_EXPRESSION_LEFT: usize = offset_of!(BinaryExpression, left);
-pub(super) const OFFSET_BINARY_EXPRESSION_OPERATOR: usize = offset_of!(BinaryExpression, operator);
-pub(super) const OFFSET_BINARY_EXPRESSION_RIGHT: usize = offset_of!(BinaryExpression, right);
+pub(crate) const OFFSET_BINARY_EXPRESSION_SPAN: usize = offset_of!(BinaryExpression, span);
+pub(crate) const OFFSET_BINARY_EXPRESSION_LEFT: usize = offset_of!(BinaryExpression, left);
+pub(crate) const OFFSET_BINARY_EXPRESSION_OPERATOR: usize = offset_of!(BinaryExpression, operator);
+pub(crate) const OFFSET_BINARY_EXPRESSION_RIGHT: usize = offset_of!(BinaryExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BinaryExpressionWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct BinaryExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> BinaryExpressionWithoutLeft<'a> {
     #[inline]
@@ -2500,7 +2500,7 @@ impl<'a> BinaryExpressionWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BinaryExpressionWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct BinaryExpressionWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> BinaryExpressionWithoutRight<'a> {
     #[inline]
@@ -2518,15 +2518,15 @@ impl<'a> BinaryExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_OPERATOR) as *const BinaryOperator) }
     }
 }
-pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_SPAN: usize = offset_of!(PrivateInExpression, span);
-pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_LEFT: usize = offset_of!(PrivateInExpression, left);
-pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR: usize =
+pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_SPAN: usize = offset_of!(PrivateInExpression, span);
+pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_LEFT: usize = offset_of!(PrivateInExpression, left);
+pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR: usize =
     offset_of!(PrivateInExpression, operator);
-pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_RIGHT: usize = offset_of!(PrivateInExpression, right);
+pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_RIGHT: usize = offset_of!(PrivateInExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PrivateInExpressionWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct PrivateInExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> PrivateInExpressionWithoutLeft<'a> {
     #[inline]
@@ -2548,8 +2548,8 @@ impl<'a> PrivateInExpressionWithoutLeft<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct PrivateInExpressionWithoutRight<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> PrivateInExpressionWithoutRight<'a> {
@@ -2568,15 +2568,15 @@ impl<'a> PrivateInExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR) as *const BinaryOperator) }
     }
 }
-pub(super) const OFFSET_LOGICAL_EXPRESSION_SPAN: usize = offset_of!(LogicalExpression, span);
-pub(super) const OFFSET_LOGICAL_EXPRESSION_LEFT: usize = offset_of!(LogicalExpression, left);
-pub(super) const OFFSET_LOGICAL_EXPRESSION_OPERATOR: usize =
+pub(crate) const OFFSET_LOGICAL_EXPRESSION_SPAN: usize = offset_of!(LogicalExpression, span);
+pub(crate) const OFFSET_LOGICAL_EXPRESSION_LEFT: usize = offset_of!(LogicalExpression, left);
+pub(crate) const OFFSET_LOGICAL_EXPRESSION_OPERATOR: usize =
     offset_of!(LogicalExpression, operator);
-pub(super) const OFFSET_LOGICAL_EXPRESSION_RIGHT: usize = offset_of!(LogicalExpression, right);
+pub(crate) const OFFSET_LOGICAL_EXPRESSION_RIGHT: usize = offset_of!(LogicalExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LogicalExpressionWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct LogicalExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> LogicalExpressionWithoutLeft<'a> {
     #[inline]
@@ -2597,7 +2597,7 @@ impl<'a> LogicalExpressionWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LogicalExpressionWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct LogicalExpressionWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> LogicalExpressionWithoutRight<'a> {
     #[inline]
@@ -2615,20 +2615,20 @@ impl<'a> LogicalExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_OPERATOR) as *const LogicalOperator) }
     }
 }
-pub(super) const OFFSET_CONDITIONAL_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_SPAN: usize =
     offset_of!(ConditionalExpression, span);
-pub(super) const OFFSET_CONDITIONAL_EXPRESSION_TEST: usize =
+pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_TEST: usize =
     offset_of!(ConditionalExpression, test);
-pub(super) const OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT: usize =
+pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT: usize =
     offset_of!(ConditionalExpression, consequent);
-pub(super) const OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE: usize =
+pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE: usize =
     offset_of!(ConditionalExpression, alternate);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ConditionalExpressionWithoutTest<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ConditionalExpressionWithoutTest<'a> {
@@ -2651,8 +2651,8 @@ impl<'a> ConditionalExpressionWithoutTest<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ConditionalExpressionWithoutConsequent<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ConditionalExpressionWithoutConsequent<'a> {
@@ -2675,8 +2675,8 @@ impl<'a> ConditionalExpressionWithoutConsequent<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ConditionalExpressionWithoutAlternate<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ConditionalExpressionWithoutAlternate<'a> {
@@ -2695,18 +2695,18 @@ impl<'a> ConditionalExpressionWithoutAlternate<'a> {
         unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_SPAN: usize = offset_of!(AssignmentExpression, span);
-pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR: usize =
+pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_SPAN: usize = offset_of!(AssignmentExpression, span);
+pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR: usize =
     offset_of!(AssignmentExpression, operator);
-pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_LEFT: usize = offset_of!(AssignmentExpression, left);
-pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_RIGHT: usize =
+pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_LEFT: usize = offset_of!(AssignmentExpression, left);
+pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_RIGHT: usize =
     offset_of!(AssignmentExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentExpressionWithoutLeft<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentExpressionWithoutLeft<'a> {
@@ -2731,8 +2731,8 @@ impl<'a> AssignmentExpressionWithoutLeft<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentExpressionWithoutRight<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentExpressionWithoutRight<'a> {
@@ -2753,20 +2753,20 @@ impl<'a> AssignmentExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_LEFT) as *const AssignmentTarget<'a>) }
     }
 }
-pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN: usize =
+pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN: usize =
     offset_of!(ArrayAssignmentTarget, span);
-pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS: usize =
+pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS: usize =
     offset_of!(ArrayAssignmentTarget, elements);
-pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_REST: usize =
+pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_REST: usize =
     offset_of!(ArrayAssignmentTarget, rest);
-pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA: usize =
+pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA: usize =
     offset_of!(ArrayAssignmentTarget, trailing_comma);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrayAssignmentTargetWithoutElements<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrayAssignmentTargetWithoutElements<'a> {
@@ -2794,8 +2794,8 @@ impl<'a> ArrayAssignmentTargetWithoutElements<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrayAssignmentTargetWithoutRest<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrayAssignmentTargetWithoutRest<'a> {
@@ -2819,18 +2819,18 @@ impl<'a> ArrayAssignmentTargetWithoutRest<'a> {
         }
     }
 }
-pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN: usize =
+pub(crate) const OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN: usize =
     offset_of!(ObjectAssignmentTarget, span);
-pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES: usize =
+pub(crate) const OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES: usize =
     offset_of!(ObjectAssignmentTarget, properties);
-pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_REST: usize =
+pub(crate) const OFFSET_OBJECT_ASSIGNMENT_TARGET_REST: usize =
     offset_of!(ObjectAssignmentTarget, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ObjectAssignmentTargetWithoutProperties<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ObjectAssignmentTargetWithoutProperties<'a> {
@@ -2851,8 +2851,8 @@ impl<'a> ObjectAssignmentTargetWithoutProperties<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ObjectAssignmentTargetWithoutRest<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ObjectAssignmentTargetWithoutRest<'a> {
@@ -2869,13 +2869,13 @@ impl<'a> ObjectAssignmentTargetWithoutRest<'a> {
         }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_TARGET_REST_SPAN: usize = offset_of!(AssignmentTargetRest, span);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_REST_TARGET: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_REST_SPAN: usize = offset_of!(AssignmentTargetRest, span);
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_REST_TARGET: usize =
     offset_of!(AssignmentTargetRest, target);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentTargetRestWithoutTarget(pub(super) *const u8);
+pub struct AssignmentTargetRestWithoutTarget(pub(crate) *const u8);
 
 impl AssignmentTargetRestWithoutTarget {
     #[inline]
@@ -2883,18 +2883,18 @@ impl AssignmentTargetRestWithoutTarget {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_REST_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN: usize =
     offset_of!(AssignmentTargetWithDefault, span);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING: usize =
     offset_of!(AssignmentTargetWithDefault, binding);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT: usize =
     offset_of!(AssignmentTargetWithDefault, init);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetWithDefaultWithoutBinding<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetWithDefaultWithoutBinding<'a> {
@@ -2914,8 +2914,8 @@ impl<'a> AssignmentTargetWithDefaultWithoutBinding<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetWithDefaultWithoutInit<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetWithDefaultWithoutInit<'a> {
@@ -2932,18 +2932,18 @@ impl<'a> AssignmentTargetWithDefaultWithoutInit<'a> {
         }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN: usize =
     offset_of!(AssignmentTargetPropertyIdentifier, span);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING: usize =
     offset_of!(AssignmentTargetPropertyIdentifier, binding);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT: usize =
     offset_of!(AssignmentTargetPropertyIdentifier, init);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyIdentifierWithoutBinding<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetPropertyIdentifierWithoutBinding<'a> {
@@ -2964,8 +2964,8 @@ impl<'a> AssignmentTargetPropertyIdentifierWithoutBinding<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyIdentifierWithoutInit<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetPropertyIdentifierWithoutInit<'a> {
@@ -2982,18 +2982,18 @@ impl<'a> AssignmentTargetPropertyIdentifierWithoutInit<'a> {
         }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN: usize =
     offset_of!(AssignmentTargetPropertyProperty, span);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME: usize =
     offset_of!(AssignmentTargetPropertyProperty, name);
-pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING: usize =
+pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING: usize =
     offset_of!(AssignmentTargetPropertyProperty, binding);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyPropertyWithoutName<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetPropertyPropertyWithoutName<'a> {
@@ -3014,8 +3014,8 @@ impl<'a> AssignmentTargetPropertyPropertyWithoutName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyPropertyWithoutBinding<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AssignmentTargetPropertyPropertyWithoutBinding<'a> {
@@ -3032,13 +3032,13 @@ impl<'a> AssignmentTargetPropertyPropertyWithoutBinding<'a> {
         }
     }
 }
-pub(super) const OFFSET_SEQUENCE_EXPRESSION_SPAN: usize = offset_of!(SequenceExpression, span);
-pub(super) const OFFSET_SEQUENCE_EXPRESSION_EXPRESSIONS: usize =
+pub(crate) const OFFSET_SEQUENCE_EXPRESSION_SPAN: usize = offset_of!(SequenceExpression, span);
+pub(crate) const OFFSET_SEQUENCE_EXPRESSION_EXPRESSIONS: usize =
     offset_of!(SequenceExpression, expressions);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SequenceExpressionWithoutExpressions(pub(super) *const u8);
+pub struct SequenceExpressionWithoutExpressions(pub(crate) *const u8);
 
 impl SequenceExpressionWithoutExpressions {
     #[inline]
@@ -3046,13 +3046,13 @@ impl SequenceExpressionWithoutExpressions {
         unsafe { &*(self.0.add(OFFSET_SEQUENCE_EXPRESSION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_SUPER_SPAN: usize = offset_of!(Super, span);
-pub(super) const OFFSET_AWAIT_EXPRESSION_SPAN: usize = offset_of!(AwaitExpression, span);
-pub(super) const OFFSET_AWAIT_EXPRESSION_ARGUMENT: usize = offset_of!(AwaitExpression, argument);
+pub(crate) const OFFSET_SUPER_SPAN: usize = offset_of!(Super, span);
+pub(crate) const OFFSET_AWAIT_EXPRESSION_SPAN: usize = offset_of!(AwaitExpression, span);
+pub(crate) const OFFSET_AWAIT_EXPRESSION_ARGUMENT: usize = offset_of!(AwaitExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AwaitExpressionWithoutArgument(pub(super) *const u8);
+pub struct AwaitExpressionWithoutArgument(pub(crate) *const u8);
 
 impl AwaitExpressionWithoutArgument {
     #[inline]
@@ -3060,13 +3060,13 @@ impl AwaitExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_AWAIT_EXPRESSION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_CHAIN_EXPRESSION_SPAN: usize = offset_of!(ChainExpression, span);
-pub(super) const OFFSET_CHAIN_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_CHAIN_EXPRESSION_SPAN: usize = offset_of!(ChainExpression, span);
+pub(crate) const OFFSET_CHAIN_EXPRESSION_EXPRESSION: usize =
     offset_of!(ChainExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ChainExpressionWithoutExpression(pub(super) *const u8);
+pub struct ChainExpressionWithoutExpression(pub(crate) *const u8);
 
 impl ChainExpressionWithoutExpression {
     #[inline]
@@ -3074,14 +3074,14 @@ impl ChainExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_CHAIN_EXPRESSION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_PARENTHESIZED_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_PARENTHESIZED_EXPRESSION_SPAN: usize =
     offset_of!(ParenthesizedExpression, span);
-pub(super) const OFFSET_PARENTHESIZED_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_PARENTHESIZED_EXPRESSION_EXPRESSION: usize =
     offset_of!(ParenthesizedExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ParenthesizedExpressionWithoutExpression(pub(super) *const u8);
+pub struct ParenthesizedExpressionWithoutExpression(pub(crate) *const u8);
 
 impl ParenthesizedExpressionWithoutExpression {
     #[inline]
@@ -3089,13 +3089,13 @@ impl ParenthesizedExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_PARENTHESIZED_EXPRESSION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_DIRECTIVE_SPAN: usize = offset_of!(Directive, span);
-pub(super) const OFFSET_DIRECTIVE_EXPRESSION: usize = offset_of!(Directive, expression);
-pub(super) const OFFSET_DIRECTIVE_DIRECTIVE: usize = offset_of!(Directive, directive);
+pub(crate) const OFFSET_DIRECTIVE_SPAN: usize = offset_of!(Directive, span);
+pub(crate) const OFFSET_DIRECTIVE_EXPRESSION: usize = offset_of!(Directive, expression);
+pub(crate) const OFFSET_DIRECTIVE_DIRECTIVE: usize = offset_of!(Directive, directive);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DirectiveWithoutExpression<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct DirectiveWithoutExpression<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> DirectiveWithoutExpression<'a> {
     #[inline]
@@ -3108,14 +3108,14 @@ impl<'a> DirectiveWithoutExpression<'a> {
         unsafe { &*(self.0.add(OFFSET_DIRECTIVE_DIRECTIVE) as *const Atom<'a>) }
     }
 }
-pub(super) const OFFSET_HASHBANG_SPAN: usize = offset_of!(Hashbang, span);
-pub(super) const OFFSET_HASHBANG_VALUE: usize = offset_of!(Hashbang, value);
-pub(super) const OFFSET_BLOCK_STATEMENT_SPAN: usize = offset_of!(BlockStatement, span);
-pub(super) const OFFSET_BLOCK_STATEMENT_BODY: usize = offset_of!(BlockStatement, body);
+pub(crate) const OFFSET_HASHBANG_SPAN: usize = offset_of!(Hashbang, span);
+pub(crate) const OFFSET_HASHBANG_VALUE: usize = offset_of!(Hashbang, value);
+pub(crate) const OFFSET_BLOCK_STATEMENT_SPAN: usize = offset_of!(BlockStatement, span);
+pub(crate) const OFFSET_BLOCK_STATEMENT_BODY: usize = offset_of!(BlockStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BlockStatementWithoutBody(pub(super) *const u8);
+pub struct BlockStatementWithoutBody(pub(crate) *const u8);
 
 impl BlockStatementWithoutBody {
     #[inline]
@@ -3123,18 +3123,18 @@ impl BlockStatementWithoutBody {
         unsafe { &*(self.0.add(OFFSET_BLOCK_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_VARIABLE_DECLARATION_SPAN: usize = offset_of!(VariableDeclaration, span);
-pub(super) const OFFSET_VARIABLE_DECLARATION_KIND: usize = offset_of!(VariableDeclaration, kind);
-pub(super) const OFFSET_VARIABLE_DECLARATION_DECLARATIONS: usize =
+pub(crate) const OFFSET_VARIABLE_DECLARATION_SPAN: usize = offset_of!(VariableDeclaration, span);
+pub(crate) const OFFSET_VARIABLE_DECLARATION_KIND: usize = offset_of!(VariableDeclaration, kind);
+pub(crate) const OFFSET_VARIABLE_DECLARATION_DECLARATIONS: usize =
     offset_of!(VariableDeclaration, declarations);
-pub(super) const OFFSET_VARIABLE_DECLARATION_MODIFIERS: usize =
+pub(crate) const OFFSET_VARIABLE_DECLARATION_MODIFIERS: usize =
     offset_of!(VariableDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct VariableDeclarationWithoutDeclarations<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> VariableDeclarationWithoutDeclarations<'a> {
@@ -3155,16 +3155,16 @@ impl<'a> VariableDeclarationWithoutDeclarations<'a> {
         unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
-pub(super) const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
-pub(super) const OFFSET_VARIABLE_DECLARATOR_ID: usize = offset_of!(VariableDeclarator, id);
-pub(super) const OFFSET_VARIABLE_DECLARATOR_INIT: usize = offset_of!(VariableDeclarator, init);
-pub(super) const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize =
+pub(crate) const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
+pub(crate) const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
+pub(crate) const OFFSET_VARIABLE_DECLARATOR_ID: usize = offset_of!(VariableDeclarator, id);
+pub(crate) const OFFSET_VARIABLE_DECLARATOR_INIT: usize = offset_of!(VariableDeclarator, init);
+pub(crate) const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize =
     offset_of!(VariableDeclarator, definite);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct VariableDeclaratorWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct VariableDeclaratorWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> VariableDeclaratorWithoutId<'a> {
     #[inline]
@@ -3190,7 +3190,7 @@ impl<'a> VariableDeclaratorWithoutId<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct VariableDeclaratorWithoutInit<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct VariableDeclaratorWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> VariableDeclaratorWithoutInit<'a> {
     #[inline]
@@ -3213,14 +3213,14 @@ impl<'a> VariableDeclaratorWithoutInit<'a> {
         unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
     }
 }
-pub(super) const OFFSET_USING_DECLARATION_SPAN: usize = offset_of!(UsingDeclaration, span);
-pub(super) const OFFSET_USING_DECLARATION_IS_AWAIT: usize = offset_of!(UsingDeclaration, is_await);
-pub(super) const OFFSET_USING_DECLARATION_DECLARATIONS: usize =
+pub(crate) const OFFSET_USING_DECLARATION_SPAN: usize = offset_of!(UsingDeclaration, span);
+pub(crate) const OFFSET_USING_DECLARATION_IS_AWAIT: usize = offset_of!(UsingDeclaration, is_await);
+pub(crate) const OFFSET_USING_DECLARATION_DECLARATIONS: usize =
     offset_of!(UsingDeclaration, declarations);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UsingDeclarationWithoutDeclarations(pub(super) *const u8);
+pub struct UsingDeclarationWithoutDeclarations(pub(crate) *const u8);
 
 impl UsingDeclarationWithoutDeclarations {
     #[inline]
@@ -3233,14 +3233,14 @@ impl UsingDeclarationWithoutDeclarations {
         unsafe { &*(self.0.add(OFFSET_USING_DECLARATION_IS_AWAIT) as *const bool) }
     }
 }
-pub(super) const OFFSET_EMPTY_STATEMENT_SPAN: usize = offset_of!(EmptyStatement, span);
-pub(super) const OFFSET_EXPRESSION_STATEMENT_SPAN: usize = offset_of!(ExpressionStatement, span);
-pub(super) const OFFSET_EXPRESSION_STATEMENT_EXPRESSION: usize =
+pub(crate) const OFFSET_EMPTY_STATEMENT_SPAN: usize = offset_of!(EmptyStatement, span);
+pub(crate) const OFFSET_EXPRESSION_STATEMENT_SPAN: usize = offset_of!(ExpressionStatement, span);
+pub(crate) const OFFSET_EXPRESSION_STATEMENT_EXPRESSION: usize =
     offset_of!(ExpressionStatement, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExpressionStatementWithoutExpression(pub(super) *const u8);
+pub struct ExpressionStatementWithoutExpression(pub(crate) *const u8);
 
 impl ExpressionStatementWithoutExpression {
     #[inline]
@@ -3248,14 +3248,14 @@ impl ExpressionStatementWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_EXPRESSION_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_IF_STATEMENT_SPAN: usize = offset_of!(IfStatement, span);
-pub(super) const OFFSET_IF_STATEMENT_TEST: usize = offset_of!(IfStatement, test);
-pub(super) const OFFSET_IF_STATEMENT_CONSEQUENT: usize = offset_of!(IfStatement, consequent);
-pub(super) const OFFSET_IF_STATEMENT_ALTERNATE: usize = offset_of!(IfStatement, alternate);
+pub(crate) const OFFSET_IF_STATEMENT_SPAN: usize = offset_of!(IfStatement, span);
+pub(crate) const OFFSET_IF_STATEMENT_TEST: usize = offset_of!(IfStatement, test);
+pub(crate) const OFFSET_IF_STATEMENT_CONSEQUENT: usize = offset_of!(IfStatement, consequent);
+pub(crate) const OFFSET_IF_STATEMENT_ALTERNATE: usize = offset_of!(IfStatement, alternate);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutTest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct IfStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> IfStatementWithoutTest<'a> {
     #[inline]
@@ -3276,7 +3276,7 @@ impl<'a> IfStatementWithoutTest<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutConsequent<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct IfStatementWithoutConsequent<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> IfStatementWithoutConsequent<'a> {
     #[inline]
@@ -3297,7 +3297,7 @@ impl<'a> IfStatementWithoutConsequent<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutAlternate<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct IfStatementWithoutAlternate<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> IfStatementWithoutAlternate<'a> {
     #[inline]
@@ -3315,13 +3315,13 @@ impl<'a> IfStatementWithoutAlternate<'a> {
         unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>) }
     }
 }
-pub(super) const OFFSET_DO_WHILE_STATEMENT_SPAN: usize = offset_of!(DoWhileStatement, span);
-pub(super) const OFFSET_DO_WHILE_STATEMENT_BODY: usize = offset_of!(DoWhileStatement, body);
-pub(super) const OFFSET_DO_WHILE_STATEMENT_TEST: usize = offset_of!(DoWhileStatement, test);
+pub(crate) const OFFSET_DO_WHILE_STATEMENT_SPAN: usize = offset_of!(DoWhileStatement, span);
+pub(crate) const OFFSET_DO_WHILE_STATEMENT_BODY: usize = offset_of!(DoWhileStatement, body);
+pub(crate) const OFFSET_DO_WHILE_STATEMENT_TEST: usize = offset_of!(DoWhileStatement, test);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DoWhileStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct DoWhileStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> DoWhileStatementWithoutBody<'a> {
     #[inline]
@@ -3337,7 +3337,7 @@ impl<'a> DoWhileStatementWithoutBody<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DoWhileStatementWithoutTest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct DoWhileStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> DoWhileStatementWithoutTest<'a> {
     #[inline]
@@ -3350,13 +3350,13 @@ impl<'a> DoWhileStatementWithoutTest<'a> {
         unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
-pub(super) const OFFSET_WHILE_STATEMENT_SPAN: usize = offset_of!(WhileStatement, span);
-pub(super) const OFFSET_WHILE_STATEMENT_TEST: usize = offset_of!(WhileStatement, test);
-pub(super) const OFFSET_WHILE_STATEMENT_BODY: usize = offset_of!(WhileStatement, body);
+pub(crate) const OFFSET_WHILE_STATEMENT_SPAN: usize = offset_of!(WhileStatement, span);
+pub(crate) const OFFSET_WHILE_STATEMENT_TEST: usize = offset_of!(WhileStatement, test);
+pub(crate) const OFFSET_WHILE_STATEMENT_BODY: usize = offset_of!(WhileStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WhileStatementWithoutTest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct WhileStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> WhileStatementWithoutTest<'a> {
     #[inline]
@@ -3372,7 +3372,7 @@ impl<'a> WhileStatementWithoutTest<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WhileStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct WhileStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> WhileStatementWithoutBody<'a> {
     #[inline]
@@ -3385,15 +3385,15 @@ impl<'a> WhileStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_TEST) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_FOR_STATEMENT_SPAN: usize = offset_of!(ForStatement, span);
-pub(super) const OFFSET_FOR_STATEMENT_INIT: usize = offset_of!(ForStatement, init);
-pub(super) const OFFSET_FOR_STATEMENT_TEST: usize = offset_of!(ForStatement, test);
-pub(super) const OFFSET_FOR_STATEMENT_UPDATE: usize = offset_of!(ForStatement, update);
-pub(super) const OFFSET_FOR_STATEMENT_BODY: usize = offset_of!(ForStatement, body);
+pub(crate) const OFFSET_FOR_STATEMENT_SPAN: usize = offset_of!(ForStatement, span);
+pub(crate) const OFFSET_FOR_STATEMENT_INIT: usize = offset_of!(ForStatement, init);
+pub(crate) const OFFSET_FOR_STATEMENT_TEST: usize = offset_of!(ForStatement, test);
+pub(crate) const OFFSET_FOR_STATEMENT_UPDATE: usize = offset_of!(ForStatement, update);
+pub(crate) const OFFSET_FOR_STATEMENT_BODY: usize = offset_of!(ForStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutInit<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForStatementWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForStatementWithoutInit<'a> {
     #[inline]
@@ -3419,7 +3419,7 @@ impl<'a> ForStatementWithoutInit<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutTest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForStatementWithoutTest<'a> {
     #[inline]
@@ -3445,7 +3445,7 @@ impl<'a> ForStatementWithoutTest<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutUpdate<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForStatementWithoutUpdate<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForStatementWithoutUpdate<'a> {
     #[inline]
@@ -3471,7 +3471,7 @@ impl<'a> ForStatementWithoutUpdate<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForStatementWithoutBody<'a> {
     #[inline]
@@ -3494,14 +3494,14 @@ impl<'a> ForStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_UPDATE) as *const Option<Expression<'a>>) }
     }
 }
-pub(super) const OFFSET_FOR_IN_STATEMENT_SPAN: usize = offset_of!(ForInStatement, span);
-pub(super) const OFFSET_FOR_IN_STATEMENT_LEFT: usize = offset_of!(ForInStatement, left);
-pub(super) const OFFSET_FOR_IN_STATEMENT_RIGHT: usize = offset_of!(ForInStatement, right);
-pub(super) const OFFSET_FOR_IN_STATEMENT_BODY: usize = offset_of!(ForInStatement, body);
+pub(crate) const OFFSET_FOR_IN_STATEMENT_SPAN: usize = offset_of!(ForInStatement, span);
+pub(crate) const OFFSET_FOR_IN_STATEMENT_LEFT: usize = offset_of!(ForInStatement, left);
+pub(crate) const OFFSET_FOR_IN_STATEMENT_RIGHT: usize = offset_of!(ForInStatement, right);
+pub(crate) const OFFSET_FOR_IN_STATEMENT_BODY: usize = offset_of!(ForInStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForInStatementWithoutLeft<'a> {
     #[inline]
@@ -3522,7 +3522,7 @@ impl<'a> ForInStatementWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForInStatementWithoutRight<'a> {
     #[inline]
@@ -3543,7 +3543,7 @@ impl<'a> ForInStatementWithoutRight<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForInStatementWithoutBody<'a> {
     #[inline]
@@ -3561,15 +3561,15 @@ impl<'a> ForInStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_FOR_OF_STATEMENT_SPAN: usize = offset_of!(ForOfStatement, span);
-pub(super) const OFFSET_FOR_OF_STATEMENT_AWAIT: usize = offset_of!(ForOfStatement, r#await);
-pub(super) const OFFSET_FOR_OF_STATEMENT_LEFT: usize = offset_of!(ForOfStatement, left);
-pub(super) const OFFSET_FOR_OF_STATEMENT_RIGHT: usize = offset_of!(ForOfStatement, right);
-pub(super) const OFFSET_FOR_OF_STATEMENT_BODY: usize = offset_of!(ForOfStatement, body);
+pub(crate) const OFFSET_FOR_OF_STATEMENT_SPAN: usize = offset_of!(ForOfStatement, span);
+pub(crate) const OFFSET_FOR_OF_STATEMENT_AWAIT: usize = offset_of!(ForOfStatement, r#await);
+pub(crate) const OFFSET_FOR_OF_STATEMENT_LEFT: usize = offset_of!(ForOfStatement, left);
+pub(crate) const OFFSET_FOR_OF_STATEMENT_RIGHT: usize = offset_of!(ForOfStatement, right);
+pub(crate) const OFFSET_FOR_OF_STATEMENT_BODY: usize = offset_of!(ForOfStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForOfStatementWithoutLeft<'a> {
     #[inline]
@@ -3595,7 +3595,7 @@ impl<'a> ForOfStatementWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForOfStatementWithoutRight<'a> {
     #[inline]
@@ -3621,7 +3621,7 @@ impl<'a> ForOfStatementWithoutRight<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ForOfStatementWithoutBody<'a> {
     #[inline]
@@ -3644,12 +3644,12 @@ impl<'a> ForOfStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_CONTINUE_STATEMENT_SPAN: usize = offset_of!(ContinueStatement, span);
-pub(super) const OFFSET_CONTINUE_STATEMENT_LABEL: usize = offset_of!(ContinueStatement, label);
+pub(crate) const OFFSET_CONTINUE_STATEMENT_SPAN: usize = offset_of!(ContinueStatement, span);
+pub(crate) const OFFSET_CONTINUE_STATEMENT_LABEL: usize = offset_of!(ContinueStatement, label);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ContinueStatementWithoutLabel(pub(super) *const u8);
+pub struct ContinueStatementWithoutLabel(pub(crate) *const u8);
 
 impl ContinueStatementWithoutLabel {
     #[inline]
@@ -3657,12 +3657,12 @@ impl ContinueStatementWithoutLabel {
         unsafe { &*(self.0.add(OFFSET_CONTINUE_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_BREAK_STATEMENT_SPAN: usize = offset_of!(BreakStatement, span);
-pub(super) const OFFSET_BREAK_STATEMENT_LABEL: usize = offset_of!(BreakStatement, label);
+pub(crate) const OFFSET_BREAK_STATEMENT_SPAN: usize = offset_of!(BreakStatement, span);
+pub(crate) const OFFSET_BREAK_STATEMENT_LABEL: usize = offset_of!(BreakStatement, label);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BreakStatementWithoutLabel(pub(super) *const u8);
+pub struct BreakStatementWithoutLabel(pub(crate) *const u8);
 
 impl BreakStatementWithoutLabel {
     #[inline]
@@ -3670,12 +3670,12 @@ impl BreakStatementWithoutLabel {
         unsafe { &*(self.0.add(OFFSET_BREAK_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_RETURN_STATEMENT_SPAN: usize = offset_of!(ReturnStatement, span);
-pub(super) const OFFSET_RETURN_STATEMENT_ARGUMENT: usize = offset_of!(ReturnStatement, argument);
+pub(crate) const OFFSET_RETURN_STATEMENT_SPAN: usize = offset_of!(ReturnStatement, span);
+pub(crate) const OFFSET_RETURN_STATEMENT_ARGUMENT: usize = offset_of!(ReturnStatement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ReturnStatementWithoutArgument(pub(super) *const u8);
+pub struct ReturnStatementWithoutArgument(pub(crate) *const u8);
 
 impl ReturnStatementWithoutArgument {
     #[inline]
@@ -3683,13 +3683,13 @@ impl ReturnStatementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_RETURN_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_WITH_STATEMENT_SPAN: usize = offset_of!(WithStatement, span);
-pub(super) const OFFSET_WITH_STATEMENT_OBJECT: usize = offset_of!(WithStatement, object);
-pub(super) const OFFSET_WITH_STATEMENT_BODY: usize = offset_of!(WithStatement, body);
+pub(crate) const OFFSET_WITH_STATEMENT_SPAN: usize = offset_of!(WithStatement, span);
+pub(crate) const OFFSET_WITH_STATEMENT_OBJECT: usize = offset_of!(WithStatement, object);
+pub(crate) const OFFSET_WITH_STATEMENT_BODY: usize = offset_of!(WithStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithStatementWithoutObject<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct WithStatementWithoutObject<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> WithStatementWithoutObject<'a> {
     #[inline]
@@ -3705,7 +3705,7 @@ impl<'a> WithStatementWithoutObject<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct WithStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> WithStatementWithoutBody<'a> {
     #[inline]
@@ -3718,16 +3718,16 @@ impl<'a> WithStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_OBJECT) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_SWITCH_STATEMENT_SPAN: usize = offset_of!(SwitchStatement, span);
-pub(super) const OFFSET_SWITCH_STATEMENT_DISCRIMINANT: usize =
+pub(crate) const OFFSET_SWITCH_STATEMENT_SPAN: usize = offset_of!(SwitchStatement, span);
+pub(crate) const OFFSET_SWITCH_STATEMENT_DISCRIMINANT: usize =
     offset_of!(SwitchStatement, discriminant);
-pub(super) const OFFSET_SWITCH_STATEMENT_CASES: usize = offset_of!(SwitchStatement, cases);
+pub(crate) const OFFSET_SWITCH_STATEMENT_CASES: usize = offset_of!(SwitchStatement, cases);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct SwitchStatementWithoutDiscriminant<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> SwitchStatementWithoutDiscriminant<'a> {
@@ -3744,7 +3744,7 @@ impl<'a> SwitchStatementWithoutDiscriminant<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchStatementWithoutCases<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct SwitchStatementWithoutCases<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> SwitchStatementWithoutCases<'a> {
     #[inline]
@@ -3757,13 +3757,13 @@ impl<'a> SwitchStatementWithoutCases<'a> {
         unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_DISCRIMINANT) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_SWITCH_CASE_SPAN: usize = offset_of!(SwitchCase, span);
-pub(super) const OFFSET_SWITCH_CASE_TEST: usize = offset_of!(SwitchCase, test);
-pub(super) const OFFSET_SWITCH_CASE_CONSEQUENT: usize = offset_of!(SwitchCase, consequent);
+pub(crate) const OFFSET_SWITCH_CASE_SPAN: usize = offset_of!(SwitchCase, span);
+pub(crate) const OFFSET_SWITCH_CASE_TEST: usize = offset_of!(SwitchCase, test);
+pub(crate) const OFFSET_SWITCH_CASE_CONSEQUENT: usize = offset_of!(SwitchCase, consequent);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchCaseWithoutTest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct SwitchCaseWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> SwitchCaseWithoutTest<'a> {
     #[inline]
@@ -3779,7 +3779,7 @@ impl<'a> SwitchCaseWithoutTest<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchCaseWithoutConsequent<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct SwitchCaseWithoutConsequent<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> SwitchCaseWithoutConsequent<'a> {
     #[inline]
@@ -3792,13 +3792,13 @@ impl<'a> SwitchCaseWithoutConsequent<'a> {
         unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_TEST) as *const Option<Expression<'a>>) }
     }
 }
-pub(super) const OFFSET_LABELED_STATEMENT_SPAN: usize = offset_of!(LabeledStatement, span);
-pub(super) const OFFSET_LABELED_STATEMENT_LABEL: usize = offset_of!(LabeledStatement, label);
-pub(super) const OFFSET_LABELED_STATEMENT_BODY: usize = offset_of!(LabeledStatement, body);
+pub(crate) const OFFSET_LABELED_STATEMENT_SPAN: usize = offset_of!(LabeledStatement, span);
+pub(crate) const OFFSET_LABELED_STATEMENT_LABEL: usize = offset_of!(LabeledStatement, label);
+pub(crate) const OFFSET_LABELED_STATEMENT_BODY: usize = offset_of!(LabeledStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LabeledStatementWithoutLabel<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct LabeledStatementWithoutLabel<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> LabeledStatementWithoutLabel<'a> {
     #[inline]
@@ -3814,7 +3814,7 @@ impl<'a> LabeledStatementWithoutLabel<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LabeledStatementWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct LabeledStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> LabeledStatementWithoutBody<'a> {
     #[inline]
@@ -3827,12 +3827,12 @@ impl<'a> LabeledStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_LABEL) as *const LabelIdentifier<'a>) }
     }
 }
-pub(super) const OFFSET_THROW_STATEMENT_SPAN: usize = offset_of!(ThrowStatement, span);
-pub(super) const OFFSET_THROW_STATEMENT_ARGUMENT: usize = offset_of!(ThrowStatement, argument);
+pub(crate) const OFFSET_THROW_STATEMENT_SPAN: usize = offset_of!(ThrowStatement, span);
+pub(crate) const OFFSET_THROW_STATEMENT_ARGUMENT: usize = offset_of!(ThrowStatement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ThrowStatementWithoutArgument(pub(super) *const u8);
+pub struct ThrowStatementWithoutArgument(pub(crate) *const u8);
 
 impl ThrowStatementWithoutArgument {
     #[inline]
@@ -3840,14 +3840,14 @@ impl ThrowStatementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_THROW_STATEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TRY_STATEMENT_SPAN: usize = offset_of!(TryStatement, span);
-pub(super) const OFFSET_TRY_STATEMENT_BLOCK: usize = offset_of!(TryStatement, block);
-pub(super) const OFFSET_TRY_STATEMENT_HANDLER: usize = offset_of!(TryStatement, handler);
-pub(super) const OFFSET_TRY_STATEMENT_FINALIZER: usize = offset_of!(TryStatement, finalizer);
+pub(crate) const OFFSET_TRY_STATEMENT_SPAN: usize = offset_of!(TryStatement, span);
+pub(crate) const OFFSET_TRY_STATEMENT_BLOCK: usize = offset_of!(TryStatement, block);
+pub(crate) const OFFSET_TRY_STATEMENT_HANDLER: usize = offset_of!(TryStatement, handler);
+pub(crate) const OFFSET_TRY_STATEMENT_FINALIZER: usize = offset_of!(TryStatement, finalizer);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutBlock<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TryStatementWithoutBlock<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TryStatementWithoutBlock<'a> {
     #[inline]
@@ -3873,7 +3873,7 @@ impl<'a> TryStatementWithoutBlock<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutHandler<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TryStatementWithoutHandler<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TryStatementWithoutHandler<'a> {
     #[inline]
@@ -3897,7 +3897,7 @@ impl<'a> TryStatementWithoutHandler<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutFinalizer<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TryStatementWithoutFinalizer<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TryStatementWithoutFinalizer<'a> {
     #[inline]
@@ -3917,13 +3917,13 @@ impl<'a> TryStatementWithoutFinalizer<'a> {
         }
     }
 }
-pub(super) const OFFSET_CATCH_CLAUSE_SPAN: usize = offset_of!(CatchClause, span);
-pub(super) const OFFSET_CATCH_CLAUSE_PARAM: usize = offset_of!(CatchClause, param);
-pub(super) const OFFSET_CATCH_CLAUSE_BODY: usize = offset_of!(CatchClause, body);
+pub(crate) const OFFSET_CATCH_CLAUSE_SPAN: usize = offset_of!(CatchClause, span);
+pub(crate) const OFFSET_CATCH_CLAUSE_PARAM: usize = offset_of!(CatchClause, param);
+pub(crate) const OFFSET_CATCH_CLAUSE_BODY: usize = offset_of!(CatchClause, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchClauseWithoutParam<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct CatchClauseWithoutParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> CatchClauseWithoutParam<'a> {
     #[inline]
@@ -3939,7 +3939,7 @@ impl<'a> CatchClauseWithoutParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchClauseWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct CatchClauseWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> CatchClauseWithoutBody<'a> {
     #[inline]
@@ -3952,12 +3952,12 @@ impl<'a> CatchClauseWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_PARAM) as *const Option<CatchParameter<'a>>) }
     }
 }
-pub(super) const OFFSET_CATCH_PARAMETER_SPAN: usize = offset_of!(CatchParameter, span);
-pub(super) const OFFSET_CATCH_PARAMETER_PATTERN: usize = offset_of!(CatchParameter, pattern);
+pub(crate) const OFFSET_CATCH_PARAMETER_SPAN: usize = offset_of!(CatchParameter, span);
+pub(crate) const OFFSET_CATCH_PARAMETER_PATTERN: usize = offset_of!(CatchParameter, pattern);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchParameterWithoutPattern(pub(super) *const u8);
+pub struct CatchParameterWithoutPattern(pub(crate) *const u8);
 
 impl CatchParameterWithoutPattern {
     #[inline]
@@ -3965,15 +3965,15 @@ impl CatchParameterWithoutPattern {
         unsafe { &*(self.0.add(OFFSET_CATCH_PARAMETER_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_DEBUGGER_STATEMENT_SPAN: usize = offset_of!(DebuggerStatement, span);
-pub(super) const OFFSET_BINDING_PATTERN_KIND: usize = offset_of!(BindingPattern, kind);
-pub(super) const OFFSET_BINDING_PATTERN_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_DEBUGGER_STATEMENT_SPAN: usize = offset_of!(DebuggerStatement, span);
+pub(crate) const OFFSET_BINDING_PATTERN_KIND: usize = offset_of!(BindingPattern, kind);
+pub(crate) const OFFSET_BINDING_PATTERN_TYPE_ANNOTATION: usize =
     offset_of!(BindingPattern, type_annotation);
-pub(super) const OFFSET_BINDING_PATTERN_OPTIONAL: usize = offset_of!(BindingPattern, optional);
+pub(crate) const OFFSET_BINDING_PATTERN_OPTIONAL: usize = offset_of!(BindingPattern, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPatternWithoutKind<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct BindingPatternWithoutKind<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> BindingPatternWithoutKind<'a> {
     #[inline]
@@ -3993,8 +3993,8 @@ impl<'a> BindingPatternWithoutKind<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct BindingPatternWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> BindingPatternWithoutTypeAnnotation<'a> {
@@ -4008,13 +4008,13 @@ impl<'a> BindingPatternWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_ASSIGNMENT_PATTERN_SPAN: usize = offset_of!(AssignmentPattern, span);
-pub(super) const OFFSET_ASSIGNMENT_PATTERN_LEFT: usize = offset_of!(AssignmentPattern, left);
-pub(super) const OFFSET_ASSIGNMENT_PATTERN_RIGHT: usize = offset_of!(AssignmentPattern, right);
+pub(crate) const OFFSET_ASSIGNMENT_PATTERN_SPAN: usize = offset_of!(AssignmentPattern, span);
+pub(crate) const OFFSET_ASSIGNMENT_PATTERN_LEFT: usize = offset_of!(AssignmentPattern, left);
+pub(crate) const OFFSET_ASSIGNMENT_PATTERN_RIGHT: usize = offset_of!(AssignmentPattern, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentPatternWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct AssignmentPatternWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> AssignmentPatternWithoutLeft<'a> {
     #[inline]
@@ -4030,7 +4030,7 @@ impl<'a> AssignmentPatternWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentPatternWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct AssignmentPatternWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> AssignmentPatternWithoutRight<'a> {
     #[inline]
@@ -4043,13 +4043,13 @@ impl<'a> AssignmentPatternWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_LEFT) as *const BindingPattern<'a>) }
     }
 }
-pub(super) const OFFSET_OBJECT_PATTERN_SPAN: usize = offset_of!(ObjectPattern, span);
-pub(super) const OFFSET_OBJECT_PATTERN_PROPERTIES: usize = offset_of!(ObjectPattern, properties);
-pub(super) const OFFSET_OBJECT_PATTERN_REST: usize = offset_of!(ObjectPattern, rest);
+pub(crate) const OFFSET_OBJECT_PATTERN_SPAN: usize = offset_of!(ObjectPattern, span);
+pub(crate) const OFFSET_OBJECT_PATTERN_PROPERTIES: usize = offset_of!(ObjectPattern, properties);
+pub(crate) const OFFSET_OBJECT_PATTERN_REST: usize = offset_of!(ObjectPattern, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPatternWithoutProperties<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ObjectPatternWithoutProperties<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ObjectPatternWithoutProperties<'a> {
     #[inline]
@@ -4068,7 +4068,7 @@ impl<'a> ObjectPatternWithoutProperties<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPatternWithoutRest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ObjectPatternWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ObjectPatternWithoutRest<'a> {
     #[inline]
@@ -4083,15 +4083,15 @@ impl<'a> ObjectPatternWithoutRest<'a> {
         }
     }
 }
-pub(super) const OFFSET_BINDING_PROPERTY_SPAN: usize = offset_of!(BindingProperty, span);
-pub(super) const OFFSET_BINDING_PROPERTY_KEY: usize = offset_of!(BindingProperty, key);
-pub(super) const OFFSET_BINDING_PROPERTY_VALUE: usize = offset_of!(BindingProperty, value);
-pub(super) const OFFSET_BINDING_PROPERTY_SHORTHAND: usize = offset_of!(BindingProperty, shorthand);
-pub(super) const OFFSET_BINDING_PROPERTY_COMPUTED: usize = offset_of!(BindingProperty, computed);
+pub(crate) const OFFSET_BINDING_PROPERTY_SPAN: usize = offset_of!(BindingProperty, span);
+pub(crate) const OFFSET_BINDING_PROPERTY_KEY: usize = offset_of!(BindingProperty, key);
+pub(crate) const OFFSET_BINDING_PROPERTY_VALUE: usize = offset_of!(BindingProperty, value);
+pub(crate) const OFFSET_BINDING_PROPERTY_SHORTHAND: usize = offset_of!(BindingProperty, shorthand);
+pub(crate) const OFFSET_BINDING_PROPERTY_COMPUTED: usize = offset_of!(BindingProperty, computed);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPropertyWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct BindingPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> BindingPropertyWithoutKey<'a> {
     #[inline]
@@ -4117,7 +4117,7 @@ impl<'a> BindingPropertyWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPropertyWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct BindingPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> BindingPropertyWithoutValue<'a> {
     #[inline]
@@ -4140,13 +4140,13 @@ impl<'a> BindingPropertyWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
     }
 }
-pub(super) const OFFSET_ARRAY_PATTERN_SPAN: usize = offset_of!(ArrayPattern, span);
-pub(super) const OFFSET_ARRAY_PATTERN_ELEMENTS: usize = offset_of!(ArrayPattern, elements);
-pub(super) const OFFSET_ARRAY_PATTERN_REST: usize = offset_of!(ArrayPattern, rest);
+pub(crate) const OFFSET_ARRAY_PATTERN_SPAN: usize = offset_of!(ArrayPattern, span);
+pub(crate) const OFFSET_ARRAY_PATTERN_ELEMENTS: usize = offset_of!(ArrayPattern, elements);
+pub(crate) const OFFSET_ARRAY_PATTERN_REST: usize = offset_of!(ArrayPattern, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayPatternWithoutElements<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ArrayPatternWithoutElements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ArrayPatternWithoutElements<'a> {
     #[inline]
@@ -4165,7 +4165,7 @@ impl<'a> ArrayPatternWithoutElements<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayPatternWithoutRest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ArrayPatternWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ArrayPatternWithoutRest<'a> {
     #[inline]
@@ -4181,13 +4181,13 @@ impl<'a> ArrayPatternWithoutRest<'a> {
         }
     }
 }
-pub(super) const OFFSET_BINDING_REST_ELEMENT_SPAN: usize = offset_of!(BindingRestElement, span);
-pub(super) const OFFSET_BINDING_REST_ELEMENT_ARGUMENT: usize =
+pub(crate) const OFFSET_BINDING_REST_ELEMENT_SPAN: usize = offset_of!(BindingRestElement, span);
+pub(crate) const OFFSET_BINDING_REST_ELEMENT_ARGUMENT: usize =
     offset_of!(BindingRestElement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingRestElementWithoutArgument(pub(super) *const u8);
+pub struct BindingRestElementWithoutArgument(pub(crate) *const u8);
 
 impl BindingRestElementWithoutArgument {
     #[inline]
@@ -4195,21 +4195,21 @@ impl BindingRestElementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_BINDING_REST_ELEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
-pub(super) const OFFSET_FUNCTION_SPAN: usize = offset_of!(Function, span);
-pub(super) const OFFSET_FUNCTION_ID: usize = offset_of!(Function, id);
-pub(super) const OFFSET_FUNCTION_GENERATOR: usize = offset_of!(Function, generator);
-pub(super) const OFFSET_FUNCTION_ASYNC: usize = offset_of!(Function, r#async);
-pub(super) const OFFSET_FUNCTION_THIS_PARAM: usize = offset_of!(Function, this_param);
-pub(super) const OFFSET_FUNCTION_PARAMS: usize = offset_of!(Function, params);
-pub(super) const OFFSET_FUNCTION_BODY: usize = offset_of!(Function, body);
-pub(super) const OFFSET_FUNCTION_TYPE_PARAMETERS: usize = offset_of!(Function, type_parameters);
-pub(super) const OFFSET_FUNCTION_RETURN_TYPE: usize = offset_of!(Function, return_type);
-pub(super) const OFFSET_FUNCTION_MODIFIERS: usize = offset_of!(Function, modifiers);
+pub(crate) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
+pub(crate) const OFFSET_FUNCTION_SPAN: usize = offset_of!(Function, span);
+pub(crate) const OFFSET_FUNCTION_ID: usize = offset_of!(Function, id);
+pub(crate) const OFFSET_FUNCTION_GENERATOR: usize = offset_of!(Function, generator);
+pub(crate) const OFFSET_FUNCTION_ASYNC: usize = offset_of!(Function, r#async);
+pub(crate) const OFFSET_FUNCTION_THIS_PARAM: usize = offset_of!(Function, this_param);
+pub(crate) const OFFSET_FUNCTION_PARAMS: usize = offset_of!(Function, params);
+pub(crate) const OFFSET_FUNCTION_BODY: usize = offset_of!(Function, body);
+pub(crate) const OFFSET_FUNCTION_TYPE_PARAMETERS: usize = offset_of!(Function, type_parameters);
+pub(crate) const OFFSET_FUNCTION_RETURN_TYPE: usize = offset_of!(Function, return_type);
+pub(crate) const OFFSET_FUNCTION_MODIFIERS: usize = offset_of!(Function, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutId<'a> {
     #[inline]
@@ -4271,7 +4271,7 @@ impl<'a> FunctionWithoutId<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutThisParam<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutThisParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutThisParam<'a> {
     #[inline]
@@ -4333,7 +4333,7 @@ impl<'a> FunctionWithoutThisParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutParams<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutParams<'a> {
     #[inline]
@@ -4395,7 +4395,7 @@ impl<'a> FunctionWithoutParams<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutBody<'a> {
     #[inline]
@@ -4457,7 +4457,7 @@ impl<'a> FunctionWithoutBody<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutTypeParameters<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutTypeParameters<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutTypeParameters<'a> {
     #[inline]
@@ -4516,7 +4516,7 @@ impl<'a> FunctionWithoutTypeParameters<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutReturnType<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionWithoutReturnType<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionWithoutReturnType<'a> {
     #[inline]
@@ -4572,14 +4572,14 @@ impl<'a> FunctionWithoutReturnType<'a> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_FORMAL_PARAMETERS_SPAN: usize = offset_of!(FormalParameters, span);
-pub(super) const OFFSET_FORMAL_PARAMETERS_KIND: usize = offset_of!(FormalParameters, kind);
-pub(super) const OFFSET_FORMAL_PARAMETERS_ITEMS: usize = offset_of!(FormalParameters, items);
-pub(super) const OFFSET_FORMAL_PARAMETERS_REST: usize = offset_of!(FormalParameters, rest);
+pub(crate) const OFFSET_FORMAL_PARAMETERS_SPAN: usize = offset_of!(FormalParameters, span);
+pub(crate) const OFFSET_FORMAL_PARAMETERS_KIND: usize = offset_of!(FormalParameters, kind);
+pub(crate) const OFFSET_FORMAL_PARAMETERS_ITEMS: usize = offset_of!(FormalParameters, items);
+pub(crate) const OFFSET_FORMAL_PARAMETERS_REST: usize = offset_of!(FormalParameters, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParametersWithoutItems<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FormalParametersWithoutItems<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FormalParametersWithoutItems<'a> {
     #[inline]
@@ -4603,7 +4603,7 @@ impl<'a> FormalParametersWithoutItems<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParametersWithoutRest<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FormalParametersWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FormalParametersWithoutRest<'a> {
     #[inline]
@@ -4623,18 +4623,18 @@ impl<'a> FormalParametersWithoutRest<'a> {
         }
     }
 }
-pub(super) const OFFSET_FORMAL_PARAMETER_SPAN: usize = offset_of!(FormalParameter, span);
-pub(super) const OFFSET_FORMAL_PARAMETER_PATTERN: usize = offset_of!(FormalParameter, pattern);
-pub(super) const OFFSET_FORMAL_PARAMETER_ACCESSIBILITY: usize =
+pub(crate) const OFFSET_FORMAL_PARAMETER_SPAN: usize = offset_of!(FormalParameter, span);
+pub(crate) const OFFSET_FORMAL_PARAMETER_PATTERN: usize = offset_of!(FormalParameter, pattern);
+pub(crate) const OFFSET_FORMAL_PARAMETER_ACCESSIBILITY: usize =
     offset_of!(FormalParameter, accessibility);
-pub(super) const OFFSET_FORMAL_PARAMETER_READONLY: usize = offset_of!(FormalParameter, readonly);
-pub(super) const OFFSET_FORMAL_PARAMETER_OVERRIDE: usize = offset_of!(FormalParameter, r#override);
-pub(super) const OFFSET_FORMAL_PARAMETER_DECORATORS: usize =
+pub(crate) const OFFSET_FORMAL_PARAMETER_READONLY: usize = offset_of!(FormalParameter, readonly);
+pub(crate) const OFFSET_FORMAL_PARAMETER_OVERRIDE: usize = offset_of!(FormalParameter, r#override);
+pub(crate) const OFFSET_FORMAL_PARAMETER_DECORATORS: usize =
     offset_of!(FormalParameter, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParameterWithoutPattern<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FormalParameterWithoutPattern<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FormalParameterWithoutPattern<'a> {
     #[inline]
@@ -4670,8 +4670,8 @@ impl<'a> FormalParameterWithoutPattern<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct FormalParameterWithoutDecorators<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> FormalParameterWithoutDecorators<'a> {
@@ -4702,13 +4702,13 @@ impl<'a> FormalParameterWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
     }
 }
-pub(super) const OFFSET_FUNCTION_BODY_SPAN: usize = offset_of!(FunctionBody, span);
-pub(super) const OFFSET_FUNCTION_BODY_DIRECTIVES: usize = offset_of!(FunctionBody, directives);
-pub(super) const OFFSET_FUNCTION_BODY_STATEMENTS: usize = offset_of!(FunctionBody, statements);
+pub(crate) const OFFSET_FUNCTION_BODY_SPAN: usize = offset_of!(FunctionBody, span);
+pub(crate) const OFFSET_FUNCTION_BODY_DIRECTIVES: usize = offset_of!(FunctionBody, directives);
+pub(crate) const OFFSET_FUNCTION_BODY_STATEMENTS: usize = offset_of!(FunctionBody, statements);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionBodyWithoutDirectives<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionBodyWithoutDirectives<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionBodyWithoutDirectives<'a> {
     #[inline]
@@ -4724,7 +4724,7 @@ impl<'a> FunctionBodyWithoutDirectives<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionBodyWithoutStatements<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct FunctionBodyWithoutStatements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> FunctionBodyWithoutStatements<'a> {
     #[inline]
@@ -4737,26 +4737,26 @@ impl<'a> FunctionBodyWithoutStatements<'a> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_DIRECTIVES) as *const Vec<'a, Directive<'a>>) }
     }
 }
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN: usize =
     offset_of!(ArrowFunctionExpression, span);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION: usize =
     offset_of!(ArrowFunctionExpression, expression);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC: usize =
     offset_of!(ArrowFunctionExpression, r#async);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS: usize =
     offset_of!(ArrowFunctionExpression, params);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_BODY: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_BODY: usize =
     offset_of!(ArrowFunctionExpression, body);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(ArrowFunctionExpression, type_parameters);
-pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE: usize =
+pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE: usize =
     offset_of!(ArrowFunctionExpression, return_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutParams<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
@@ -4803,8 +4803,8 @@ impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutBody<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
@@ -4851,8 +4851,8 @@ impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
@@ -4899,8 +4899,8 @@ impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
@@ -4943,13 +4943,13 @@ impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
         }
     }
 }
-pub(super) const OFFSET_YIELD_EXPRESSION_SPAN: usize = offset_of!(YieldExpression, span);
-pub(super) const OFFSET_YIELD_EXPRESSION_DELEGATE: usize = offset_of!(YieldExpression, delegate);
-pub(super) const OFFSET_YIELD_EXPRESSION_ARGUMENT: usize = offset_of!(YieldExpression, argument);
+pub(crate) const OFFSET_YIELD_EXPRESSION_SPAN: usize = offset_of!(YieldExpression, span);
+pub(crate) const OFFSET_YIELD_EXPRESSION_DELEGATE: usize = offset_of!(YieldExpression, delegate);
+pub(crate) const OFFSET_YIELD_EXPRESSION_ARGUMENT: usize = offset_of!(YieldExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct YieldExpressionWithoutArgument(pub(super) *const u8);
+pub struct YieldExpressionWithoutArgument(pub(crate) *const u8);
 
 impl YieldExpressionWithoutArgument {
     #[inline]
@@ -4962,21 +4962,21 @@ impl YieldExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_YIELD_EXPRESSION_DELEGATE) as *const bool) }
     }
 }
-pub(super) const OFFSET_CLASS_TYPE: usize = offset_of!(Class, r#type);
-pub(super) const OFFSET_CLASS_SPAN: usize = offset_of!(Class, span);
-pub(super) const OFFSET_CLASS_ID: usize = offset_of!(Class, id);
-pub(super) const OFFSET_CLASS_SUPER_CLASS: usize = offset_of!(Class, super_class);
-pub(super) const OFFSET_CLASS_BODY: usize = offset_of!(Class, body);
-pub(super) const OFFSET_CLASS_TYPE_PARAMETERS: usize = offset_of!(Class, type_parameters);
-pub(super) const OFFSET_CLASS_SUPER_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_CLASS_TYPE: usize = offset_of!(Class, r#type);
+pub(crate) const OFFSET_CLASS_SPAN: usize = offset_of!(Class, span);
+pub(crate) const OFFSET_CLASS_ID: usize = offset_of!(Class, id);
+pub(crate) const OFFSET_CLASS_SUPER_CLASS: usize = offset_of!(Class, super_class);
+pub(crate) const OFFSET_CLASS_BODY: usize = offset_of!(Class, body);
+pub(crate) const OFFSET_CLASS_TYPE_PARAMETERS: usize = offset_of!(Class, type_parameters);
+pub(crate) const OFFSET_CLASS_SUPER_TYPE_PARAMETERS: usize =
     offset_of!(Class, super_type_parameters);
-pub(super) const OFFSET_CLASS_IMPLEMENTS: usize = offset_of!(Class, implements);
-pub(super) const OFFSET_CLASS_DECORATORS: usize = offset_of!(Class, decorators);
-pub(super) const OFFSET_CLASS_MODIFIERS: usize = offset_of!(Class, modifiers);
+pub(crate) const OFFSET_CLASS_IMPLEMENTS: usize = offset_of!(Class, implements);
+pub(crate) const OFFSET_CLASS_DECORATORS: usize = offset_of!(Class, decorators);
+pub(crate) const OFFSET_CLASS_MODIFIERS: usize = offset_of!(Class, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutId<'a> {
     #[inline]
@@ -5035,7 +5035,7 @@ impl<'a> ClassWithoutId<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutSuperClass<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutSuperClass<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutSuperClass<'a> {
     #[inline]
@@ -5094,7 +5094,7 @@ impl<'a> ClassWithoutSuperClass<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutBody<'a> {
     #[inline]
@@ -5153,7 +5153,7 @@ impl<'a> ClassWithoutBody<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutTypeParameters<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutTypeParameters<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutTypeParameters<'a> {
     #[inline]
@@ -5210,8 +5210,8 @@ impl<'a> ClassWithoutTypeParameters<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ClassWithoutSuperTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ClassWithoutSuperTypeParameters<'a> {
@@ -5268,7 +5268,7 @@ impl<'a> ClassWithoutSuperTypeParameters<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutImplements<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutImplements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutImplements<'a> {
     #[inline]
@@ -5325,7 +5325,7 @@ impl<'a> ClassWithoutImplements<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutDecorators<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ClassWithoutDecorators<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ClassWithoutDecorators<'a> {
     #[inline]
@@ -5381,12 +5381,12 @@ impl<'a> ClassWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_CLASS_BODY_SPAN: usize = offset_of!(ClassBody, span);
-pub(super) const OFFSET_CLASS_BODY_BODY: usize = offset_of!(ClassBody, body);
+pub(crate) const OFFSET_CLASS_BODY_SPAN: usize = offset_of!(ClassBody, span);
+pub(crate) const OFFSET_CLASS_BODY_BODY: usize = offset_of!(ClassBody, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassBodyWithoutBody(pub(super) *const u8);
+pub struct ClassBodyWithoutBody(pub(crate) *const u8);
 
 impl ClassBodyWithoutBody {
     #[inline]
@@ -5394,24 +5394,24 @@ impl ClassBodyWithoutBody {
         unsafe { &*(self.0.add(OFFSET_CLASS_BODY_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
-pub(super) const OFFSET_METHOD_DEFINITION_SPAN: usize = offset_of!(MethodDefinition, span);
-pub(super) const OFFSET_METHOD_DEFINITION_KEY: usize = offset_of!(MethodDefinition, key);
-pub(super) const OFFSET_METHOD_DEFINITION_VALUE: usize = offset_of!(MethodDefinition, value);
-pub(super) const OFFSET_METHOD_DEFINITION_KIND: usize = offset_of!(MethodDefinition, kind);
-pub(super) const OFFSET_METHOD_DEFINITION_COMPUTED: usize = offset_of!(MethodDefinition, computed);
-pub(super) const OFFSET_METHOD_DEFINITION_STATIC: usize = offset_of!(MethodDefinition, r#static);
-pub(super) const OFFSET_METHOD_DEFINITION_OVERRIDE: usize =
+pub(crate) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
+pub(crate) const OFFSET_METHOD_DEFINITION_SPAN: usize = offset_of!(MethodDefinition, span);
+pub(crate) const OFFSET_METHOD_DEFINITION_KEY: usize = offset_of!(MethodDefinition, key);
+pub(crate) const OFFSET_METHOD_DEFINITION_VALUE: usize = offset_of!(MethodDefinition, value);
+pub(crate) const OFFSET_METHOD_DEFINITION_KIND: usize = offset_of!(MethodDefinition, kind);
+pub(crate) const OFFSET_METHOD_DEFINITION_COMPUTED: usize = offset_of!(MethodDefinition, computed);
+pub(crate) const OFFSET_METHOD_DEFINITION_STATIC: usize = offset_of!(MethodDefinition, r#static);
+pub(crate) const OFFSET_METHOD_DEFINITION_OVERRIDE: usize =
     offset_of!(MethodDefinition, r#override);
-pub(super) const OFFSET_METHOD_DEFINITION_OPTIONAL: usize = offset_of!(MethodDefinition, optional);
-pub(super) const OFFSET_METHOD_DEFINITION_ACCESSIBILITY: usize =
+pub(crate) const OFFSET_METHOD_DEFINITION_OPTIONAL: usize = offset_of!(MethodDefinition, optional);
+pub(crate) const OFFSET_METHOD_DEFINITION_ACCESSIBILITY: usize =
     offset_of!(MethodDefinition, accessibility);
-pub(super) const OFFSET_METHOD_DEFINITION_DECORATORS: usize =
+pub(crate) const OFFSET_METHOD_DEFINITION_DECORATORS: usize =
     offset_of!(MethodDefinition, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MethodDefinitionWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct MethodDefinitionWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> MethodDefinitionWithoutKey<'a> {
     #[inline]
@@ -5471,7 +5471,7 @@ impl<'a> MethodDefinitionWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MethodDefinitionWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct MethodDefinitionWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> MethodDefinitionWithoutValue<'a> {
     #[inline]
@@ -5532,8 +5532,8 @@ impl<'a> MethodDefinitionWithoutValue<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct MethodDefinitionWithoutDecorators<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> MethodDefinitionWithoutDecorators<'a> {
@@ -5589,34 +5589,34 @@ impl<'a> MethodDefinitionWithoutDecorators<'a> {
         }
     }
 }
-pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
-pub(super) const OFFSET_PROPERTY_DEFINITION_SPAN: usize = offset_of!(PropertyDefinition, span);
-pub(super) const OFFSET_PROPERTY_DEFINITION_KEY: usize = offset_of!(PropertyDefinition, key);
-pub(super) const OFFSET_PROPERTY_DEFINITION_VALUE: usize = offset_of!(PropertyDefinition, value);
-pub(super) const OFFSET_PROPERTY_DEFINITION_COMPUTED: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
+pub(crate) const OFFSET_PROPERTY_DEFINITION_SPAN: usize = offset_of!(PropertyDefinition, span);
+pub(crate) const OFFSET_PROPERTY_DEFINITION_KEY: usize = offset_of!(PropertyDefinition, key);
+pub(crate) const OFFSET_PROPERTY_DEFINITION_VALUE: usize = offset_of!(PropertyDefinition, value);
+pub(crate) const OFFSET_PROPERTY_DEFINITION_COMPUTED: usize =
     offset_of!(PropertyDefinition, computed);
-pub(super) const OFFSET_PROPERTY_DEFINITION_STATIC: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_STATIC: usize =
     offset_of!(PropertyDefinition, r#static);
-pub(super) const OFFSET_PROPERTY_DEFINITION_DECLARE: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_DECLARE: usize =
     offset_of!(PropertyDefinition, declare);
-pub(super) const OFFSET_PROPERTY_DEFINITION_OVERRIDE: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_OVERRIDE: usize =
     offset_of!(PropertyDefinition, r#override);
-pub(super) const OFFSET_PROPERTY_DEFINITION_OPTIONAL: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_OPTIONAL: usize =
     offset_of!(PropertyDefinition, optional);
-pub(super) const OFFSET_PROPERTY_DEFINITION_DEFINITE: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_DEFINITE: usize =
     offset_of!(PropertyDefinition, definite);
-pub(super) const OFFSET_PROPERTY_DEFINITION_READONLY: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_READONLY: usize =
     offset_of!(PropertyDefinition, readonly);
-pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION: usize =
     offset_of!(PropertyDefinition, type_annotation);
-pub(super) const OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY: usize =
     offset_of!(PropertyDefinition, accessibility);
-pub(super) const OFFSET_PROPERTY_DEFINITION_DECORATORS: usize =
+pub(crate) const OFFSET_PROPERTY_DEFINITION_DECORATORS: usize =
     offset_of!(PropertyDefinition, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct PropertyDefinitionWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
@@ -5695,7 +5695,7 @@ impl<'a> PropertyDefinitionWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct PropertyDefinitionWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
@@ -5775,8 +5775,8 @@ impl<'a> PropertyDefinitionWithoutValue<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct PropertyDefinitionWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
@@ -5854,8 +5854,8 @@ impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct PropertyDefinitionWithoutDecorators<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> PropertyDefinitionWithoutDecorators<'a> {
@@ -5930,14 +5930,14 @@ impl<'a> PropertyDefinitionWithoutDecorators<'a> {
         }
     }
 }
-pub(super) const OFFSET_PRIVATE_IDENTIFIER_SPAN: usize = offset_of!(PrivateIdentifier, span);
-pub(super) const OFFSET_PRIVATE_IDENTIFIER_NAME: usize = offset_of!(PrivateIdentifier, name);
-pub(super) const OFFSET_STATIC_BLOCK_SPAN: usize = offset_of!(StaticBlock, span);
-pub(super) const OFFSET_STATIC_BLOCK_BODY: usize = offset_of!(StaticBlock, body);
+pub(crate) const OFFSET_PRIVATE_IDENTIFIER_SPAN: usize = offset_of!(PrivateIdentifier, span);
+pub(crate) const OFFSET_PRIVATE_IDENTIFIER_NAME: usize = offset_of!(PrivateIdentifier, name);
+pub(crate) const OFFSET_STATIC_BLOCK_SPAN: usize = offset_of!(StaticBlock, span);
+pub(crate) const OFFSET_STATIC_BLOCK_BODY: usize = offset_of!(StaticBlock, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct StaticBlockWithoutBody(pub(super) *const u8);
+pub struct StaticBlockWithoutBody(pub(crate) *const u8);
 
 impl StaticBlockWithoutBody {
     #[inline]
@@ -5945,17 +5945,17 @@ impl StaticBlockWithoutBody {
         unsafe { &*(self.0.add(OFFSET_STATIC_BLOCK_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_ACCESSOR_PROPERTY_SPAN: usize = offset_of!(AccessorProperty, span);
-pub(super) const OFFSET_ACCESSOR_PROPERTY_KEY: usize = offset_of!(AccessorProperty, key);
-pub(super) const OFFSET_ACCESSOR_PROPERTY_VALUE: usize = offset_of!(AccessorProperty, value);
-pub(super) const OFFSET_ACCESSOR_PROPERTY_COMPUTED: usize = offset_of!(AccessorProperty, computed);
-pub(super) const OFFSET_ACCESSOR_PROPERTY_STATIC: usize = offset_of!(AccessorProperty, r#static);
-pub(super) const OFFSET_ACCESSOR_PROPERTY_DECORATORS: usize =
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_SPAN: usize = offset_of!(AccessorProperty, span);
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_KEY: usize = offset_of!(AccessorProperty, key);
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_VALUE: usize = offset_of!(AccessorProperty, value);
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_COMPUTED: usize = offset_of!(AccessorProperty, computed);
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_STATIC: usize = offset_of!(AccessorProperty, r#static);
+pub(crate) const OFFSET_ACCESSOR_PROPERTY_DECORATORS: usize =
     offset_of!(AccessorProperty, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AccessorPropertyWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct AccessorPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> AccessorPropertyWithoutKey<'a> {
     #[inline]
@@ -5988,7 +5988,7 @@ impl<'a> AccessorPropertyWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AccessorPropertyWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct AccessorPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> AccessorPropertyWithoutValue<'a> {
     #[inline]
@@ -6022,8 +6022,8 @@ impl<'a> AccessorPropertyWithoutValue<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AccessorPropertyWithoutDecorators<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> AccessorPropertyWithoutDecorators<'a> {
@@ -6052,14 +6052,14 @@ impl<'a> AccessorPropertyWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
     }
 }
-pub(super) const OFFSET_IMPORT_EXPRESSION_SPAN: usize = offset_of!(ImportExpression, span);
-pub(super) const OFFSET_IMPORT_EXPRESSION_SOURCE: usize = offset_of!(ImportExpression, source);
-pub(super) const OFFSET_IMPORT_EXPRESSION_ARGUMENTS: usize =
+pub(crate) const OFFSET_IMPORT_EXPRESSION_SPAN: usize = offset_of!(ImportExpression, span);
+pub(crate) const OFFSET_IMPORT_EXPRESSION_SOURCE: usize = offset_of!(ImportExpression, source);
+pub(crate) const OFFSET_IMPORT_EXPRESSION_ARGUMENTS: usize =
     offset_of!(ImportExpression, arguments);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportExpressionWithoutSource<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportExpressionWithoutSource<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportExpressionWithoutSource<'a> {
     #[inline]
@@ -6078,8 +6078,8 @@ impl<'a> ImportExpressionWithoutSource<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ImportExpressionWithoutArguments<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ImportExpressionWithoutArguments<'a> {
@@ -6093,20 +6093,20 @@ impl<'a> ImportExpressionWithoutArguments<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_EXPRESSION_SOURCE) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_IMPORT_DECLARATION_SPAN: usize = offset_of!(ImportDeclaration, span);
-pub(super) const OFFSET_IMPORT_DECLARATION_SPECIFIERS: usize =
+pub(crate) const OFFSET_IMPORT_DECLARATION_SPAN: usize = offset_of!(ImportDeclaration, span);
+pub(crate) const OFFSET_IMPORT_DECLARATION_SPECIFIERS: usize =
     offset_of!(ImportDeclaration, specifiers);
-pub(super) const OFFSET_IMPORT_DECLARATION_SOURCE: usize = offset_of!(ImportDeclaration, source);
-pub(super) const OFFSET_IMPORT_DECLARATION_WITH_CLAUSE: usize =
+pub(crate) const OFFSET_IMPORT_DECLARATION_SOURCE: usize = offset_of!(ImportDeclaration, source);
+pub(crate) const OFFSET_IMPORT_DECLARATION_WITH_CLAUSE: usize =
     offset_of!(ImportDeclaration, with_clause);
-pub(super) const OFFSET_IMPORT_DECLARATION_IMPORT_KIND: usize =
+pub(crate) const OFFSET_IMPORT_DECLARATION_IMPORT_KIND: usize =
     offset_of!(ImportDeclaration, import_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ImportDeclarationWithoutSpecifiers<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ImportDeclarationWithoutSpecifiers<'a> {
@@ -6137,7 +6137,7 @@ impl<'a> ImportDeclarationWithoutSpecifiers<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDeclarationWithoutSource<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportDeclarationWithoutSource<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportDeclarationWithoutSource<'a> {
     #[inline]
@@ -6171,8 +6171,8 @@ impl<'a> ImportDeclarationWithoutSource<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ImportDeclarationWithoutWithClause<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ImportDeclarationWithoutWithClause<'a> {
@@ -6201,15 +6201,15 @@ impl<'a> ImportDeclarationWithoutWithClause<'a> {
         }
     }
 }
-pub(super) const OFFSET_IMPORT_SPECIFIER_SPAN: usize = offset_of!(ImportSpecifier, span);
-pub(super) const OFFSET_IMPORT_SPECIFIER_IMPORTED: usize = offset_of!(ImportSpecifier, imported);
-pub(super) const OFFSET_IMPORT_SPECIFIER_LOCAL: usize = offset_of!(ImportSpecifier, local);
-pub(super) const OFFSET_IMPORT_SPECIFIER_IMPORT_KIND: usize =
+pub(crate) const OFFSET_IMPORT_SPECIFIER_SPAN: usize = offset_of!(ImportSpecifier, span);
+pub(crate) const OFFSET_IMPORT_SPECIFIER_IMPORTED: usize = offset_of!(ImportSpecifier, imported);
+pub(crate) const OFFSET_IMPORT_SPECIFIER_LOCAL: usize = offset_of!(ImportSpecifier, local);
+pub(crate) const OFFSET_IMPORT_SPECIFIER_IMPORT_KIND: usize =
     offset_of!(ImportSpecifier, import_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportSpecifierWithoutImported<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportSpecifierWithoutImported<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportSpecifierWithoutImported<'a> {
     #[inline]
@@ -6230,7 +6230,7 @@ impl<'a> ImportSpecifierWithoutImported<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportSpecifierWithoutLocal<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportSpecifierWithoutLocal<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportSpecifierWithoutLocal<'a> {
     #[inline]
@@ -6248,14 +6248,14 @@ impl<'a> ImportSpecifierWithoutLocal<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND) as *const ImportOrExportKind) }
     }
 }
-pub(super) const OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN: usize =
+pub(crate) const OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN: usize =
     offset_of!(ImportDefaultSpecifier, span);
-pub(super) const OFFSET_IMPORT_DEFAULT_SPECIFIER_LOCAL: usize =
+pub(crate) const OFFSET_IMPORT_DEFAULT_SPECIFIER_LOCAL: usize =
     offset_of!(ImportDefaultSpecifier, local);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDefaultSpecifierWithoutLocal(pub(super) *const u8);
+pub struct ImportDefaultSpecifierWithoutLocal(pub(crate) *const u8);
 
 impl ImportDefaultSpecifierWithoutLocal {
     #[inline]
@@ -6263,14 +6263,14 @@ impl ImportDefaultSpecifierWithoutLocal {
         unsafe { &*(self.0.add(OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN: usize =
+pub(crate) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN: usize =
     offset_of!(ImportNamespaceSpecifier, span);
-pub(super) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_LOCAL: usize =
+pub(crate) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_LOCAL: usize =
     offset_of!(ImportNamespaceSpecifier, local);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportNamespaceSpecifierWithoutLocal(pub(super) *const u8);
+pub struct ImportNamespaceSpecifierWithoutLocal(pub(crate) *const u8);
 
 impl ImportNamespaceSpecifierWithoutLocal {
     #[inline]
@@ -6278,16 +6278,16 @@ impl ImportNamespaceSpecifierWithoutLocal {
         unsafe { &*(self.0.add(OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_WITH_CLAUSE_SPAN: usize = offset_of!(WithClause, span);
-pub(super) const OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD: usize =
+pub(crate) const OFFSET_WITH_CLAUSE_SPAN: usize = offset_of!(WithClause, span);
+pub(crate) const OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD: usize =
     offset_of!(WithClause, attributes_keyword);
-pub(super) const OFFSET_WITH_CLAUSE_WITH_ENTRIES: usize = offset_of!(WithClause, with_entries);
+pub(crate) const OFFSET_WITH_CLAUSE_WITH_ENTRIES: usize = offset_of!(WithClause, with_entries);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct WithClauseWithoutAttributesKeyword<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> WithClauseWithoutAttributesKeyword<'a> {
@@ -6306,7 +6306,7 @@ impl<'a> WithClauseWithoutAttributesKeyword<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithClauseWithoutWithEntries<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct WithClauseWithoutWithEntries<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> WithClauseWithoutWithEntries<'a> {
     #[inline]
@@ -6321,13 +6321,13 @@ impl<'a> WithClauseWithoutWithEntries<'a> {
         }
     }
 }
-pub(super) const OFFSET_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(ImportAttribute, span);
-pub(super) const OFFSET_IMPORT_ATTRIBUTE_KEY: usize = offset_of!(ImportAttribute, key);
-pub(super) const OFFSET_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(ImportAttribute, value);
+pub(crate) const OFFSET_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(ImportAttribute, span);
+pub(crate) const OFFSET_IMPORT_ATTRIBUTE_KEY: usize = offset_of!(ImportAttribute, key);
+pub(crate) const OFFSET_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(ImportAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportAttributeWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportAttributeWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportAttributeWithoutKey<'a> {
     #[inline]
@@ -6343,7 +6343,7 @@ impl<'a> ImportAttributeWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportAttributeWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ImportAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ImportAttributeWithoutValue<'a> {
     #[inline]
@@ -6356,24 +6356,24 @@ impl<'a> ImportAttributeWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_KEY) as *const ImportAttributeKey<'a>) }
     }
 }
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_SPAN: usize =
     offset_of!(ExportNamedDeclaration, span);
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION: usize =
     offset_of!(ExportNamedDeclaration, declaration);
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS: usize =
     offset_of!(ExportNamedDeclaration, specifiers);
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SOURCE: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_SOURCE: usize =
     offset_of!(ExportNamedDeclaration, source);
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND: usize =
     offset_of!(ExportNamedDeclaration, export_kind);
-pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE: usize =
+pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE: usize =
     offset_of!(ExportNamedDeclaration, with_clause);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutDeclaration<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
@@ -6417,8 +6417,8 @@ impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutSpecifiers<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
@@ -6462,8 +6462,8 @@ impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutSource<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutSource<'a> {
@@ -6507,8 +6507,8 @@ impl<'a> ExportNamedDeclarationWithoutSource<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutWithClause<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
@@ -6548,18 +6548,18 @@ impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
         }
     }
 }
-pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN: usize =
     offset_of!(ExportDefaultDeclaration, span);
-pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION: usize =
+pub(crate) const OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION: usize =
     offset_of!(ExportDefaultDeclaration, declaration);
-pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED: usize =
+pub(crate) const OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED: usize =
     offset_of!(ExportDefaultDeclaration, exported);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportDefaultDeclarationWithoutDeclaration<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportDefaultDeclarationWithoutDeclaration<'a> {
@@ -6580,8 +6580,8 @@ impl<'a> ExportDefaultDeclarationWithoutDeclaration<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportDefaultDeclarationWithoutExported<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportDefaultDeclarationWithoutExported<'a> {
@@ -6598,21 +6598,21 @@ impl<'a> ExportDefaultDeclarationWithoutExported<'a> {
         }
     }
 }
-pub(super) const OFFSET_EXPORT_ALL_DECLARATION_SPAN: usize = offset_of!(ExportAllDeclaration, span);
-pub(super) const OFFSET_EXPORT_ALL_DECLARATION_EXPORTED: usize =
+pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_SPAN: usize = offset_of!(ExportAllDeclaration, span);
+pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_EXPORTED: usize =
     offset_of!(ExportAllDeclaration, exported);
-pub(super) const OFFSET_EXPORT_ALL_DECLARATION_SOURCE: usize =
+pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_SOURCE: usize =
     offset_of!(ExportAllDeclaration, source);
-pub(super) const OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE: usize =
+pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE: usize =
     offset_of!(ExportAllDeclaration, with_clause);
-pub(super) const OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND: usize =
+pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND: usize =
     offset_of!(ExportAllDeclaration, export_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportAllDeclarationWithoutExported<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportAllDeclarationWithoutExported<'a> {
@@ -6645,8 +6645,8 @@ impl<'a> ExportAllDeclarationWithoutExported<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportAllDeclarationWithoutSource<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportAllDeclarationWithoutSource<'a> {
@@ -6682,8 +6682,8 @@ impl<'a> ExportAllDeclarationWithoutSource<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportAllDeclarationWithoutWithClause<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> ExportAllDeclarationWithoutWithClause<'a> {
@@ -6712,15 +6712,15 @@ impl<'a> ExportAllDeclarationWithoutWithClause<'a> {
         }
     }
 }
-pub(super) const OFFSET_EXPORT_SPECIFIER_SPAN: usize = offset_of!(ExportSpecifier, span);
-pub(super) const OFFSET_EXPORT_SPECIFIER_LOCAL: usize = offset_of!(ExportSpecifier, local);
-pub(super) const OFFSET_EXPORT_SPECIFIER_EXPORTED: usize = offset_of!(ExportSpecifier, exported);
-pub(super) const OFFSET_EXPORT_SPECIFIER_EXPORT_KIND: usize =
+pub(crate) const OFFSET_EXPORT_SPECIFIER_SPAN: usize = offset_of!(ExportSpecifier, span);
+pub(crate) const OFFSET_EXPORT_SPECIFIER_LOCAL: usize = offset_of!(ExportSpecifier, local);
+pub(crate) const OFFSET_EXPORT_SPECIFIER_EXPORTED: usize = offset_of!(ExportSpecifier, exported);
+pub(crate) const OFFSET_EXPORT_SPECIFIER_EXPORT_KIND: usize =
     offset_of!(ExportSpecifier, export_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportSpecifierWithoutLocal<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ExportSpecifierWithoutLocal<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ExportSpecifierWithoutLocal<'a> {
     #[inline]
@@ -6741,7 +6741,7 @@ impl<'a> ExportSpecifierWithoutLocal<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportSpecifierWithoutExported<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct ExportSpecifierWithoutExported<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> ExportSpecifierWithoutExported<'a> {
     #[inline]
@@ -6759,18 +6759,18 @@ impl<'a> ExportSpecifierWithoutExported<'a> {
         unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND) as *const ImportOrExportKind) }
     }
 }
-pub(super) const OFFSET_JSX_ELEMENT_SPAN: usize = offset_of!(JSXElement, span);
-pub(super) const OFFSET_JSX_ELEMENT_OPENING_ELEMENT: usize =
+pub(crate) const OFFSET_JSX_ELEMENT_SPAN: usize = offset_of!(JSXElement, span);
+pub(crate) const OFFSET_JSX_ELEMENT_OPENING_ELEMENT: usize =
     offset_of!(JSXElement, opening_element);
-pub(super) const OFFSET_JSX_ELEMENT_CLOSING_ELEMENT: usize =
+pub(crate) const OFFSET_JSX_ELEMENT_CLOSING_ELEMENT: usize =
     offset_of!(JSXElement, closing_element);
-pub(super) const OFFSET_JSX_ELEMENT_CHILDREN: usize = offset_of!(JSXElement, children);
+pub(crate) const OFFSET_JSX_ELEMENT_CHILDREN: usize = offset_of!(JSXElement, children);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXElementWithoutOpeningElement<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXElementWithoutOpeningElement<'a> {
@@ -6796,8 +6796,8 @@ impl<'a> JSXElementWithoutOpeningElement<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXElementWithoutClosingElement<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXElementWithoutClosingElement<'a> {
@@ -6822,7 +6822,7 @@ impl<'a> JSXElementWithoutClosingElement<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXElementWithoutChildren<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct JSXElementWithoutChildren<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> JSXElementWithoutChildren<'a> {
     #[inline]
@@ -6846,18 +6846,18 @@ impl<'a> JSXElementWithoutChildren<'a> {
         }
     }
 }
-pub(super) const OFFSET_JSX_OPENING_ELEMENT_SPAN: usize = offset_of!(JSXOpeningElement, span);
-pub(super) const OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING: usize =
+pub(crate) const OFFSET_JSX_OPENING_ELEMENT_SPAN: usize = offset_of!(JSXOpeningElement, span);
+pub(crate) const OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING: usize =
     offset_of!(JSXOpeningElement, self_closing);
-pub(super) const OFFSET_JSX_OPENING_ELEMENT_NAME: usize = offset_of!(JSXOpeningElement, name);
-pub(super) const OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES: usize =
+pub(crate) const OFFSET_JSX_OPENING_ELEMENT_NAME: usize = offset_of!(JSXOpeningElement, name);
+pub(crate) const OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES: usize =
     offset_of!(JSXOpeningElement, attributes);
-pub(super) const OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS: usize =
     offset_of!(JSXOpeningElement, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXOpeningElementWithoutName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct JSXOpeningElementWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> JSXOpeningElementWithoutName<'a> {
     #[inline]
@@ -6890,8 +6890,8 @@ impl<'a> JSXOpeningElementWithoutName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXOpeningElementWithoutAttributes<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXOpeningElementWithoutAttributes<'a> {
@@ -6922,8 +6922,8 @@ impl<'a> JSXOpeningElementWithoutAttributes<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXOpeningElementWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXOpeningElementWithoutTypeParameters<'a> {
@@ -6950,12 +6950,12 @@ impl<'a> JSXOpeningElementWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_JSX_CLOSING_ELEMENT_SPAN: usize = offset_of!(JSXClosingElement, span);
-pub(super) const OFFSET_JSX_CLOSING_ELEMENT_NAME: usize = offset_of!(JSXClosingElement, name);
+pub(crate) const OFFSET_JSX_CLOSING_ELEMENT_SPAN: usize = offset_of!(JSXClosingElement, span);
+pub(crate) const OFFSET_JSX_CLOSING_ELEMENT_NAME: usize = offset_of!(JSXClosingElement, name);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXClosingElementWithoutName(pub(super) *const u8);
+pub struct JSXClosingElementWithoutName(pub(crate) *const u8);
 
 impl JSXClosingElementWithoutName {
     #[inline]
@@ -6963,16 +6963,16 @@ impl JSXClosingElementWithoutName {
         unsafe { &*(self.0.add(OFFSET_JSX_CLOSING_ELEMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_JSX_FRAGMENT_SPAN: usize = offset_of!(JSXFragment, span);
-pub(super) const OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT: usize =
+pub(crate) const OFFSET_JSX_FRAGMENT_SPAN: usize = offset_of!(JSXFragment, span);
+pub(crate) const OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT: usize =
     offset_of!(JSXFragment, opening_fragment);
-pub(super) const OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT: usize =
+pub(crate) const OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT: usize =
     offset_of!(JSXFragment, closing_fragment);
-pub(super) const OFFSET_JSX_FRAGMENT_CHILDREN: usize = offset_of!(JSXFragment, children);
+pub(crate) const OFFSET_JSX_FRAGMENT_CHILDREN: usize = offset_of!(JSXFragment, children);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXFragmentWithoutChildren(pub(super) *const u8);
+pub struct JSXFragmentWithoutChildren(pub(crate) *const u8);
 
 impl JSXFragmentWithoutChildren {
     #[inline]
@@ -6990,17 +6990,17 @@ impl JSXFragmentWithoutChildren {
         unsafe { &*(self.0.add(OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT) as *const JSXClosingFragment) }
     }
 }
-pub(super) const OFFSET_JSX_NAMESPACED_NAME_SPAN: usize = offset_of!(JSXNamespacedName, span);
-pub(super) const OFFSET_JSX_NAMESPACED_NAME_NAMESPACE: usize =
+pub(crate) const OFFSET_JSX_NAMESPACED_NAME_SPAN: usize = offset_of!(JSXNamespacedName, span);
+pub(crate) const OFFSET_JSX_NAMESPACED_NAME_NAMESPACE: usize =
     offset_of!(JSXNamespacedName, namespace);
-pub(super) const OFFSET_JSX_NAMESPACED_NAME_PROPERTY: usize =
+pub(crate) const OFFSET_JSX_NAMESPACED_NAME_PROPERTY: usize =
     offset_of!(JSXNamespacedName, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXNamespacedNameWithoutNamespace<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXNamespacedNameWithoutNamespace<'a> {
@@ -7018,8 +7018,8 @@ impl<'a> JSXNamespacedNameWithoutNamespace<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXNamespacedNameWithoutProperty<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXNamespacedNameWithoutProperty<'a> {
@@ -7033,17 +7033,17 @@ impl<'a> JSXNamespacedNameWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_NAMESPACE) as *const JSXIdentifier<'a>) }
     }
 }
-pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_SPAN: usize = offset_of!(JSXMemberExpression, span);
-pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_OBJECT: usize =
+pub(crate) const OFFSET_JSX_MEMBER_EXPRESSION_SPAN: usize = offset_of!(JSXMemberExpression, span);
+pub(crate) const OFFSET_JSX_MEMBER_EXPRESSION_OBJECT: usize =
     offset_of!(JSXMemberExpression, object);
-pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY: usize =
+pub(crate) const OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY: usize =
     offset_of!(JSXMemberExpression, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXMemberExpressionWithoutObject<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXMemberExpressionWithoutObject<'a> {
@@ -7061,8 +7061,8 @@ impl<'a> JSXMemberExpressionWithoutObject<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct JSXMemberExpressionWithoutProperty<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> JSXMemberExpressionWithoutProperty<'a> {
@@ -7079,14 +7079,14 @@ impl<'a> JSXMemberExpressionWithoutProperty<'a> {
         }
     }
 }
-pub(super) const OFFSET_JSX_EXPRESSION_CONTAINER_SPAN: usize =
+pub(crate) const OFFSET_JSX_EXPRESSION_CONTAINER_SPAN: usize =
     offset_of!(JSXExpressionContainer, span);
-pub(super) const OFFSET_JSX_EXPRESSION_CONTAINER_EXPRESSION: usize =
+pub(crate) const OFFSET_JSX_EXPRESSION_CONTAINER_EXPRESSION: usize =
     offset_of!(JSXExpressionContainer, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXExpressionContainerWithoutExpression(pub(super) *const u8);
+pub struct JSXExpressionContainerWithoutExpression(pub(crate) *const u8);
 
 impl JSXExpressionContainerWithoutExpression {
     #[inline]
@@ -7094,14 +7094,14 @@ impl JSXExpressionContainerWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_JSX_EXPRESSION_CONTAINER_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_JSX_EMPTY_EXPRESSION_SPAN: usize = offset_of!(JSXEmptyExpression, span);
-pub(super) const OFFSET_JSX_ATTRIBUTE_SPAN: usize = offset_of!(JSXAttribute, span);
-pub(super) const OFFSET_JSX_ATTRIBUTE_NAME: usize = offset_of!(JSXAttribute, name);
-pub(super) const OFFSET_JSX_ATTRIBUTE_VALUE: usize = offset_of!(JSXAttribute, value);
+pub(crate) const OFFSET_JSX_EMPTY_EXPRESSION_SPAN: usize = offset_of!(JSXEmptyExpression, span);
+pub(crate) const OFFSET_JSX_ATTRIBUTE_SPAN: usize = offset_of!(JSXAttribute, span);
+pub(crate) const OFFSET_JSX_ATTRIBUTE_NAME: usize = offset_of!(JSXAttribute, name);
+pub(crate) const OFFSET_JSX_ATTRIBUTE_VALUE: usize = offset_of!(JSXAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXAttributeWithoutName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct JSXAttributeWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> JSXAttributeWithoutName<'a> {
     #[inline]
@@ -7119,7 +7119,7 @@ impl<'a> JSXAttributeWithoutName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXAttributeWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct JSXAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> JSXAttributeWithoutValue<'a> {
     #[inline]
@@ -7132,13 +7132,13 @@ impl<'a> JSXAttributeWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_JSX_ATTRIBUTE_NAME) as *const JSXAttributeName<'a>) }
     }
 }
-pub(super) const OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN: usize = offset_of!(JSXSpreadAttribute, span);
-pub(super) const OFFSET_JSX_SPREAD_ATTRIBUTE_ARGUMENT: usize =
+pub(crate) const OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN: usize = offset_of!(JSXSpreadAttribute, span);
+pub(crate) const OFFSET_JSX_SPREAD_ATTRIBUTE_ARGUMENT: usize =
     offset_of!(JSXSpreadAttribute, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXSpreadAttributeWithoutArgument(pub(super) *const u8);
+pub struct JSXSpreadAttributeWithoutArgument(pub(crate) *const u8);
 
 impl JSXSpreadAttributeWithoutArgument {
     #[inline]
@@ -7146,14 +7146,14 @@ impl JSXSpreadAttributeWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_JSX_IDENTIFIER_SPAN: usize = offset_of!(JSXIdentifier, span);
-pub(super) const OFFSET_JSX_IDENTIFIER_NAME: usize = offset_of!(JSXIdentifier, name);
-pub(super) const OFFSET_JSX_SPREAD_CHILD_SPAN: usize = offset_of!(JSXSpreadChild, span);
-pub(super) const OFFSET_JSX_SPREAD_CHILD_EXPRESSION: usize = offset_of!(JSXSpreadChild, expression);
+pub(crate) const OFFSET_JSX_IDENTIFIER_SPAN: usize = offset_of!(JSXIdentifier, span);
+pub(crate) const OFFSET_JSX_IDENTIFIER_NAME: usize = offset_of!(JSXIdentifier, name);
+pub(crate) const OFFSET_JSX_SPREAD_CHILD_SPAN: usize = offset_of!(JSXSpreadChild, span);
+pub(crate) const OFFSET_JSX_SPREAD_CHILD_EXPRESSION: usize = offset_of!(JSXSpreadChild, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXSpreadChildWithoutExpression(pub(super) *const u8);
+pub struct JSXSpreadChildWithoutExpression(pub(crate) *const u8);
 
 impl JSXSpreadChildWithoutExpression {
     #[inline]
@@ -7161,31 +7161,31 @@ impl JSXSpreadChildWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_CHILD_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_JSX_TEXT_SPAN: usize = offset_of!(JSXText, span);
-pub(super) const OFFSET_JSX_TEXT_VALUE: usize = offset_of!(JSXText, value);
-pub(super) const OFFSET_BOOLEAN_LITERAL_SPAN: usize = offset_of!(BooleanLiteral, span);
-pub(super) const OFFSET_BOOLEAN_LITERAL_VALUE: usize = offset_of!(BooleanLiteral, value);
-pub(super) const OFFSET_NULL_LITERAL_SPAN: usize = offset_of!(NullLiteral, span);
-pub(super) const OFFSET_NUMERIC_LITERAL_SPAN: usize = offset_of!(NumericLiteral, span);
-pub(super) const OFFSET_NUMERIC_LITERAL_VALUE: usize = offset_of!(NumericLiteral, value);
-pub(super) const OFFSET_NUMERIC_LITERAL_RAW: usize = offset_of!(NumericLiteral, raw);
-pub(super) const OFFSET_NUMERIC_LITERAL_BASE: usize = offset_of!(NumericLiteral, base);
-pub(super) const OFFSET_BIG_INT_LITERAL_SPAN: usize = offset_of!(BigIntLiteral, span);
-pub(super) const OFFSET_BIG_INT_LITERAL_RAW: usize = offset_of!(BigIntLiteral, raw);
-pub(super) const OFFSET_BIG_INT_LITERAL_BASE: usize = offset_of!(BigIntLiteral, base);
-pub(super) const OFFSET_REG_EXP_LITERAL_SPAN: usize = offset_of!(RegExpLiteral, span);
-pub(super) const OFFSET_REG_EXP_LITERAL_VALUE: usize = offset_of!(RegExpLiteral, value);
-pub(super) const OFFSET_REG_EXP_LITERAL_REGEX: usize = offset_of!(RegExpLiteral, regex);
-pub(super) const OFFSET_STRING_LITERAL_SPAN: usize = offset_of!(StringLiteral, span);
-pub(super) const OFFSET_STRING_LITERAL_VALUE: usize = offset_of!(StringLiteral, value);
-pub(super) const OFFSET_TS_THIS_PARAMETER_SPAN: usize = offset_of!(TSThisParameter, span);
-pub(super) const OFFSET_TS_THIS_PARAMETER_THIS: usize = offset_of!(TSThisParameter, this);
-pub(super) const OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_JSX_TEXT_SPAN: usize = offset_of!(JSXText, span);
+pub(crate) const OFFSET_JSX_TEXT_VALUE: usize = offset_of!(JSXText, value);
+pub(crate) const OFFSET_BOOLEAN_LITERAL_SPAN: usize = offset_of!(BooleanLiteral, span);
+pub(crate) const OFFSET_BOOLEAN_LITERAL_VALUE: usize = offset_of!(BooleanLiteral, value);
+pub(crate) const OFFSET_NULL_LITERAL_SPAN: usize = offset_of!(NullLiteral, span);
+pub(crate) const OFFSET_NUMERIC_LITERAL_SPAN: usize = offset_of!(NumericLiteral, span);
+pub(crate) const OFFSET_NUMERIC_LITERAL_VALUE: usize = offset_of!(NumericLiteral, value);
+pub(crate) const OFFSET_NUMERIC_LITERAL_RAW: usize = offset_of!(NumericLiteral, raw);
+pub(crate) const OFFSET_NUMERIC_LITERAL_BASE: usize = offset_of!(NumericLiteral, base);
+pub(crate) const OFFSET_BIG_INT_LITERAL_SPAN: usize = offset_of!(BigIntLiteral, span);
+pub(crate) const OFFSET_BIG_INT_LITERAL_RAW: usize = offset_of!(BigIntLiteral, raw);
+pub(crate) const OFFSET_BIG_INT_LITERAL_BASE: usize = offset_of!(BigIntLiteral, base);
+pub(crate) const OFFSET_REG_EXP_LITERAL_SPAN: usize = offset_of!(RegExpLiteral, span);
+pub(crate) const OFFSET_REG_EXP_LITERAL_VALUE: usize = offset_of!(RegExpLiteral, value);
+pub(crate) const OFFSET_REG_EXP_LITERAL_REGEX: usize = offset_of!(RegExpLiteral, regex);
+pub(crate) const OFFSET_STRING_LITERAL_SPAN: usize = offset_of!(StringLiteral, span);
+pub(crate) const OFFSET_STRING_LITERAL_VALUE: usize = offset_of!(StringLiteral, value);
+pub(crate) const OFFSET_TS_THIS_PARAMETER_SPAN: usize = offset_of!(TSThisParameter, span);
+pub(crate) const OFFSET_TS_THIS_PARAMETER_THIS: usize = offset_of!(TSThisParameter, this);
+pub(crate) const OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION: usize =
     offset_of!(TSThisParameter, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSThisParameterWithoutThis<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSThisParameterWithoutThis<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSThisParameterWithoutThis<'a> {
     #[inline]
@@ -7205,8 +7205,8 @@ impl<'a> TSThisParameterWithoutThis<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSThisParameterWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSThisParameterWithoutTypeAnnotation<'a> {
@@ -7220,15 +7220,15 @@ impl<'a> TSThisParameterWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_THIS_PARAMETER_THIS) as *const IdentifierName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_ENUM_DECLARATION_SPAN: usize = offset_of!(TSEnumDeclaration, span);
-pub(super) const OFFSET_TS_ENUM_DECLARATION_ID: usize = offset_of!(TSEnumDeclaration, id);
-pub(super) const OFFSET_TS_ENUM_DECLARATION_MEMBERS: usize = offset_of!(TSEnumDeclaration, members);
-pub(super) const OFFSET_TS_ENUM_DECLARATION_MODIFIERS: usize =
+pub(crate) const OFFSET_TS_ENUM_DECLARATION_SPAN: usize = offset_of!(TSEnumDeclaration, span);
+pub(crate) const OFFSET_TS_ENUM_DECLARATION_ID: usize = offset_of!(TSEnumDeclaration, id);
+pub(crate) const OFFSET_TS_ENUM_DECLARATION_MEMBERS: usize = offset_of!(TSEnumDeclaration, members);
+pub(crate) const OFFSET_TS_ENUM_DECLARATION_MODIFIERS: usize =
     offset_of!(TSEnumDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumDeclarationWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSEnumDeclarationWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSEnumDeclarationWithoutId<'a> {
     #[inline]
@@ -7252,8 +7252,8 @@ impl<'a> TSEnumDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSEnumDeclarationWithoutMembers<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSEnumDeclarationWithoutMembers<'a> {
@@ -7272,13 +7272,13 @@ impl<'a> TSEnumDeclarationWithoutMembers<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_TS_ENUM_MEMBER_SPAN: usize = offset_of!(TSEnumMember, span);
-pub(super) const OFFSET_TS_ENUM_MEMBER_ID: usize = offset_of!(TSEnumMember, id);
-pub(super) const OFFSET_TS_ENUM_MEMBER_INITIALIZER: usize = offset_of!(TSEnumMember, initializer);
+pub(crate) const OFFSET_TS_ENUM_MEMBER_SPAN: usize = offset_of!(TSEnumMember, span);
+pub(crate) const OFFSET_TS_ENUM_MEMBER_ID: usize = offset_of!(TSEnumMember, id);
+pub(crate) const OFFSET_TS_ENUM_MEMBER_INITIALIZER: usize = offset_of!(TSEnumMember, initializer);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumMemberWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSEnumMemberWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSEnumMemberWithoutId<'a> {
     #[inline]
@@ -7296,7 +7296,7 @@ impl<'a> TSEnumMemberWithoutId<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumMemberWithoutInitializer<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSEnumMemberWithoutInitializer<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSEnumMemberWithoutInitializer<'a> {
     #[inline]
@@ -7309,13 +7309,13 @@ impl<'a> TSEnumMemberWithoutInitializer<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_ENUM_MEMBER_ID) as *const TSEnumMemberName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_ANNOTATION_SPAN: usize = offset_of!(TSTypeAnnotation, span);
-pub(super) const OFFSET_TS_TYPE_ANNOTATION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_TYPE_ANNOTATION_SPAN: usize = offset_of!(TSTypeAnnotation, span);
+pub(crate) const OFFSET_TS_TYPE_ANNOTATION_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeAnnotation, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeAnnotationWithoutTypeAnnotation(pub(super) *const u8);
+pub struct TSTypeAnnotationWithoutTypeAnnotation(pub(crate) *const u8);
 
 impl TSTypeAnnotationWithoutTypeAnnotation {
     #[inline]
@@ -7323,12 +7323,12 @@ impl TSTypeAnnotationWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_ANNOTATION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_LITERAL_TYPE_SPAN: usize = offset_of!(TSLiteralType, span);
-pub(super) const OFFSET_TS_LITERAL_TYPE_LITERAL: usize = offset_of!(TSLiteralType, literal);
+pub(crate) const OFFSET_TS_LITERAL_TYPE_SPAN: usize = offset_of!(TSLiteralType, span);
+pub(crate) const OFFSET_TS_LITERAL_TYPE_LITERAL: usize = offset_of!(TSLiteralType, literal);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSLiteralTypeWithoutLiteral(pub(super) *const u8);
+pub struct TSLiteralTypeWithoutLiteral(pub(crate) *const u8);
 
 impl TSLiteralTypeWithoutLiteral {
     #[inline]
@@ -7336,21 +7336,21 @@ impl TSLiteralTypeWithoutLiteral {
         unsafe { &*(self.0.add(OFFSET_TS_LITERAL_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_CONDITIONAL_TYPE_SPAN: usize = offset_of!(TSConditionalType, span);
-pub(super) const OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE: usize =
+pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_SPAN: usize = offset_of!(TSConditionalType, span);
+pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE: usize =
     offset_of!(TSConditionalType, check_type);
-pub(super) const OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE: usize =
+pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE: usize =
     offset_of!(TSConditionalType, extends_type);
-pub(super) const OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE: usize =
+pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE: usize =
     offset_of!(TSConditionalType, true_type);
-pub(super) const OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE: usize =
+pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE: usize =
     offset_of!(TSConditionalType, false_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConditionalTypeWithoutCheckType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConditionalTypeWithoutCheckType<'a> {
@@ -7378,8 +7378,8 @@ impl<'a> TSConditionalTypeWithoutCheckType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConditionalTypeWithoutExtendsType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConditionalTypeWithoutExtendsType<'a> {
@@ -7407,8 +7407,8 @@ impl<'a> TSConditionalTypeWithoutExtendsType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConditionalTypeWithoutTrueType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConditionalTypeWithoutTrueType<'a> {
@@ -7436,8 +7436,8 @@ impl<'a> TSConditionalTypeWithoutTrueType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConditionalTypeWithoutFalseType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConditionalTypeWithoutFalseType<'a> {
@@ -7461,12 +7461,12 @@ impl<'a> TSConditionalTypeWithoutFalseType<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>) }
     }
 }
-pub(super) const OFFSET_TS_UNION_TYPE_SPAN: usize = offset_of!(TSUnionType, span);
-pub(super) const OFFSET_TS_UNION_TYPE_TYPES: usize = offset_of!(TSUnionType, types);
+pub(crate) const OFFSET_TS_UNION_TYPE_SPAN: usize = offset_of!(TSUnionType, span);
+pub(crate) const OFFSET_TS_UNION_TYPE_TYPES: usize = offset_of!(TSUnionType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSUnionTypeWithoutTypes(pub(super) *const u8);
+pub struct TSUnionTypeWithoutTypes(pub(crate) *const u8);
 
 impl TSUnionTypeWithoutTypes {
     #[inline]
@@ -7474,12 +7474,12 @@ impl TSUnionTypeWithoutTypes {
         unsafe { &*(self.0.add(OFFSET_TS_UNION_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_INTERSECTION_TYPE_SPAN: usize = offset_of!(TSIntersectionType, span);
-pub(super) const OFFSET_TS_INTERSECTION_TYPE_TYPES: usize = offset_of!(TSIntersectionType, types);
+pub(crate) const OFFSET_TS_INTERSECTION_TYPE_SPAN: usize = offset_of!(TSIntersectionType, span);
+pub(crate) const OFFSET_TS_INTERSECTION_TYPE_TYPES: usize = offset_of!(TSIntersectionType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIntersectionTypeWithoutTypes(pub(super) *const u8);
+pub struct TSIntersectionTypeWithoutTypes(pub(crate) *const u8);
 
 impl TSIntersectionTypeWithoutTypes {
     #[inline]
@@ -7487,14 +7487,14 @@ impl TSIntersectionTypeWithoutTypes {
         unsafe { &*(self.0.add(OFFSET_TS_INTERSECTION_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_OPERATOR_SPAN: usize = offset_of!(TSTypeOperator, span);
-pub(super) const OFFSET_TS_TYPE_OPERATOR_OPERATOR: usize = offset_of!(TSTypeOperator, operator);
-pub(super) const OFFSET_TS_TYPE_OPERATOR_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_TYPE_OPERATOR_SPAN: usize = offset_of!(TSTypeOperator, span);
+pub(crate) const OFFSET_TS_TYPE_OPERATOR_OPERATOR: usize = offset_of!(TSTypeOperator, operator);
+pub(crate) const OFFSET_TS_TYPE_OPERATOR_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeOperator, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeOperatorWithoutTypeAnnotation(pub(super) *const u8);
+pub struct TSTypeOperatorWithoutTypeAnnotation(pub(crate) *const u8);
 
 impl TSTypeOperatorWithoutTypeAnnotation {
     #[inline]
@@ -7507,12 +7507,12 @@ impl TSTypeOperatorWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_OPERATOR_OPERATOR) as *const TSTypeOperatorOperator) }
     }
 }
-pub(super) const OFFSET_TS_ARRAY_TYPE_SPAN: usize = offset_of!(TSArrayType, span);
-pub(super) const OFFSET_TS_ARRAY_TYPE_ELEMENT_TYPE: usize = offset_of!(TSArrayType, element_type);
+pub(crate) const OFFSET_TS_ARRAY_TYPE_SPAN: usize = offset_of!(TSArrayType, span);
+pub(crate) const OFFSET_TS_ARRAY_TYPE_ELEMENT_TYPE: usize = offset_of!(TSArrayType, element_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSArrayTypeWithoutElementType(pub(super) *const u8);
+pub struct TSArrayTypeWithoutElementType(pub(crate) *const u8);
 
 impl TSArrayTypeWithoutElementType {
     #[inline]
@@ -7520,17 +7520,17 @@ impl TSArrayTypeWithoutElementType {
         unsafe { &*(self.0.add(OFFSET_TS_ARRAY_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN: usize = offset_of!(TSIndexedAccessType, span);
-pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE: usize =
+pub(crate) const OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN: usize = offset_of!(TSIndexedAccessType, span);
+pub(crate) const OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE: usize =
     offset_of!(TSIndexedAccessType, object_type);
-pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE: usize =
+pub(crate) const OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE: usize =
     offset_of!(TSIndexedAccessType, index_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexedAccessTypeWithoutObjectType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSIndexedAccessTypeWithoutObjectType<'a> {
@@ -7548,8 +7548,8 @@ impl<'a> TSIndexedAccessTypeWithoutObjectType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexedAccessTypeWithoutIndexType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSIndexedAccessTypeWithoutIndexType<'a> {
@@ -7563,12 +7563,12 @@ impl<'a> TSIndexedAccessTypeWithoutIndexType<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE) as *const TSType<'a>) }
     }
 }
-pub(super) const OFFSET_TS_TUPLE_TYPE_SPAN: usize = offset_of!(TSTupleType, span);
-pub(super) const OFFSET_TS_TUPLE_TYPE_ELEMENT_TYPES: usize = offset_of!(TSTupleType, element_types);
+pub(crate) const OFFSET_TS_TUPLE_TYPE_SPAN: usize = offset_of!(TSTupleType, span);
+pub(crate) const OFFSET_TS_TUPLE_TYPE_ELEMENT_TYPES: usize = offset_of!(TSTupleType, element_types);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTupleTypeWithoutElementTypes(pub(super) *const u8);
+pub struct TSTupleTypeWithoutElementTypes(pub(crate) *const u8);
 
 impl TSTupleTypeWithoutElementTypes {
     #[inline]
@@ -7576,18 +7576,18 @@ impl TSTupleTypeWithoutElementTypes {
         unsafe { &*(self.0.add(OFFSET_TS_TUPLE_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN: usize = offset_of!(TSNamedTupleMember, span);
-pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE: usize =
+pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN: usize = offset_of!(TSNamedTupleMember, span);
+pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE: usize =
     offset_of!(TSNamedTupleMember, element_type);
-pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL: usize = offset_of!(TSNamedTupleMember, label);
-pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL: usize =
+pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL: usize = offset_of!(TSNamedTupleMember, label);
+pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL: usize =
     offset_of!(TSNamedTupleMember, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSNamedTupleMemberWithoutElementType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSNamedTupleMemberWithoutElementType<'a> {
@@ -7609,7 +7609,7 @@ impl<'a> TSNamedTupleMemberWithoutElementType<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNamedTupleMemberWithoutLabel<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSNamedTupleMemberWithoutLabel<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSNamedTupleMemberWithoutLabel<'a> {
     #[inline]
@@ -7627,13 +7627,13 @@ impl<'a> TSNamedTupleMemberWithoutLabel<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool) }
     }
 }
-pub(super) const OFFSET_TS_OPTIONAL_TYPE_SPAN: usize = offset_of!(TSOptionalType, span);
-pub(super) const OFFSET_TS_OPTIONAL_TYPE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_OPTIONAL_TYPE_SPAN: usize = offset_of!(TSOptionalType, span);
+pub(crate) const OFFSET_TS_OPTIONAL_TYPE_TYPE_ANNOTATION: usize =
     offset_of!(TSOptionalType, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSOptionalTypeWithoutTypeAnnotation(pub(super) *const u8);
+pub struct TSOptionalTypeWithoutTypeAnnotation(pub(crate) *const u8);
 
 impl TSOptionalTypeWithoutTypeAnnotation {
     #[inline]
@@ -7641,13 +7641,13 @@ impl TSOptionalTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_OPTIONAL_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_REST_TYPE_SPAN: usize = offset_of!(TSRestType, span);
-pub(super) const OFFSET_TS_REST_TYPE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_REST_TYPE_SPAN: usize = offset_of!(TSRestType, span);
+pub(crate) const OFFSET_TS_REST_TYPE_TYPE_ANNOTATION: usize =
     offset_of!(TSRestType, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSRestTypeWithoutTypeAnnotation(pub(super) *const u8);
+pub struct TSRestTypeWithoutTypeAnnotation(pub(crate) *const u8);
 
 impl TSRestTypeWithoutTypeAnnotation {
     #[inline]
@@ -7655,27 +7655,27 @@ impl TSRestTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_REST_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_ANY_KEYWORD_SPAN: usize = offset_of!(TSAnyKeyword, span);
-pub(super) const OFFSET_TS_STRING_KEYWORD_SPAN: usize = offset_of!(TSStringKeyword, span);
-pub(super) const OFFSET_TS_BOOLEAN_KEYWORD_SPAN: usize = offset_of!(TSBooleanKeyword, span);
-pub(super) const OFFSET_TS_NUMBER_KEYWORD_SPAN: usize = offset_of!(TSNumberKeyword, span);
-pub(super) const OFFSET_TS_NEVER_KEYWORD_SPAN: usize = offset_of!(TSNeverKeyword, span);
-pub(super) const OFFSET_TS_UNKNOWN_KEYWORD_SPAN: usize = offset_of!(TSUnknownKeyword, span);
-pub(super) const OFFSET_TS_NULL_KEYWORD_SPAN: usize = offset_of!(TSNullKeyword, span);
-pub(super) const OFFSET_TS_UNDEFINED_KEYWORD_SPAN: usize = offset_of!(TSUndefinedKeyword, span);
-pub(super) const OFFSET_TS_VOID_KEYWORD_SPAN: usize = offset_of!(TSVoidKeyword, span);
-pub(super) const OFFSET_TS_SYMBOL_KEYWORD_SPAN: usize = offset_of!(TSSymbolKeyword, span);
-pub(super) const OFFSET_TS_THIS_TYPE_SPAN: usize = offset_of!(TSThisType, span);
-pub(super) const OFFSET_TS_OBJECT_KEYWORD_SPAN: usize = offset_of!(TSObjectKeyword, span);
-pub(super) const OFFSET_TS_BIG_INT_KEYWORD_SPAN: usize = offset_of!(TSBigIntKeyword, span);
-pub(super) const OFFSET_TS_TYPE_REFERENCE_SPAN: usize = offset_of!(TSTypeReference, span);
-pub(super) const OFFSET_TS_TYPE_REFERENCE_TYPE_NAME: usize = offset_of!(TSTypeReference, type_name);
-pub(super) const OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_ANY_KEYWORD_SPAN: usize = offset_of!(TSAnyKeyword, span);
+pub(crate) const OFFSET_TS_STRING_KEYWORD_SPAN: usize = offset_of!(TSStringKeyword, span);
+pub(crate) const OFFSET_TS_BOOLEAN_KEYWORD_SPAN: usize = offset_of!(TSBooleanKeyword, span);
+pub(crate) const OFFSET_TS_NUMBER_KEYWORD_SPAN: usize = offset_of!(TSNumberKeyword, span);
+pub(crate) const OFFSET_TS_NEVER_KEYWORD_SPAN: usize = offset_of!(TSNeverKeyword, span);
+pub(crate) const OFFSET_TS_UNKNOWN_KEYWORD_SPAN: usize = offset_of!(TSUnknownKeyword, span);
+pub(crate) const OFFSET_TS_NULL_KEYWORD_SPAN: usize = offset_of!(TSNullKeyword, span);
+pub(crate) const OFFSET_TS_UNDEFINED_KEYWORD_SPAN: usize = offset_of!(TSUndefinedKeyword, span);
+pub(crate) const OFFSET_TS_VOID_KEYWORD_SPAN: usize = offset_of!(TSVoidKeyword, span);
+pub(crate) const OFFSET_TS_SYMBOL_KEYWORD_SPAN: usize = offset_of!(TSSymbolKeyword, span);
+pub(crate) const OFFSET_TS_THIS_TYPE_SPAN: usize = offset_of!(TSThisType, span);
+pub(crate) const OFFSET_TS_OBJECT_KEYWORD_SPAN: usize = offset_of!(TSObjectKeyword, span);
+pub(crate) const OFFSET_TS_BIG_INT_KEYWORD_SPAN: usize = offset_of!(TSBigIntKeyword, span);
+pub(crate) const OFFSET_TS_TYPE_REFERENCE_SPAN: usize = offset_of!(TSTypeReference, span);
+pub(crate) const OFFSET_TS_TYPE_REFERENCE_TYPE_NAME: usize = offset_of!(TSTypeReference, type_name);
+pub(crate) const OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS: usize =
     offset_of!(TSTypeReference, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeReferenceWithoutTypeName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSTypeReferenceWithoutTypeName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSTypeReferenceWithoutTypeName<'a> {
     #[inline]
@@ -7695,8 +7695,8 @@ impl<'a> TSTypeReferenceWithoutTypeName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeReferenceWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeReferenceWithoutTypeParameters<'a> {
@@ -7710,13 +7710,13 @@ impl<'a> TSTypeReferenceWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_TYPE_NAME) as *const TSTypeName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_QUALIFIED_NAME_SPAN: usize = offset_of!(TSQualifiedName, span);
-pub(super) const OFFSET_TS_QUALIFIED_NAME_LEFT: usize = offset_of!(TSQualifiedName, left);
-pub(super) const OFFSET_TS_QUALIFIED_NAME_RIGHT: usize = offset_of!(TSQualifiedName, right);
+pub(crate) const OFFSET_TS_QUALIFIED_NAME_SPAN: usize = offset_of!(TSQualifiedName, span);
+pub(crate) const OFFSET_TS_QUALIFIED_NAME_LEFT: usize = offset_of!(TSQualifiedName, left);
+pub(crate) const OFFSET_TS_QUALIFIED_NAME_RIGHT: usize = offset_of!(TSQualifiedName, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSQualifiedNameWithoutLeft<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSQualifiedNameWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSQualifiedNameWithoutLeft<'a> {
     #[inline]
@@ -7732,7 +7732,7 @@ impl<'a> TSQualifiedNameWithoutLeft<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSQualifiedNameWithoutRight<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSQualifiedNameWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSQualifiedNameWithoutRight<'a> {
     #[inline]
@@ -7745,14 +7745,14 @@ impl<'a> TSQualifiedNameWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_LEFT) as *const TSTypeName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN: usize =
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN: usize =
     offset_of!(TSTypeParameterInstantiation, span);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_PARAMS: usize =
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_PARAMS: usize =
     offset_of!(TSTypeParameterInstantiation, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterInstantiationWithoutParams(pub(super) *const u8);
+pub struct TSTypeParameterInstantiationWithoutParams(pub(crate) *const u8);
 
 impl TSTypeParameterInstantiationWithoutParams {
     #[inline]
@@ -7760,18 +7760,18 @@ impl TSTypeParameterInstantiationWithoutParams {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_PARAMETER_SPAN: usize = offset_of!(TSTypeParameter, span);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_NAME: usize = offset_of!(TSTypeParameter, name);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_CONSTRAINT: usize =
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_SPAN: usize = offset_of!(TSTypeParameter, span);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_NAME: usize = offset_of!(TSTypeParameter, name);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_CONSTRAINT: usize =
     offset_of!(TSTypeParameter, constraint);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_DEFAULT: usize = offset_of!(TSTypeParameter, default);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_IN: usize = offset_of!(TSTypeParameter, r#in);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_OUT: usize = offset_of!(TSTypeParameter, out);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_CONST: usize = offset_of!(TSTypeParameter, r#const);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_DEFAULT: usize = offset_of!(TSTypeParameter, default);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_IN: usize = offset_of!(TSTypeParameter, r#in);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_OUT: usize = offset_of!(TSTypeParameter, out);
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_CONST: usize = offset_of!(TSTypeParameter, r#const);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterWithoutName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSTypeParameterWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSTypeParameterWithoutName<'a> {
     #[inline]
@@ -7808,8 +7808,8 @@ impl<'a> TSTypeParameterWithoutName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeParameterWithoutConstraint<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeParameterWithoutConstraint<'a> {
@@ -7846,7 +7846,7 @@ impl<'a> TSTypeParameterWithoutConstraint<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterWithoutDefault<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSTypeParameterWithoutDefault<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSTypeParameterWithoutDefault<'a> {
     #[inline]
@@ -7879,14 +7879,14 @@ impl<'a> TSTypeParameterWithoutDefault<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN: usize =
     offset_of!(TSTypeParameterDeclaration, span);
-pub(super) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_PARAMS: usize =
+pub(crate) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_PARAMS: usize =
     offset_of!(TSTypeParameterDeclaration, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterDeclarationWithoutParams(pub(super) *const u8);
+pub struct TSTypeParameterDeclarationWithoutParams(pub(crate) *const u8);
 
 impl TSTypeParameterDeclarationWithoutParams {
     #[inline]
@@ -7894,22 +7894,22 @@ impl TSTypeParameterDeclarationWithoutParams {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN: usize =
     offset_of!(TSTypeAliasDeclaration, span);
-pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_ID: usize =
+pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_ID: usize =
     offset_of!(TSTypeAliasDeclaration, id);
-pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeAliasDeclaration, type_annotation);
-pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSTypeAliasDeclaration, type_parameters);
-pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS: usize =
+pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS: usize =
     offset_of!(TSTypeAliasDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAliasDeclarationWithoutId<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeAliasDeclarationWithoutId<'a> {
@@ -7944,8 +7944,8 @@ impl<'a> TSTypeAliasDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAliasDeclarationWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeAliasDeclarationWithoutTypeAnnotation<'a> {
@@ -7980,8 +7980,8 @@ impl<'a> TSTypeAliasDeclarationWithoutTypeAnnotation<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAliasDeclarationWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeAliasDeclarationWithoutTypeParameters<'a> {
@@ -8011,17 +8011,17 @@ impl<'a> TSTypeAliasDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_SPAN: usize = offset_of!(TSClassImplements, span);
-pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_CLASS_IMPLEMENTS_SPAN: usize = offset_of!(TSClassImplements, span);
+pub(crate) const OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION: usize =
     offset_of!(TSClassImplements, expression);
-pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS: usize =
     offset_of!(TSClassImplements, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSClassImplementsWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSClassImplementsWithoutExpression<'a> {
@@ -8042,8 +8042,8 @@ impl<'a> TSClassImplementsWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSClassImplementsWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSClassImplementsWithoutTypeParameters<'a> {
@@ -8057,23 +8057,23 @@ impl<'a> TSClassImplementsWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION) as *const TSTypeName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_SPAN: usize =
     offset_of!(TSInterfaceDeclaration, span);
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_ID: usize = offset_of!(TSInterfaceDeclaration, id);
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_BODY: usize =
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_ID: usize = offset_of!(TSInterfaceDeclaration, id);
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_BODY: usize =
     offset_of!(TSInterfaceDeclaration, body);
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSInterfaceDeclaration, type_parameters);
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_EXTENDS: usize =
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_EXTENDS: usize =
     offset_of!(TSInterfaceDeclaration, extends);
-pub(super) const OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS: usize =
+pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS: usize =
     offset_of!(TSInterfaceDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceDeclarationWithoutId<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceDeclarationWithoutId<'a> {
@@ -8115,8 +8115,8 @@ impl<'a> TSInterfaceDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceDeclarationWithoutBody<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceDeclarationWithoutBody<'a> {
@@ -8157,8 +8157,8 @@ impl<'a> TSInterfaceDeclarationWithoutBody<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceDeclarationWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceDeclarationWithoutTypeParameters<'a> {
@@ -8199,8 +8199,8 @@ impl<'a> TSInterfaceDeclarationWithoutTypeParameters<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceDeclarationWithoutExtends<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceDeclarationWithoutExtends<'a> {
@@ -8237,12 +8237,12 @@ impl<'a> TSInterfaceDeclarationWithoutExtends<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_TS_INTERFACE_BODY_SPAN: usize = offset_of!(TSInterfaceBody, span);
-pub(super) const OFFSET_TS_INTERFACE_BODY_BODY: usize = offset_of!(TSInterfaceBody, body);
+pub(crate) const OFFSET_TS_INTERFACE_BODY_SPAN: usize = offset_of!(TSInterfaceBody, span);
+pub(crate) const OFFSET_TS_INTERFACE_BODY_BODY: usize = offset_of!(TSInterfaceBody, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceBodyWithoutBody(pub(super) *const u8);
+pub struct TSInterfaceBodyWithoutBody(pub(crate) *const u8);
 
 impl TSInterfaceBodyWithoutBody {
     #[inline]
@@ -8250,20 +8250,20 @@ impl TSInterfaceBodyWithoutBody {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_BODY_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_SPAN: usize = offset_of!(TSPropertySignature, span);
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED: usize =
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_SPAN: usize = offset_of!(TSPropertySignature, span);
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED: usize =
     offset_of!(TSPropertySignature, computed);
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL: usize =
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL: usize =
     offset_of!(TSPropertySignature, optional);
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_READONLY: usize =
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_READONLY: usize =
     offset_of!(TSPropertySignature, readonly);
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_KEY: usize = offset_of!(TSPropertySignature, key);
-pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_KEY: usize = offset_of!(TSPropertySignature, key);
+pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION: usize =
     offset_of!(TSPropertySignature, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSPropertySignatureWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSPropertySignatureWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSPropertySignatureWithoutKey<'a> {
     #[inline]
@@ -8298,8 +8298,8 @@ impl<'a> TSPropertySignatureWithoutKey<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSPropertySignatureWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSPropertySignatureWithoutTypeAnnotation<'a> {
@@ -8328,18 +8328,18 @@ impl<'a> TSPropertySignatureWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_KEY) as *const PropertyKey<'a>) }
     }
 }
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_SPAN: usize = offset_of!(TSIndexSignature, span);
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_SPAN: usize = offset_of!(TSIndexSignature, span);
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_PARAMETERS: usize =
     offset_of!(TSIndexSignature, parameters);
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION: usize =
     offset_of!(TSIndexSignature, type_annotation);
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_READONLY: usize = offset_of!(TSIndexSignature, readonly);
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_READONLY: usize = offset_of!(TSIndexSignature, readonly);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexSignatureWithoutParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSIndexSignatureWithoutParameters<'a> {
@@ -8365,8 +8365,8 @@ impl<'a> TSIndexSignatureWithoutParameters<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexSignatureWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSIndexSignatureWithoutTypeAnnotation<'a> {
@@ -8388,22 +8388,22 @@ impl<'a> TSIndexSignatureWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
     }
 }
-pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN: usize =
     offset_of!(TSCallSignatureDeclaration, span);
-pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM: usize =
+pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM: usize =
     offset_of!(TSCallSignatureDeclaration, this_param);
-pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS: usize =
+pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS: usize =
     offset_of!(TSCallSignatureDeclaration, params);
-pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
+pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
     offset_of!(TSCallSignatureDeclaration, return_type);
-pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSCallSignatureDeclaration, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutThisParam<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
@@ -8440,8 +8440,8 @@ impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutParams<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
@@ -8478,8 +8478,8 @@ impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
@@ -8516,8 +8516,8 @@ impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
@@ -8550,24 +8550,24 @@ impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_SPAN: usize = offset_of!(TSMethodSignature, span);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_KEY: usize = offset_of!(TSMethodSignature, key);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_COMPUTED: usize =
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_SPAN: usize = offset_of!(TSMethodSignature, span);
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_KEY: usize = offset_of!(TSMethodSignature, key);
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_COMPUTED: usize =
     offset_of!(TSMethodSignature, computed);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_OPTIONAL: usize =
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_OPTIONAL: usize =
     offset_of!(TSMethodSignature, optional);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_KIND: usize = offset_of!(TSMethodSignature, kind);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM: usize =
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_KIND: usize = offset_of!(TSMethodSignature, kind);
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM: usize =
     offset_of!(TSMethodSignature, this_param);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_PARAMS: usize = offset_of!(TSMethodSignature, params);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE: usize =
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_PARAMS: usize = offset_of!(TSMethodSignature, params);
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE: usize =
     offset_of!(TSMethodSignature, return_type);
-pub(super) const OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS: usize =
     offset_of!(TSMethodSignature, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutKey<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSMethodSignatureWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSMethodSignatureWithoutKey<'a> {
     #[inline]
@@ -8626,8 +8626,8 @@ impl<'a> TSMethodSignatureWithoutKey<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSMethodSignatureWithoutThisParam<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSMethodSignatureWithoutThisParam<'a> {
@@ -8683,7 +8683,7 @@ impl<'a> TSMethodSignatureWithoutThisParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutParams<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSMethodSignatureWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSMethodSignatureWithoutParams<'a> {
     #[inline]
@@ -8739,8 +8739,8 @@ impl<'a> TSMethodSignatureWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSMethodSignatureWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSMethodSignatureWithoutReturnType<'a> {
@@ -8797,8 +8797,8 @@ impl<'a> TSMethodSignatureWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSMethodSignatureWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
@@ -8851,20 +8851,20 @@ impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN: usize =
     offset_of!(TSConstructSignatureDeclaration, span);
-pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS: usize =
+pub(crate) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS: usize =
     offset_of!(TSConstructSignatureDeclaration, params);
-pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
+pub(crate) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
     offset_of!(TSConstructSignatureDeclaration, return_type);
-pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSConstructSignatureDeclaration, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutParams<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutParams<'a> {
@@ -8893,8 +8893,8 @@ impl<'a> TSConstructSignatureDeclarationWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutReturnType<'a> {
@@ -8923,8 +8923,8 @@ impl<'a> TSConstructSignatureDeclarationWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutTypeParameters<'a> {
@@ -8949,18 +8949,18 @@ impl<'a> TSConstructSignatureDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN: usize =
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN: usize =
     offset_of!(TSIndexSignatureName, span);
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_NAME: usize =
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_NAME_NAME: usize =
     offset_of!(TSIndexSignatureName, name);
-pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_INDEX_SIGNATURE_NAME_TYPE_ANNOTATION: usize =
     offset_of!(TSIndexSignatureName, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexSignatureNameWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSIndexSignatureNameWithoutTypeAnnotation<'a> {
@@ -8974,17 +8974,17 @@ impl<'a> TSIndexSignatureNameWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_NAME_NAME) as *const Atom<'a>) }
     }
 }
-pub(super) const OFFSET_TS_INTERFACE_HERITAGE_SPAN: usize = offset_of!(TSInterfaceHeritage, span);
-pub(super) const OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_INTERFACE_HERITAGE_SPAN: usize = offset_of!(TSInterfaceHeritage, span);
+pub(crate) const OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION: usize =
     offset_of!(TSInterfaceHeritage, expression);
-pub(super) const OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS: usize =
     offset_of!(TSInterfaceHeritage, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceHeritageWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceHeritageWithoutExpression<'a> {
@@ -9005,8 +9005,8 @@ impl<'a> TSInterfaceHeritageWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceHeritageWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInterfaceHeritageWithoutTypeParameters<'a> {
@@ -9020,18 +9020,18 @@ impl<'a> TSInterfaceHeritageWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_PREDICATE_SPAN: usize = offset_of!(TSTypePredicate, span);
-pub(super) const OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME: usize =
+pub(crate) const OFFSET_TS_TYPE_PREDICATE_SPAN: usize = offset_of!(TSTypePredicate, span);
+pub(crate) const OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME: usize =
     offset_of!(TSTypePredicate, parameter_name);
-pub(super) const OFFSET_TS_TYPE_PREDICATE_ASSERTS: usize = offset_of!(TSTypePredicate, asserts);
-pub(super) const OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_TYPE_PREDICATE_ASSERTS: usize = offset_of!(TSTypePredicate, asserts);
+pub(crate) const OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION: usize =
     offset_of!(TSTypePredicate, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypePredicateWithoutParameterName<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypePredicateWithoutParameterName<'a> {
@@ -9057,8 +9057,8 @@ impl<'a> TSTypePredicateWithoutParameterName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypePredicateWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypePredicateWithoutTypeAnnotation<'a> {
@@ -9080,16 +9080,16 @@ impl<'a> TSTypePredicateWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
     }
 }
-pub(super) const OFFSET_TS_MODULE_DECLARATION_SPAN: usize = offset_of!(TSModuleDeclaration, span);
-pub(super) const OFFSET_TS_MODULE_DECLARATION_ID: usize = offset_of!(TSModuleDeclaration, id);
-pub(super) const OFFSET_TS_MODULE_DECLARATION_BODY: usize = offset_of!(TSModuleDeclaration, body);
-pub(super) const OFFSET_TS_MODULE_DECLARATION_KIND: usize = offset_of!(TSModuleDeclaration, kind);
-pub(super) const OFFSET_TS_MODULE_DECLARATION_MODIFIERS: usize =
+pub(crate) const OFFSET_TS_MODULE_DECLARATION_SPAN: usize = offset_of!(TSModuleDeclaration, span);
+pub(crate) const OFFSET_TS_MODULE_DECLARATION_ID: usize = offset_of!(TSModuleDeclaration, id);
+pub(crate) const OFFSET_TS_MODULE_DECLARATION_BODY: usize = offset_of!(TSModuleDeclaration, body);
+pub(crate) const OFFSET_TS_MODULE_DECLARATION_KIND: usize = offset_of!(TSModuleDeclaration, kind);
+pub(crate) const OFFSET_TS_MODULE_DECLARATION_MODIFIERS: usize =
     offset_of!(TSModuleDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleDeclarationWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSModuleDeclarationWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSModuleDeclarationWithoutId<'a> {
     #[inline]
@@ -9120,7 +9120,7 @@ impl<'a> TSModuleDeclarationWithoutId<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleDeclarationWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSModuleDeclarationWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSModuleDeclarationWithoutBody<'a> {
     #[inline]
@@ -9147,12 +9147,12 @@ impl<'a> TSModuleDeclarationWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-pub(super) const OFFSET_TS_MODULE_BLOCK_SPAN: usize = offset_of!(TSModuleBlock, span);
-pub(super) const OFFSET_TS_MODULE_BLOCK_BODY: usize = offset_of!(TSModuleBlock, body);
+pub(crate) const OFFSET_TS_MODULE_BLOCK_SPAN: usize = offset_of!(TSModuleBlock, span);
+pub(crate) const OFFSET_TS_MODULE_BLOCK_BODY: usize = offset_of!(TSModuleBlock, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleBlockWithoutBody(pub(super) *const u8);
+pub struct TSModuleBlockWithoutBody(pub(crate) *const u8);
 
 impl TSModuleBlockWithoutBody {
     #[inline]
@@ -9160,12 +9160,12 @@ impl TSModuleBlockWithoutBody {
         unsafe { &*(self.0.add(OFFSET_TS_MODULE_BLOCK_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_LITERAL_SPAN: usize = offset_of!(TSTypeLiteral, span);
-pub(super) const OFFSET_TS_TYPE_LITERAL_MEMBERS: usize = offset_of!(TSTypeLiteral, members);
+pub(crate) const OFFSET_TS_TYPE_LITERAL_SPAN: usize = offset_of!(TSTypeLiteral, span);
+pub(crate) const OFFSET_TS_TYPE_LITERAL_MEMBERS: usize = offset_of!(TSTypeLiteral, members);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeLiteralWithoutMembers(pub(super) *const u8);
+pub struct TSTypeLiteralWithoutMembers(pub(crate) *const u8);
 
 impl TSTypeLiteralWithoutMembers {
     #[inline]
@@ -9173,13 +9173,13 @@ impl TSTypeLiteralWithoutMembers {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_LITERAL_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_INFER_TYPE_SPAN: usize = offset_of!(TSInferType, span);
-pub(super) const OFFSET_TS_INFER_TYPE_TYPE_PARAMETER: usize =
+pub(crate) const OFFSET_TS_INFER_TYPE_SPAN: usize = offset_of!(TSInferType, span);
+pub(crate) const OFFSET_TS_INFER_TYPE_TYPE_PARAMETER: usize =
     offset_of!(TSInferType, type_parameter);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInferTypeWithoutTypeParameter(pub(super) *const u8);
+pub struct TSInferTypeWithoutTypeParameter(pub(crate) *const u8);
 
 impl TSInferTypeWithoutTypeParameter {
     #[inline]
@@ -9187,14 +9187,14 @@ impl TSInferTypeWithoutTypeParameter {
         unsafe { &*(self.0.add(OFFSET_TS_INFER_TYPE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_TYPE_QUERY_SPAN: usize = offset_of!(TSTypeQuery, span);
-pub(super) const OFFSET_TS_TYPE_QUERY_EXPR_NAME: usize = offset_of!(TSTypeQuery, expr_name);
-pub(super) const OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_TYPE_QUERY_SPAN: usize = offset_of!(TSTypeQuery, span);
+pub(crate) const OFFSET_TS_TYPE_QUERY_EXPR_NAME: usize = offset_of!(TSTypeQuery, expr_name);
+pub(crate) const OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS: usize =
     offset_of!(TSTypeQuery, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeQueryWithoutExprName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSTypeQueryWithoutExprName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSTypeQueryWithoutExprName<'a> {
     #[inline]
@@ -9214,8 +9214,8 @@ impl<'a> TSTypeQueryWithoutExprName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeQueryWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeQueryWithoutTypeParameters<'a> {
@@ -9229,16 +9229,16 @@ impl<'a> TSTypeQueryWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_QUERY_EXPR_NAME) as *const TSTypeQueryExprName<'a>) }
     }
 }
-pub(super) const OFFSET_TS_IMPORT_TYPE_SPAN: usize = offset_of!(TSImportType, span);
-pub(super) const OFFSET_TS_IMPORT_TYPE_ARGUMENT: usize = offset_of!(TSImportType, argument);
-pub(super) const OFFSET_TS_IMPORT_TYPE_QUALIFIER: usize = offset_of!(TSImportType, qualifier);
-pub(super) const OFFSET_TS_IMPORT_TYPE_ATTRIBUTES: usize = offset_of!(TSImportType, attributes);
-pub(super) const OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_IMPORT_TYPE_SPAN: usize = offset_of!(TSImportType, span);
+pub(crate) const OFFSET_TS_IMPORT_TYPE_ARGUMENT: usize = offset_of!(TSImportType, argument);
+pub(crate) const OFFSET_TS_IMPORT_TYPE_QUALIFIER: usize = offset_of!(TSImportType, qualifier);
+pub(crate) const OFFSET_TS_IMPORT_TYPE_ATTRIBUTES: usize = offset_of!(TSImportType, attributes);
+pub(crate) const OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS: usize =
     offset_of!(TSImportType, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutArgument<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutArgument<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSImportTypeWithoutArgument<'a> {
     #[inline]
@@ -9270,7 +9270,7 @@ impl<'a> TSImportTypeWithoutArgument<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutQualifier<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutQualifier<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSImportTypeWithoutQualifier<'a> {
     #[inline]
@@ -9302,7 +9302,7 @@ impl<'a> TSImportTypeWithoutQualifier<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutAttributes<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutAttributes<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSImportTypeWithoutAttributes<'a> {
     #[inline]
@@ -9332,8 +9332,8 @@ impl<'a> TSImportTypeWithoutAttributes<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSImportTypeWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSImportTypeWithoutTypeParameters<'a> {
@@ -9360,13 +9360,13 @@ impl<'a> TSImportTypeWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_IMPORT_ATTRIBUTES_SPAN: usize = offset_of!(TSImportAttributes, span);
-pub(super) const OFFSET_TS_IMPORT_ATTRIBUTES_ELEMENTS: usize =
+pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTES_SPAN: usize = offset_of!(TSImportAttributes, span);
+pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTES_ELEMENTS: usize =
     offset_of!(TSImportAttributes, elements);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributesWithoutElements(pub(super) *const u8);
+pub struct TSImportAttributesWithoutElements(pub(crate) *const u8);
 
 impl TSImportAttributesWithoutElements {
     #[inline]
@@ -9374,13 +9374,13 @@ impl TSImportAttributesWithoutElements {
         unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTES_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(TSImportAttribute, span);
-pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_NAME: usize = offset_of!(TSImportAttribute, name);
-pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(TSImportAttribute, value);
+pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(TSImportAttribute, span);
+pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTE_NAME: usize = offset_of!(TSImportAttribute, name);
+pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(TSImportAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributeWithoutName<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSImportAttributeWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSImportAttributeWithoutName<'a> {
     #[inline]
@@ -9396,7 +9396,7 @@ impl<'a> TSImportAttributeWithoutName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributeWithoutValue<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSImportAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSImportAttributeWithoutValue<'a> {
     #[inline]
@@ -9411,17 +9411,17 @@ impl<'a> TSImportAttributeWithoutValue<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_FUNCTION_TYPE_SPAN: usize = offset_of!(TSFunctionType, span);
-pub(super) const OFFSET_TS_FUNCTION_TYPE_THIS_PARAM: usize = offset_of!(TSFunctionType, this_param);
-pub(super) const OFFSET_TS_FUNCTION_TYPE_PARAMS: usize = offset_of!(TSFunctionType, params);
-pub(super) const OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE: usize =
+pub(crate) const OFFSET_TS_FUNCTION_TYPE_SPAN: usize = offset_of!(TSFunctionType, span);
+pub(crate) const OFFSET_TS_FUNCTION_TYPE_THIS_PARAM: usize = offset_of!(TSFunctionType, this_param);
+pub(crate) const OFFSET_TS_FUNCTION_TYPE_PARAMS: usize = offset_of!(TSFunctionType, params);
+pub(crate) const OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE: usize =
     offset_of!(TSFunctionType, return_type);
-pub(super) const OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS: usize =
     offset_of!(TSFunctionType, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutThisParam<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSFunctionTypeWithoutThisParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSFunctionTypeWithoutThisParam<'a> {
     #[inline]
@@ -9455,7 +9455,7 @@ impl<'a> TSFunctionTypeWithoutThisParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutParams<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSFunctionTypeWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSFunctionTypeWithoutParams<'a> {
     #[inline]
@@ -9490,8 +9490,8 @@ impl<'a> TSFunctionTypeWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSFunctionTypeWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSFunctionTypeWithoutReturnType<'a> {
@@ -9526,8 +9526,8 @@ impl<'a> TSFunctionTypeWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSFunctionTypeWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSFunctionTypeWithoutTypeParameters<'a> {
@@ -9558,18 +9558,18 @@ impl<'a> TSFunctionTypeWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_SPAN: usize = offset_of!(TSConstructorType, span);
-pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT: usize =
+pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_SPAN: usize = offset_of!(TSConstructorType, span);
+pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT: usize =
     offset_of!(TSConstructorType, r#abstract);
-pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS: usize = offset_of!(TSConstructorType, params);
-pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE: usize =
+pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS: usize = offset_of!(TSConstructorType, params);
+pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE: usize =
     offset_of!(TSConstructorType, return_type);
-pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS: usize =
     offset_of!(TSConstructorType, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConstructorTypeWithoutParams<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSConstructorTypeWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSConstructorTypeWithoutParams<'a> {
     #[inline]
@@ -9602,8 +9602,8 @@ impl<'a> TSConstructorTypeWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructorTypeWithoutReturnType<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConstructorTypeWithoutReturnType<'a> {
@@ -9637,8 +9637,8 @@ impl<'a> TSConstructorTypeWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructorTypeWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSConstructorTypeWithoutTypeParameters<'a> {
@@ -9668,20 +9668,20 @@ impl<'a> TSConstructorTypeWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_MAPPED_TYPE_SPAN: usize = offset_of!(TSMappedType, span);
-pub(super) const OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER: usize =
+pub(crate) const OFFSET_TS_MAPPED_TYPE_SPAN: usize = offset_of!(TSMappedType, span);
+pub(crate) const OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER: usize =
     offset_of!(TSMappedType, type_parameter);
-pub(super) const OFFSET_TS_MAPPED_TYPE_NAME_TYPE: usize = offset_of!(TSMappedType, name_type);
-pub(super) const OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_MAPPED_TYPE_NAME_TYPE: usize = offset_of!(TSMappedType, name_type);
+pub(crate) const OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION: usize =
     offset_of!(TSMappedType, type_annotation);
-pub(super) const OFFSET_TS_MAPPED_TYPE_OPTIONAL: usize = offset_of!(TSMappedType, optional);
-pub(super) const OFFSET_TS_MAPPED_TYPE_READONLY: usize = offset_of!(TSMappedType, readonly);
+pub(crate) const OFFSET_TS_MAPPED_TYPE_OPTIONAL: usize = offset_of!(TSMappedType, optional);
+pub(crate) const OFFSET_TS_MAPPED_TYPE_READONLY: usize = offset_of!(TSMappedType, readonly);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSMappedTypeWithoutTypeParameter<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSMappedTypeWithoutTypeParameter<'a> {
@@ -9719,7 +9719,7 @@ impl<'a> TSMappedTypeWithoutTypeParameter<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMappedTypeWithoutNameType<'a>(pub(super) *const u8, pub(super) PhantomData<&'a ()>);
+pub struct TSMappedTypeWithoutNameType<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
 
 impl<'a> TSMappedTypeWithoutNameType<'a> {
     #[inline]
@@ -9760,8 +9760,8 @@ impl<'a> TSMappedTypeWithoutNameType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSMappedTypeWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSMappedTypeWithoutTypeAnnotation<'a> {
@@ -9797,18 +9797,18 @@ impl<'a> TSMappedTypeWithoutTypeAnnotation<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN: usize =
+pub(crate) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN: usize =
     offset_of!(TSTemplateLiteralType, span);
-pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS: usize =
+pub(crate) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS: usize =
     offset_of!(TSTemplateLiteralType, quasis);
-pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES: usize =
+pub(crate) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES: usize =
     offset_of!(TSTemplateLiteralType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTemplateLiteralTypeWithoutQuasis<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTemplateLiteralTypeWithoutQuasis<'a> {
@@ -9828,8 +9828,8 @@ impl<'a> TSTemplateLiteralTypeWithoutQuasis<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTemplateLiteralTypeWithoutTypes<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTemplateLiteralTypeWithoutTypes<'a> {
@@ -9846,16 +9846,16 @@ impl<'a> TSTemplateLiteralTypeWithoutTypes<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_AS_EXPRESSION_SPAN: usize = offset_of!(TSAsExpression, span);
-pub(super) const OFFSET_TS_AS_EXPRESSION_EXPRESSION: usize = offset_of!(TSAsExpression, expression);
-pub(super) const OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_AS_EXPRESSION_SPAN: usize = offset_of!(TSAsExpression, span);
+pub(crate) const OFFSET_TS_AS_EXPRESSION_EXPRESSION: usize = offset_of!(TSAsExpression, expression);
+pub(crate) const OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION: usize =
     offset_of!(TSAsExpression, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSAsExpressionWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSAsExpressionWithoutExpression<'a> {
@@ -9873,8 +9873,8 @@ impl<'a> TSAsExpressionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSAsExpressionWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSAsExpressionWithoutTypeAnnotation<'a> {
@@ -9888,18 +9888,18 @@ impl<'a> TSAsExpressionWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_EXPRESSION) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_TS_SATISFIES_EXPRESSION_SPAN: usize =
     offset_of!(TSSatisfiesExpression, span);
-pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION: usize =
     offset_of!(TSSatisfiesExpression, expression);
-pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION: usize =
     offset_of!(TSSatisfiesExpression, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSSatisfiesExpressionWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSSatisfiesExpressionWithoutExpression<'a> {
@@ -9919,8 +9919,8 @@ impl<'a> TSSatisfiesExpressionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSSatisfiesExpressionWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSSatisfiesExpressionWithoutTypeAnnotation<'a> {
@@ -9936,17 +9936,17 @@ impl<'a> TSSatisfiesExpressionWithoutTypeAnnotation<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_TYPE_ASSERTION_SPAN: usize = offset_of!(TSTypeAssertion, span);
-pub(super) const OFFSET_TS_TYPE_ASSERTION_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_TYPE_ASSERTION_SPAN: usize = offset_of!(TSTypeAssertion, span);
+pub(crate) const OFFSET_TS_TYPE_ASSERTION_EXPRESSION: usize =
     offset_of!(TSTypeAssertion, expression);
-pub(super) const OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeAssertion, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAssertionWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeAssertionWithoutExpression<'a> {
@@ -9964,8 +9964,8 @@ impl<'a> TSTypeAssertionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAssertionWithoutTypeAnnotation<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSTypeAssertionWithoutTypeAnnotation<'a> {
@@ -9979,20 +9979,20 @@ impl<'a> TSTypeAssertionWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_EXPRESSION) as *const Expression<'a>) }
     }
 }
-pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN: usize =
     offset_of!(TSImportEqualsDeclaration, span);
-pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID: usize =
+pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID: usize =
     offset_of!(TSImportEqualsDeclaration, id);
-pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE: usize =
+pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE: usize =
     offset_of!(TSImportEqualsDeclaration, module_reference);
-pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND: usize =
+pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND: usize =
     offset_of!(TSImportEqualsDeclaration, import_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSImportEqualsDeclarationWithoutId<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSImportEqualsDeclarationWithoutId<'a> {
@@ -10021,8 +10021,8 @@ impl<'a> TSImportEqualsDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSImportEqualsDeclarationWithoutModuleReference<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSImportEqualsDeclarationWithoutModuleReference<'a> {
@@ -10046,14 +10046,14 @@ impl<'a> TSImportEqualsDeclarationWithoutModuleReference<'a> {
         }
     }
 }
-pub(super) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN: usize =
+pub(crate) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN: usize =
     offset_of!(TSExternalModuleReference, span);
-pub(super) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_EXPRESSION: usize =
     offset_of!(TSExternalModuleReference, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSExternalModuleReferenceWithoutExpression(pub(super) *const u8);
+pub struct TSExternalModuleReferenceWithoutExpression(pub(crate) *const u8);
 
 impl TSExternalModuleReferenceWithoutExpression {
     #[inline]
@@ -10061,13 +10061,13 @@ impl TSExternalModuleReferenceWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_NON_NULL_EXPRESSION_SPAN: usize = offset_of!(TSNonNullExpression, span);
-pub(super) const OFFSET_TS_NON_NULL_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_NON_NULL_EXPRESSION_SPAN: usize = offset_of!(TSNonNullExpression, span);
+pub(crate) const OFFSET_TS_NON_NULL_EXPRESSION_EXPRESSION: usize =
     offset_of!(TSNonNullExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNonNullExpressionWithoutExpression(pub(super) *const u8);
+pub struct TSNonNullExpressionWithoutExpression(pub(crate) *const u8);
 
 impl TSNonNullExpressionWithoutExpression {
     #[inline]
@@ -10075,12 +10075,12 @@ impl TSNonNullExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_NON_NULL_EXPRESSION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_DECORATOR_SPAN: usize = offset_of!(Decorator, span);
-pub(super) const OFFSET_DECORATOR_EXPRESSION: usize = offset_of!(Decorator, expression);
+pub(crate) const OFFSET_DECORATOR_SPAN: usize = offset_of!(Decorator, span);
+pub(crate) const OFFSET_DECORATOR_EXPRESSION: usize = offset_of!(Decorator, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DecoratorWithoutExpression(pub(super) *const u8);
+pub struct DecoratorWithoutExpression(pub(crate) *const u8);
 
 impl DecoratorWithoutExpression {
     #[inline]
@@ -10088,13 +10088,13 @@ impl DecoratorWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_DECORATOR_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_EXPORT_ASSIGNMENT_SPAN: usize = offset_of!(TSExportAssignment, span);
-pub(super) const OFFSET_TS_EXPORT_ASSIGNMENT_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_EXPORT_ASSIGNMENT_SPAN: usize = offset_of!(TSExportAssignment, span);
+pub(crate) const OFFSET_TS_EXPORT_ASSIGNMENT_EXPRESSION: usize =
     offset_of!(TSExportAssignment, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSExportAssignmentWithoutExpression(pub(super) *const u8);
+pub struct TSExportAssignmentWithoutExpression(pub(crate) *const u8);
 
 impl TSExportAssignmentWithoutExpression {
     #[inline]
@@ -10102,14 +10102,14 @@ impl TSExportAssignmentWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_EXPORT_ASSIGNMENT_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN: usize =
+pub(crate) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN: usize =
     offset_of!(TSNamespaceExportDeclaration, span);
-pub(super) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_ID: usize =
+pub(crate) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_ID: usize =
     offset_of!(TSNamespaceExportDeclaration, id);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNamespaceExportDeclarationWithoutId(pub(super) *const u8);
+pub struct TSNamespaceExportDeclarationWithoutId(pub(crate) *const u8);
 
 impl TSNamespaceExportDeclarationWithoutId {
     #[inline]
@@ -10117,18 +10117,18 @@ impl TSNamespaceExportDeclarationWithoutId {
         unsafe { &*(self.0.add(OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN) as *const Span) }
     }
 }
-pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN: usize =
+pub(crate) const OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN: usize =
     offset_of!(TSInstantiationExpression, span);
-pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION: usize =
+pub(crate) const OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION: usize =
     offset_of!(TSInstantiationExpression, expression);
-pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(crate) const OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(TSInstantiationExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInstantiationExpressionWithoutExpression<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInstantiationExpressionWithoutExpression<'a> {
@@ -10149,8 +10149,8 @@ impl<'a> TSInstantiationExpressionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInstantiationExpressionWithoutTypeParameters<'a>(
-    pub(super) *const u8,
-    pub(super) PhantomData<&'a ()>,
+    pub(crate) *const u8,
+    pub(crate) PhantomData<&'a ()>,
 );
 
 impl<'a> TSInstantiationExpressionWithoutTypeParameters<'a> {
@@ -10166,15 +10166,15 @@ impl<'a> TSInstantiationExpressionWithoutTypeParameters<'a> {
         }
     }
 }
-pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_SPAN: usize = offset_of!(JSDocNullableType, span);
-pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_TYPE_ANNOTATION: usize =
+pub(crate) const OFFSET_JS_DOC_NULLABLE_TYPE_SPAN: usize = offset_of!(JSDocNullableType, span);
+pub(crate) const OFFSET_JS_DOC_NULLABLE_TYPE_TYPE_ANNOTATION: usize =
     offset_of!(JSDocNullableType, type_annotation);
-pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX: usize =
+pub(crate) const OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX: usize =
     offset_of!(JSDocNullableType, postfix);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSDocNullableTypeWithoutTypeAnnotation(pub(super) *const u8);
+pub struct JSDocNullableTypeWithoutTypeAnnotation(pub(crate) *const u8);
 
 impl JSDocNullableTypeWithoutTypeAnnotation {
     #[inline]
@@ -10187,4 +10187,4 @@ impl JSDocNullableTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX) as *const bool) }
     }
 }
-pub(super) const OFFSET_JS_DOC_UNKNOWN_TYPE_SPAN: usize = offset_of!(JSDocUnknownType, span);
+pub(crate) const OFFSET_JS_DOC_UNKNOWN_TYPE_SPAN: usize = offset_of!(JSDocUnknownType, span);

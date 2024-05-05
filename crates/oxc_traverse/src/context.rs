@@ -79,7 +79,7 @@ impl<'a> TraverseCtx<'a> {
 
     /// Push item onto stack.
     #[inline]
-    pub(super) fn push_stack(&mut self, ancestor: Ancestor<'a>) {
+    pub(crate) fn push_stack(&mut self, ancestor: Ancestor<'a>) {
         self.stack.push(ancestor);
     }
 
@@ -89,7 +89,7 @@ impl<'a> TraverseCtx<'a> {
     /// * Each `pop_stack` call must correspond to a `push_stack` call for same type.
     #[inline]
     #[allow(unsafe_code)]
-    pub(super) unsafe fn pop_stack(&mut self) {
+    pub(crate) unsafe fn pop_stack(&mut self) {
         self.stack.pop().unwrap_unchecked();
     }
 
@@ -100,7 +100,7 @@ impl<'a> TraverseCtx<'a> {
     /// * Last item on stack must contain type corresponding to provided discriminant.
     #[inline]
     #[allow(unsafe_code, clippy::ptr_as_ptr, clippy::ref_as_ptr)]
-    pub(super) unsafe fn retag_stack(&mut self, discriminant: AncestorDiscriminant) {
+    pub(crate) unsafe fn retag_stack(&mut self, discriminant: AncestorDiscriminant) {
         *(self.stack.last_mut().unwrap_unchecked() as *mut _ as *mut AncestorDiscriminant) =
             discriminant;
     }

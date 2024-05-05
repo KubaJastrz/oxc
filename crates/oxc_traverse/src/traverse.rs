@@ -4,7 +4,7 @@ use oxc_allocator::Vec;
 #[allow(clippy::wildcard_imports)]
 use oxc_ast::ast::*;
 
-use super::TraverseCtx;
+use crate::TraverseCtx;
 
 #[allow(unused_variables)]
 pub trait Traverse<'a> {

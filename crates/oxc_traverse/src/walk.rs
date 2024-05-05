@@ -17,9 +17,9 @@ use oxc_allocator::Vec;
 #[allow(clippy::wildcard_imports)]
 use oxc_ast::ast::*;
 
-use super::{ancestor, Ancestor, Traverse, TraverseCtx};
+use crate::{ancestor, Ancestor, Traverse, TraverseCtx};
 
-pub(super) unsafe fn walk_program<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_program<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Program<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -51,7 +51,7 @@ pub(super) unsafe fn walk_program<'a, Tr: Traverse<'a>>(
     traverser.exit_program(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Expression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -174,7 +174,7 @@ pub(super) unsafe fn walk_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_identifier_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_identifier_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut IdentifierName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -183,7 +183,7 @@ pub(super) unsafe fn walk_identifier_name<'a, Tr: Traverse<'a>>(
     traverser.exit_identifier_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_identifier_reference<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_identifier_reference<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut IdentifierReference<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -192,7 +192,7 @@ pub(super) unsafe fn walk_identifier_reference<'a, Tr: Traverse<'a>>(
     traverser.exit_identifier_reference(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binding_identifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binding_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BindingIdentifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -201,7 +201,7 @@ pub(super) unsafe fn walk_binding_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_identifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_label_identifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_label_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut LabelIdentifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -210,7 +210,7 @@ pub(super) unsafe fn walk_label_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_label_identifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_this_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_this_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ThisExpression,
     ctx: &mut TraverseCtx<'a>,
@@ -219,7 +219,7 @@ pub(super) unsafe fn walk_this_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_this_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_array_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_array_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ArrayExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -238,7 +238,7 @@ pub(super) unsafe fn walk_array_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_array_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_array_expression_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_array_expression_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ArrayExpressionElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -297,7 +297,7 @@ pub(super) unsafe fn walk_array_expression_element<'a, Tr: Traverse<'a>>(
     traverser.exit_array_expression_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_elision<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_elision<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Elision,
     ctx: &mut TraverseCtx<'a>,
@@ -306,7 +306,7 @@ pub(super) unsafe fn walk_elision<'a, Tr: Traverse<'a>>(
     traverser.exit_elision(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_object_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_object_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ObjectExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -325,7 +325,7 @@ pub(super) unsafe fn walk_object_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_object_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_object_property_kind<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_object_property_kind<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ObjectPropertyKind<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -342,7 +342,7 @@ pub(super) unsafe fn walk_object_property_kind<'a, Tr: Traverse<'a>>(
     traverser.exit_object_property_kind(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_object_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_object_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ObjectProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -373,7 +373,7 @@ pub(super) unsafe fn walk_object_property<'a, Tr: Traverse<'a>>(
     traverser.exit_object_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_property_key<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_property_key<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut PropertyKey<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -432,7 +432,7 @@ pub(super) unsafe fn walk_property_key<'a, Tr: Traverse<'a>>(
     traverser.exit_property_key(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_template_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_template_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TemplateLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -459,7 +459,7 @@ pub(super) unsafe fn walk_template_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_template_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_tagged_template_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_tagged_template_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TaggedTemplateExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -491,7 +491,7 @@ pub(super) unsafe fn walk_tagged_template_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_tagged_template_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_template_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_template_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TemplateElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -500,7 +500,7 @@ pub(super) unsafe fn walk_template_element<'a, Tr: Traverse<'a>>(
     traverser.exit_template_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_member_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_member_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut MemberExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -520,7 +520,7 @@ pub(super) unsafe fn walk_member_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_member_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_computed_member_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_computed_member_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ComputedMemberExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -546,7 +546,7 @@ pub(super) unsafe fn walk_computed_member_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_computed_member_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_static_member_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_static_member_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut StaticMemberExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -571,7 +571,7 @@ pub(super) unsafe fn walk_static_member_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_static_member_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_private_field_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_private_field_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut PrivateFieldExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -596,7 +596,7 @@ pub(super) unsafe fn walk_private_field_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_private_field_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_call_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_call_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut CallExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -629,7 +629,7 @@ pub(super) unsafe fn walk_call_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_call_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_new_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_new_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut NewExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -662,7 +662,7 @@ pub(super) unsafe fn walk_new_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_new_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_meta_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_meta_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut MetaProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -687,7 +687,7 @@ pub(super) unsafe fn walk_meta_property<'a, Tr: Traverse<'a>>(
     traverser.exit_meta_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_spread_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_spread_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut SpreadElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -705,7 +705,7 @@ pub(super) unsafe fn walk_spread_element<'a, Tr: Traverse<'a>>(
     traverser.exit_spread_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_argument<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_argument<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Argument<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -761,7 +761,7 @@ pub(super) unsafe fn walk_argument<'a, Tr: Traverse<'a>>(
     traverser.exit_argument(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_update_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_update_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut UpdateExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -780,7 +780,7 @@ pub(super) unsafe fn walk_update_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_update_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_unary_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_unary_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut UnaryExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -798,7 +798,7 @@ pub(super) unsafe fn walk_unary_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_unary_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binary_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binary_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BinaryExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -823,7 +823,7 @@ pub(super) unsafe fn walk_binary_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_binary_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_private_in_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_private_in_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut PrivateInExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -849,7 +849,7 @@ pub(super) unsafe fn walk_private_in_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_private_in_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_logical_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_logical_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut LogicalExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -874,7 +874,7 @@ pub(super) unsafe fn walk_logical_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_logical_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_conditional_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_conditional_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ConditionalExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -905,7 +905,7 @@ pub(super) unsafe fn walk_conditional_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_conditional_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -930,7 +930,7 @@ pub(super) unsafe fn walk_assignment_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTarget<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -955,7 +955,7 @@ pub(super) unsafe fn walk_assignment_target<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_simple_assignment_target<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_simple_assignment_target<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut SimpleAssignmentTarget<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -986,7 +986,7 @@ pub(super) unsafe fn walk_simple_assignment_target<'a, Tr: Traverse<'a>>(
     traverser.exit_simple_assignment_target(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_pattern<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_pattern<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetPattern<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1003,7 +1003,7 @@ pub(super) unsafe fn walk_assignment_target_pattern<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target_pattern(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_array_assignment_target<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_array_assignment_target<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ArrayAssignmentTarget<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1029,7 +1029,7 @@ pub(super) unsafe fn walk_array_assignment_target<'a, Tr: Traverse<'a>>(
     traverser.exit_array_assignment_target(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_object_assignment_target<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_object_assignment_target<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ObjectAssignmentTarget<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1055,7 +1055,7 @@ pub(super) unsafe fn walk_object_assignment_target<'a, Tr: Traverse<'a>>(
     traverser.exit_object_assignment_target(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_rest<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_rest<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetRest<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1074,7 +1074,7 @@ pub(super) unsafe fn walk_assignment_target_rest<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target_rest(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_maybe_default<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_maybe_default<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetMaybeDefault<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1100,7 +1100,7 @@ pub(super) unsafe fn walk_assignment_target_maybe_default<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target_maybe_default(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_with_default<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_with_default<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetWithDefault<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1126,7 +1126,7 @@ pub(super) unsafe fn walk_assignment_target_with_default<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target_with_default(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1143,7 +1143,7 @@ pub(super) unsafe fn walk_assignment_target_property<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_target_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_property_identifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_property_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetPropertyIdentifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1169,7 +1169,7 @@ pub(super) unsafe fn walk_assignment_target_property_identifier<'a, Tr: Traverse
     traverser.exit_assignment_target_property_identifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_target_property_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_target_property_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentTargetPropertyProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1195,7 +1195,7 @@ pub(super) unsafe fn walk_assignment_target_property_property<'a, Tr: Traverse<'
     traverser.exit_assignment_target_property_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_sequence_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_sequence_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut SequenceExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1214,7 +1214,7 @@ pub(super) unsafe fn walk_sequence_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_sequence_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_super<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_super<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Super,
     ctx: &mut TraverseCtx<'a>,
@@ -1223,7 +1223,7 @@ pub(super) unsafe fn walk_super<'a, Tr: Traverse<'a>>(
     traverser.exit_super(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_await_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_await_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AwaitExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1241,7 +1241,7 @@ pub(super) unsafe fn walk_await_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_await_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_chain_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_chain_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ChainExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1259,7 +1259,7 @@ pub(super) unsafe fn walk_chain_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_chain_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_chain_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_chain_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ChainElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1278,7 +1278,7 @@ pub(super) unsafe fn walk_chain_element<'a, Tr: Traverse<'a>>(
     traverser.exit_chain_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_parenthesized_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_parenthesized_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ParenthesizedExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1297,7 +1297,7 @@ pub(super) unsafe fn walk_parenthesized_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_parenthesized_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Statement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1379,7 +1379,7 @@ pub(super) unsafe fn walk_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_directive<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_directive<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Directive<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1398,7 +1398,7 @@ pub(super) unsafe fn walk_directive<'a, Tr: Traverse<'a>>(
     traverser.exit_directive(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_hashbang<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_hashbang<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Hashbang<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1407,7 +1407,7 @@ pub(super) unsafe fn walk_hashbang<'a, Tr: Traverse<'a>>(
     traverser.exit_hashbang(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_block_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_block_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BlockStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1425,7 +1425,7 @@ pub(super) unsafe fn walk_block_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_block_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Declaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1461,7 +1461,7 @@ pub(super) unsafe fn walk_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_variable_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_variable_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut VariableDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1480,7 +1480,7 @@ pub(super) unsafe fn walk_variable_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_variable_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_variable_declarator<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_variable_declarator<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut VariableDeclarator<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1505,7 +1505,7 @@ pub(super) unsafe fn walk_variable_declarator<'a, Tr: Traverse<'a>>(
     traverser.exit_variable_declarator(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_using_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_using_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut UsingDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1524,7 +1524,7 @@ pub(super) unsafe fn walk_using_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_using_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_empty_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_empty_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut EmptyStatement,
     ctx: &mut TraverseCtx<'a>,
@@ -1533,7 +1533,7 @@ pub(super) unsafe fn walk_empty_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_empty_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_expression_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_expression_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExpressionStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1551,7 +1551,7 @@ pub(super) unsafe fn walk_expression_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_expression_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_if_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_if_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut IfStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1582,7 +1582,7 @@ pub(super) unsafe fn walk_if_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_if_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_do_while_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_do_while_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut DoWhileStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1607,7 +1607,7 @@ pub(super) unsafe fn walk_do_while_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_do_while_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_while_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_while_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut WhileStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1632,7 +1632,7 @@ pub(super) unsafe fn walk_while_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_while_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_for_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_for_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ForStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1669,7 +1669,7 @@ pub(super) unsafe fn walk_for_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_for_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_for_statement_init<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_for_statement_init<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ForStatementInit<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1730,7 +1730,7 @@ pub(super) unsafe fn walk_for_statement_init<'a, Tr: Traverse<'a>>(
     traverser.exit_for_statement_init(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_for_in_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_for_in_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ForInStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1761,7 +1761,7 @@ pub(super) unsafe fn walk_for_in_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_for_in_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_for_of_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_for_of_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ForOfStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1792,7 +1792,7 @@ pub(super) unsafe fn walk_for_of_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_for_of_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_for_statement_left<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_for_statement_left<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ForStatementLeft<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1821,7 +1821,7 @@ pub(super) unsafe fn walk_for_statement_left<'a, Tr: Traverse<'a>>(
     traverser.exit_for_statement_left(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_continue_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_continue_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ContinueStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1839,7 +1839,7 @@ pub(super) unsafe fn walk_continue_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_continue_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_break_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_break_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BreakStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1857,7 +1857,7 @@ pub(super) unsafe fn walk_break_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_break_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_return_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_return_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ReturnStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1875,7 +1875,7 @@ pub(super) unsafe fn walk_return_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_return_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_with_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_with_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut WithStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1900,7 +1900,7 @@ pub(super) unsafe fn walk_with_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_with_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_switch_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_switch_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut SwitchStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1925,7 +1925,7 @@ pub(super) unsafe fn walk_switch_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_switch_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_switch_case<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_switch_case<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut SwitchCase<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1950,7 +1950,7 @@ pub(super) unsafe fn walk_switch_case<'a, Tr: Traverse<'a>>(
     traverser.exit_switch_case(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_labeled_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_labeled_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut LabeledStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1975,7 +1975,7 @@ pub(super) unsafe fn walk_labeled_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_labeled_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_throw_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_throw_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ThrowStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -1993,7 +1993,7 @@ pub(super) unsafe fn walk_throw_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_throw_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_try_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_try_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TryStatement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2025,7 +2025,7 @@ pub(super) unsafe fn walk_try_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_try_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_catch_clause<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_catch_clause<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut CatchClause<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2051,7 +2051,7 @@ pub(super) unsafe fn walk_catch_clause<'a, Tr: Traverse<'a>>(
     traverser.exit_catch_clause(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_catch_parameter<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_catch_parameter<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut CatchParameter<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2069,7 +2069,7 @@ pub(super) unsafe fn walk_catch_parameter<'a, Tr: Traverse<'a>>(
     traverser.exit_catch_parameter(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_debugger_statement<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_debugger_statement<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut DebuggerStatement,
     ctx: &mut TraverseCtx<'a>,
@@ -2078,7 +2078,7 @@ pub(super) unsafe fn walk_debugger_statement<'a, Tr: Traverse<'a>>(
     traverser.exit_debugger_statement(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binding_pattern<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binding_pattern<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BindingPattern<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2104,7 +2104,7 @@ pub(super) unsafe fn walk_binding_pattern<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_pattern(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binding_pattern_kind<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binding_pattern_kind<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BindingPatternKind<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2127,7 +2127,7 @@ pub(super) unsafe fn walk_binding_pattern_kind<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_pattern_kind(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_assignment_pattern<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_assignment_pattern<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AssignmentPattern<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2152,7 +2152,7 @@ pub(super) unsafe fn walk_assignment_pattern<'a, Tr: Traverse<'a>>(
     traverser.exit_assignment_pattern(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_object_pattern<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_object_pattern<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ObjectPattern<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2178,7 +2178,7 @@ pub(super) unsafe fn walk_object_pattern<'a, Tr: Traverse<'a>>(
     traverser.exit_object_pattern(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binding_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binding_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BindingProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2203,7 +2203,7 @@ pub(super) unsafe fn walk_binding_property<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_array_pattern<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_array_pattern<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ArrayPattern<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2230,7 +2230,7 @@ pub(super) unsafe fn walk_array_pattern<'a, Tr: Traverse<'a>>(
     traverser.exit_array_pattern(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_binding_rest_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_binding_rest_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BindingRestElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2249,7 +2249,7 @@ pub(super) unsafe fn walk_binding_rest_element<'a, Tr: Traverse<'a>>(
     traverser.exit_binding_rest_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_function<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_function<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Function<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2299,7 +2299,7 @@ pub(super) unsafe fn walk_function<'a, Tr: Traverse<'a>>(
     traverser.exit_function(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_formal_parameters<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_formal_parameters<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut FormalParameters<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2325,7 +2325,7 @@ pub(super) unsafe fn walk_formal_parameters<'a, Tr: Traverse<'a>>(
     traverser.exit_formal_parameters(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_formal_parameter<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_formal_parameter<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut FormalParameter<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2351,7 +2351,7 @@ pub(super) unsafe fn walk_formal_parameter<'a, Tr: Traverse<'a>>(
     traverser.exit_formal_parameter(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_function_body<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_function_body<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut FunctionBody<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2377,7 +2377,7 @@ pub(super) unsafe fn walk_function_body<'a, Tr: Traverse<'a>>(
     traverser.exit_function_body(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_arrow_function_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_arrow_function_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ArrowFunctionExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2417,7 +2417,7 @@ pub(super) unsafe fn walk_arrow_function_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_arrow_function_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_yield_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_yield_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut YieldExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2435,7 +2435,7 @@ pub(super) unsafe fn walk_yield_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_yield_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_class<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_class<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Class<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2490,7 +2490,7 @@ pub(super) unsafe fn walk_class<'a, Tr: Traverse<'a>>(
     traverser.exit_class(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_class_body<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_class_body<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ClassBody<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2507,7 +2507,7 @@ pub(super) unsafe fn walk_class_body<'a, Tr: Traverse<'a>>(
     traverser.exit_class_body(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_class_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_class_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ClassElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2533,7 +2533,7 @@ pub(super) unsafe fn walk_class_element<'a, Tr: Traverse<'a>>(
     traverser.exit_class_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_method_definition<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_method_definition<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut MethodDefinition<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2566,7 +2566,7 @@ pub(super) unsafe fn walk_method_definition<'a, Tr: Traverse<'a>>(
     traverser.exit_method_definition(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_property_definition<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_property_definition<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut PropertyDefinition<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2605,7 +2605,7 @@ pub(super) unsafe fn walk_property_definition<'a, Tr: Traverse<'a>>(
     traverser.exit_property_definition(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_private_identifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_private_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut PrivateIdentifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2614,7 +2614,7 @@ pub(super) unsafe fn walk_private_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_private_identifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_static_block<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_static_block<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut StaticBlock<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2630,7 +2630,7 @@ pub(super) unsafe fn walk_static_block<'a, Tr: Traverse<'a>>(
     traverser.exit_static_block(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_module_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_module_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ModuleDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2659,7 +2659,7 @@ pub(super) unsafe fn walk_module_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_module_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_accessor_property<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_accessor_property<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut AccessorProperty<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2691,7 +2691,7 @@ pub(super) unsafe fn walk_accessor_property<'a, Tr: Traverse<'a>>(
     traverser.exit_accessor_property(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2717,7 +2717,7 @@ pub(super) unsafe fn walk_import_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_import_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2751,7 +2751,7 @@ pub(super) unsafe fn walk_import_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_import_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_declaration_specifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_declaration_specifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportDeclarationSpecifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2771,7 +2771,7 @@ pub(super) unsafe fn walk_import_declaration_specifier<'a, Tr: Traverse<'a>>(
     traverser.exit_import_declaration_specifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_specifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_specifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportSpecifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2796,7 +2796,7 @@ pub(super) unsafe fn walk_import_specifier<'a, Tr: Traverse<'a>>(
     traverser.exit_import_specifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_default_specifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_default_specifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportDefaultSpecifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2815,7 +2815,7 @@ pub(super) unsafe fn walk_import_default_specifier<'a, Tr: Traverse<'a>>(
     traverser.exit_import_default_specifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_namespace_specifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_namespace_specifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportNamespaceSpecifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2834,7 +2834,7 @@ pub(super) unsafe fn walk_import_namespace_specifier<'a, Tr: Traverse<'a>>(
     traverser.exit_import_namespace_specifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_with_clause<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_with_clause<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut WithClause<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2860,7 +2860,7 @@ pub(super) unsafe fn walk_with_clause<'a, Tr: Traverse<'a>>(
     traverser.exit_with_clause(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_attribute<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_attribute<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportAttribute<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2885,7 +2885,7 @@ pub(super) unsafe fn walk_import_attribute<'a, Tr: Traverse<'a>>(
     traverser.exit_import_attribute(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_import_attribute_key<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_import_attribute_key<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ImportAttributeKey<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2902,7 +2902,7 @@ pub(super) unsafe fn walk_import_attribute_key<'a, Tr: Traverse<'a>>(
     traverser.exit_import_attribute_key(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExportNamedDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2942,7 +2942,7 @@ pub(super) unsafe fn walk_export_named_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_export_named_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_export_default_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_export_default_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExportDefaultDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -2968,7 +2968,7 @@ pub(super) unsafe fn walk_export_default_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_export_default_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_export_all_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_export_all_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExportAllDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3000,7 +3000,7 @@ pub(super) unsafe fn walk_export_all_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_export_all_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_export_specifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_export_specifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExportSpecifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3025,7 +3025,7 @@ pub(super) unsafe fn walk_export_specifier<'a, Tr: Traverse<'a>>(
     traverser.exit_export_specifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_export_default_declaration_kind<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_export_default_declaration_kind<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ExportDefaultDeclarationKind<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3092,7 +3092,7 @@ pub(super) unsafe fn walk_export_default_declaration_kind<'a, Tr: Traverse<'a>>(
     traverser.exit_export_default_declaration_kind(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_module_export_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_module_export_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut ModuleExportName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3107,7 +3107,7 @@ pub(super) unsafe fn walk_module_export_name<'a, Tr: Traverse<'a>>(
     traverser.exit_module_export_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3140,7 +3140,7 @@ pub(super) unsafe fn walk_jsx_element<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_opening_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_opening_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXOpeningElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3173,7 +3173,7 @@ pub(super) unsafe fn walk_jsx_opening_element<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_opening_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_closing_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_closing_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXClosingElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3191,7 +3191,7 @@ pub(super) unsafe fn walk_jsx_closing_element<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_closing_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_fragment<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_fragment<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXFragment<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3210,7 +3210,7 @@ pub(super) unsafe fn walk_jsx_fragment<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_fragment(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_element_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_element_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXElementName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3230,7 +3230,7 @@ pub(super) unsafe fn walk_jsx_element_name<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_element_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_namespaced_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_namespaced_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXNamespacedName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3254,7 +3254,7 @@ pub(super) unsafe fn walk_jsx_namespaced_name<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_namespaced_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_member_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_member_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXMemberExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3280,7 +3280,7 @@ pub(super) unsafe fn walk_jsx_member_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_member_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_member_expression_object<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_member_expression_object<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXMemberExpressionObject<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3297,7 +3297,7 @@ pub(super) unsafe fn walk_jsx_member_expression_object<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_member_expression_object(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_expression_container<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_expression_container<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXExpressionContainer<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3316,7 +3316,7 @@ pub(super) unsafe fn walk_jsx_expression_container<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_expression_container(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3374,7 +3374,7 @@ pub(super) unsafe fn walk_jsx_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_empty_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_empty_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXEmptyExpression,
     ctx: &mut TraverseCtx<'a>,
@@ -3383,7 +3383,7 @@ pub(super) unsafe fn walk_jsx_empty_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_empty_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_attribute_item<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_attribute_item<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXAttributeItem<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3400,7 +3400,7 @@ pub(super) unsafe fn walk_jsx_attribute_item<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_attribute_item(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_attribute<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_attribute<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXAttribute<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3425,7 +3425,7 @@ pub(super) unsafe fn walk_jsx_attribute<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_attribute(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_spread_attribute<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_spread_attribute<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXSpreadAttribute<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3443,7 +3443,7 @@ pub(super) unsafe fn walk_jsx_spread_attribute<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_spread_attribute(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_attribute_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_attribute_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXAttributeName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3460,7 +3460,7 @@ pub(super) unsafe fn walk_jsx_attribute_name<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_attribute_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_attribute_value<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_attribute_value<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXAttributeValue<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3483,7 +3483,7 @@ pub(super) unsafe fn walk_jsx_attribute_value<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_attribute_value(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_identifier<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_identifier<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXIdentifier<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3492,7 +3492,7 @@ pub(super) unsafe fn walk_jsx_identifier<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_identifier(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_child<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_child<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXChild<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3510,7 +3510,7 @@ pub(super) unsafe fn walk_jsx_child<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_child(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_spread_child<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_spread_child<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXSpreadChild<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3528,7 +3528,7 @@ pub(super) unsafe fn walk_jsx_spread_child<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_spread_child(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_jsx_text<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_jsx_text<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSXText<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3537,7 +3537,7 @@ pub(super) unsafe fn walk_jsx_text<'a, Tr: Traverse<'a>>(
     traverser.exit_jsx_text(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_boolean_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_boolean_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BooleanLiteral,
     ctx: &mut TraverseCtx<'a>,
@@ -3546,7 +3546,7 @@ pub(super) unsafe fn walk_boolean_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_boolean_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_null_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_null_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut NullLiteral,
     ctx: &mut TraverseCtx<'a>,
@@ -3555,7 +3555,7 @@ pub(super) unsafe fn walk_null_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_null_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_numeric_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_numeric_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut NumericLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3564,7 +3564,7 @@ pub(super) unsafe fn walk_numeric_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_numeric_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_big_int_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_big_int_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut BigIntLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3573,7 +3573,7 @@ pub(super) unsafe fn walk_big_int_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_big_int_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_reg_exp_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_reg_exp_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut RegExpLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3582,7 +3582,7 @@ pub(super) unsafe fn walk_reg_exp_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_reg_exp_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_string_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_string_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut StringLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3591,7 +3591,7 @@ pub(super) unsafe fn walk_string_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_string_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_this_parameter<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_this_parameter<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSThisParameter<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3617,7 +3617,7 @@ pub(super) unsafe fn walk_ts_this_parameter<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_this_parameter(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_enum_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_enum_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSEnumDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3643,7 +3643,7 @@ pub(super) unsafe fn walk_ts_enum_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_enum_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_enum_member<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_enum_member<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSEnumMember<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3668,7 +3668,7 @@ pub(super) unsafe fn walk_ts_enum_member<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_enum_member(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_enum_member_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_enum_member_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSEnumMemberName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3732,7 +3732,7 @@ pub(super) unsafe fn walk_ts_enum_member_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_enum_member_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_annotation<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_annotation<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeAnnotation<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3750,7 +3750,7 @@ pub(super) unsafe fn walk_ts_type_annotation<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_annotation(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_literal_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_literal_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSLiteralType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3768,7 +3768,7 @@ pub(super) unsafe fn walk_ts_literal_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_literal_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3801,7 +3801,7 @@ pub(super) unsafe fn walk_ts_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3899,7 +3899,7 @@ pub(super) unsafe fn walk_ts_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_conditional_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_conditional_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSConditionalType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3935,7 +3935,7 @@ pub(super) unsafe fn walk_ts_conditional_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_conditional_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_union_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_union_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSUnionType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3953,7 +3953,7 @@ pub(super) unsafe fn walk_ts_union_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_union_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_intersection_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_intersection_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSIntersectionType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3972,7 +3972,7 @@ pub(super) unsafe fn walk_ts_intersection_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_intersection_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_operator<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_operator<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeOperator<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -3990,7 +3990,7 @@ pub(super) unsafe fn walk_ts_type_operator<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_operator(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_array_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_array_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSArrayType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4008,7 +4008,7 @@ pub(super) unsafe fn walk_ts_array_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_array_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_indexed_access_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_indexed_access_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSIndexedAccessType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4032,7 +4032,7 @@ pub(super) unsafe fn walk_ts_indexed_access_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_indexed_access_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_tuple_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_tuple_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTupleType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4051,7 +4051,7 @@ pub(super) unsafe fn walk_ts_tuple_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_tuple_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_named_tuple_member<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_named_tuple_member<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNamedTupleMember<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4075,7 +4075,7 @@ pub(super) unsafe fn walk_ts_named_tuple_member<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_named_tuple_member(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_optional_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_optional_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSOptionalType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4093,7 +4093,7 @@ pub(super) unsafe fn walk_ts_optional_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_optional_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_rest_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_rest_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSRestType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4111,7 +4111,7 @@ pub(super) unsafe fn walk_ts_rest_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_rest_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_tuple_element<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_tuple_element<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTupleElement<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4163,7 +4163,7 @@ pub(super) unsafe fn walk_ts_tuple_element<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_tuple_element(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_any_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_any_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSAnyKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4172,7 +4172,7 @@ pub(super) unsafe fn walk_ts_any_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_any_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_string_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_string_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSStringKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4181,7 +4181,7 @@ pub(super) unsafe fn walk_ts_string_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_string_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_boolean_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_boolean_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSBooleanKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4190,7 +4190,7 @@ pub(super) unsafe fn walk_ts_boolean_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_boolean_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_number_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_number_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNumberKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4199,7 +4199,7 @@ pub(super) unsafe fn walk_ts_number_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_number_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_never_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_never_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNeverKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4208,7 +4208,7 @@ pub(super) unsafe fn walk_ts_never_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_never_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_unknown_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_unknown_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSUnknownKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4217,7 +4217,7 @@ pub(super) unsafe fn walk_ts_unknown_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_unknown_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_null_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_null_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNullKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4226,7 +4226,7 @@ pub(super) unsafe fn walk_ts_null_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_null_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_undefined_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_undefined_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSUndefinedKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4235,7 +4235,7 @@ pub(super) unsafe fn walk_ts_undefined_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_undefined_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_void_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_void_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSVoidKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4244,7 +4244,7 @@ pub(super) unsafe fn walk_ts_void_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_void_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_symbol_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_symbol_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSSymbolKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4253,7 +4253,7 @@ pub(super) unsafe fn walk_ts_symbol_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_symbol_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_this_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_this_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSThisType,
     ctx: &mut TraverseCtx<'a>,
@@ -4262,7 +4262,7 @@ pub(super) unsafe fn walk_ts_this_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_this_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_object_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_object_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSObjectKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4271,7 +4271,7 @@ pub(super) unsafe fn walk_ts_object_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_object_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_big_int_keyword<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_big_int_keyword<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSBigIntKeyword,
     ctx: &mut TraverseCtx<'a>,
@@ -4280,7 +4280,7 @@ pub(super) unsafe fn walk_ts_big_int_keyword<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_big_int_keyword(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_reference<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_reference<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeReference<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4306,7 +4306,7 @@ pub(super) unsafe fn walk_ts_type_reference<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_reference(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4323,7 +4323,7 @@ pub(super) unsafe fn walk_ts_type_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_qualified_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_qualified_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSQualifiedName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4348,7 +4348,7 @@ pub(super) unsafe fn walk_ts_qualified_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_qualified_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_parameter_instantiation<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_parameter_instantiation<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeParameterInstantiation<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4367,7 +4367,7 @@ pub(super) unsafe fn walk_ts_type_parameter_instantiation<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_parameter_instantiation(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_parameter<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_parameter<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeParameter<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4398,7 +4398,7 @@ pub(super) unsafe fn walk_ts_type_parameter<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_parameter(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_parameter_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_parameter_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeParameterDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4417,7 +4417,7 @@ pub(super) unsafe fn walk_ts_type_parameter_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_parameter_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_alias_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_alias_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeAliasDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4451,7 +4451,7 @@ pub(super) unsafe fn walk_ts_type_alias_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_alias_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_class_implements<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_class_implements<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSClassImplements<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4476,7 +4476,7 @@ pub(super) unsafe fn walk_ts_class_implements<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_class_implements(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_interface_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_interface_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSInterfaceDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4519,7 +4519,7 @@ pub(super) unsafe fn walk_ts_interface_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_interface_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_interface_body<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_interface_body<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSInterfaceBody<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4538,7 +4538,7 @@ pub(super) unsafe fn walk_ts_interface_body<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_interface_body(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_property_signature<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_property_signature<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSPropertySignature<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4564,7 +4564,7 @@ pub(super) unsafe fn walk_ts_property_signature<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_property_signature(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_signature<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_signature<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSSignature<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4590,7 +4590,7 @@ pub(super) unsafe fn walk_ts_signature<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_signature(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_index_signature<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_index_signature<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSIndexSignature<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4616,7 +4616,7 @@ pub(super) unsafe fn walk_ts_index_signature<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_index_signature(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSCallSignatureDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4656,7 +4656,7 @@ pub(super) unsafe fn walk_ts_call_signature_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_call_signature_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSMethodSignature<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4703,7 +4703,7 @@ pub(super) unsafe fn walk_ts_method_signature<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_method_signature(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_construct_signature_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_construct_signature_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSConstructSignatureDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4736,7 +4736,7 @@ pub(super) unsafe fn walk_ts_construct_signature_declaration<'a, Tr: Traverse<'a
     traverser.exit_ts_construct_signature_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_index_signature_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_index_signature_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSIndexSignatureName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4755,7 +4755,7 @@ pub(super) unsafe fn walk_ts_index_signature_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_index_signature_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_interface_heritage<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_interface_heritage<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSInterfaceHeritage<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4780,7 +4780,7 @@ pub(super) unsafe fn walk_ts_interface_heritage<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_interface_heritage(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_predicate<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_predicate<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypePredicate<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4806,7 +4806,7 @@ pub(super) unsafe fn walk_ts_type_predicate<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_predicate(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_predicate_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_predicate_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypePredicateName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4821,7 +4821,7 @@ pub(super) unsafe fn walk_ts_type_predicate_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_predicate_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_module_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_module_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSModuleDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4847,7 +4847,7 @@ pub(super) unsafe fn walk_ts_module_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_module_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_module_declaration_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_module_declaration_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSModuleDeclarationName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4864,7 +4864,7 @@ pub(super) unsafe fn walk_ts_module_declaration_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_module_declaration_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_module_declaration_body<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_module_declaration_body<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSModuleDeclarationBody<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4881,7 +4881,7 @@ pub(super) unsafe fn walk_ts_module_declaration_body<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_module_declaration_body(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_module_block<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_module_block<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSModuleBlock<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4899,7 +4899,7 @@ pub(super) unsafe fn walk_ts_module_block<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_module_block(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_literal<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_literal<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeLiteral<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4918,7 +4918,7 @@ pub(super) unsafe fn walk_ts_type_literal<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_literal(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_infer_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_infer_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSInferType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4937,7 +4937,7 @@ pub(super) unsafe fn walk_ts_infer_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_infer_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_query<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_query<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeQuery<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4963,7 +4963,7 @@ pub(super) unsafe fn walk_ts_type_query<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_query(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_query_expr_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_query_expr_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeQueryExprName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -4980,7 +4980,7 @@ pub(super) unsafe fn walk_ts_type_query_expr_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_query_expr_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_import_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_import_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSImportType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5018,7 +5018,7 @@ pub(super) unsafe fn walk_ts_import_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_import_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_import_attributes<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_import_attributes<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSImportAttributes<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5037,7 +5037,7 @@ pub(super) unsafe fn walk_ts_import_attributes<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_import_attributes(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_import_attribute<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_import_attribute<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSImportAttribute<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5063,7 +5063,7 @@ pub(super) unsafe fn walk_ts_import_attribute<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_import_attribute(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_import_attribute_name<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_import_attribute_name<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSImportAttributeName<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5080,7 +5080,7 @@ pub(super) unsafe fn walk_ts_import_attribute_name<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_import_attribute_name(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_function_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_function_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSFunctionType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5120,7 +5120,7 @@ pub(super) unsafe fn walk_ts_function_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_function_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_constructor_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_constructor_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSConstructorType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5154,7 +5154,7 @@ pub(super) unsafe fn walk_ts_constructor_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_constructor_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_mapped_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_mapped_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSMappedType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5186,7 +5186,7 @@ pub(super) unsafe fn walk_ts_mapped_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_mapped_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_template_literal_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_template_literal_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTemplateLiteralType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5212,7 +5212,7 @@ pub(super) unsafe fn walk_ts_template_literal_type<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_template_literal_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_as_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_as_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSAsExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5237,7 +5237,7 @@ pub(super) unsafe fn walk_ts_as_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_as_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_satisfies_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_satisfies_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSSatisfiesExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5263,7 +5263,7 @@ pub(super) unsafe fn walk_ts_satisfies_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_satisfies_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_type_assertion<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_type_assertion<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSTypeAssertion<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5287,7 +5287,7 @@ pub(super) unsafe fn walk_ts_type_assertion<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_type_assertion(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_import_equals_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_import_equals_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSImportEqualsDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5313,7 +5313,7 @@ pub(super) unsafe fn walk_ts_import_equals_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_import_equals_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_module_reference<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_module_reference<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSModuleReference<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5330,7 +5330,7 @@ pub(super) unsafe fn walk_ts_module_reference<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_module_reference(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_external_module_reference<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_external_module_reference<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSExternalModuleReference<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5349,7 +5349,7 @@ pub(super) unsafe fn walk_ts_external_module_reference<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_external_module_reference(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_non_null_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_non_null_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNonNullExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5368,7 +5368,7 @@ pub(super) unsafe fn walk_ts_non_null_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_non_null_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_decorator<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_decorator<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut Decorator<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5386,7 +5386,7 @@ pub(super) unsafe fn walk_decorator<'a, Tr: Traverse<'a>>(
     traverser.exit_decorator(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_export_assignment<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_export_assignment<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSExportAssignment<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5404,7 +5404,7 @@ pub(super) unsafe fn walk_ts_export_assignment<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_export_assignment(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_namespace_export_declaration<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_namespace_export_declaration<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSNamespaceExportDeclaration<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5423,7 +5423,7 @@ pub(super) unsafe fn walk_ts_namespace_export_declaration<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_namespace_export_declaration(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_ts_instantiation_expression<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_ts_instantiation_expression<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut TSInstantiationExpression<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5449,7 +5449,7 @@ pub(super) unsafe fn walk_ts_instantiation_expression<'a, Tr: Traverse<'a>>(
     traverser.exit_ts_instantiation_expression(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_js_doc_nullable_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_js_doc_nullable_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSDocNullableType<'a>,
     ctx: &mut TraverseCtx<'a>,
@@ -5467,7 +5467,7 @@ pub(super) unsafe fn walk_js_doc_nullable_type<'a, Tr: Traverse<'a>>(
     traverser.exit_js_doc_nullable_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_js_doc_unknown_type<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_js_doc_unknown_type<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     node: *mut JSDocUnknownType,
     ctx: &mut TraverseCtx<'a>,
@@ -5476,7 +5476,7 @@ pub(super) unsafe fn walk_js_doc_unknown_type<'a, Tr: Traverse<'a>>(
     traverser.exit_js_doc_unknown_type(&mut *node, ctx);
 }
 
-pub(super) unsafe fn walk_statements<'a, Tr: Traverse<'a>>(
+pub(crate) unsafe fn walk_statements<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     stmts: *mut Vec<'a, Statement<'a>>,
     ctx: &mut TraverseCtx<'a>,
