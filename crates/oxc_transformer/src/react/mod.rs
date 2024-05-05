@@ -7,7 +7,8 @@ mod utils;
 
 use std::rc::Rc;
 
-use oxc_ast::{ast::*, traverse::TraverseCtx};
+use oxc_ast::ast::*;
+use oxc_traverse::TraverseCtx;
 
 use crate::context::Ctx;
 

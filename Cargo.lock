@@ -1699,9 +1699,20 @@ dependencies = [
  "oxc_parser",
  "oxc_span",
  "oxc_syntax",
+ "oxc_traverse",
  "ropey",
  "rustc-hash",
  "serde",
+]
+
+[[package]]
+name = "oxc_traverse"
+version = "0.12.5"
+dependencies = [
+ "oxc_allocator",
+ "oxc_ast",
+ "oxc_span",
+ "oxc_syntax",
 ]
 
 [[package]]

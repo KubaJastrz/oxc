@@ -18,7 +18,6 @@ mod ast_kind;
 pub mod precedence;
 mod span;
 pub mod syntax_directed_operations;
-pub mod traverse;
 mod trivia;
 pub mod visit;
 

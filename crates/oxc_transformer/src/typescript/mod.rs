@@ -10,9 +10,9 @@ use std::rc::Rc;
 use serde::Deserialize;
 
 use oxc_allocator::Vec;
-use oxc_ast::{ast::*, traverse::TraverseCtx};
-
+use oxc_ast::ast::*;
 use oxc_syntax::scope::ScopeFlags;
+use oxc_traverse::TraverseCtx;
 
 use crate::context::Ctx;
 

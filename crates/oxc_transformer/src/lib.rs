@@ -25,14 +25,11 @@ use std::{path::Path, rc::Rc};
 
 use es2015::ES2015;
 use oxc_allocator::{Allocator, Vec};
-use oxc_ast::{
-    ast::*,
-    traverse::{traverse_mut, Traverse, TraverseCtx},
-    Trivias,
-};
+use oxc_ast::{ast::*, Trivias};
 use oxc_diagnostics::Error;
 use oxc_span::SourceType;
 // use oxc_syntax::scope::ScopeFlags;
+use oxc_traverse::{traverse_mut, Traverse, TraverseCtx};
 
 pub use crate::{
     compiler_assumptions::CompilerAssumptions, es2015::ES2015Options, options::TransformOptions,

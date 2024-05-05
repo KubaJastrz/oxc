@@ -1,7 +1,7 @@
 use oxc_allocator::Allocator;
+use oxc_ast::AstBuilder;
 
 use super::Ancestor;
-use crate::AstBuilder;
 
 const INITIAL_STACK_CAPACITY: usize = 64;
 

@@ -13,12 +13,12 @@
 use std::{marker::PhantomData, mem::offset_of};
 
 use oxc_allocator::{Box, Vec};
+#[allow(clippy::wildcard_imports)]
+use oxc_ast::ast::*;
 use oxc_span::{Atom, SourceType, Span};
 use oxc_syntax::operator::{
     AssignmentOperator, BinaryOperator, LogicalOperator, UnaryOperator, UpdateOperator,
 };
-
-use crate::ast::*;
 
 /// Ancestor type used in AST traversal.
 ///

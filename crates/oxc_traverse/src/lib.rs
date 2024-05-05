@@ -1,6 +1,6 @@
 use oxc_allocator::Allocator;
 
-use crate::ast::Program;
+use oxc_ast::ast::Program;
 
 pub mod ancestor;
 pub use ancestor::Ancestor;

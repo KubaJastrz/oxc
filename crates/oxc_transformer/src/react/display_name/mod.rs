@@ -1,11 +1,9 @@
 use std::rc::Rc;
 
 use oxc_allocator::Box;
-use oxc_ast::{
-    ast::*,
-    traverse::{Ancestor, FinderRet, TraverseCtx},
-};
+use oxc_ast::ast::*;
 use oxc_span::{Atom, SPAN};
+use oxc_traverse::{Ancestor, FinderRet, TraverseCtx};
 
 use crate::context::Ctx;
 
