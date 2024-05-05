@@ -28,6 +28,8 @@ await writeToFile('traverse.rs', generateTraverseTraitCode(types));
 await writeToFile('ancestor.rs', generateAncestorsCode(types));
 await writeToFile('walk.rs', generateWalkFunctionsCode(types));
 
+// TODO: Remove `todo!` insertions into code and throw error here instead
+
 function generateTraverseTraitCode(types) {
     let traverseMethods = '';
     for (const type of Object.values(types)) {
