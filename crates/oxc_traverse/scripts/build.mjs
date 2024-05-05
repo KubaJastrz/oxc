@@ -88,30 +88,32 @@ function generateAncestorsCode(types) {
                 fieldType = types[fieldTypeName];
             if (!fieldType) continue;
 
-            let methodsCode = '',
-                hasLifetime = false;
+            let methodsCode = '';
             for (const otherField of type.fields) {
                 if (otherField === field) continue;
 
                 methodsCode += `
                     #[inline]
                     pub fn ${otherField.rawName}(&self) -> &${otherField.rawType} {
-                        unsafe { &*(self.0.add(${otherField.offsetVarName}) as *const ${otherField.rawType}) }
+                        unsafe {
+                            &*(
+                                (self.0 as *const u8).add(${otherField.offsetVarName})
+                                as *const ${otherField.rawType}
+                            )
+                        }
                     }
                 `;
-
-                if (otherField.type !== otherField.rawType) hasLifetime = true;
             }
 
-            const lifetime = hasLifetime ? "<'a>" : '',
+            const lifetime = type.hasLifetime ? "<'a>" : '',
                 structName = `${type.name}Without${snakeToCamel(field.name)}${lifetime}`;
-            let structFields = 'pub(crate) *const u8';
-            if (hasLifetime) structFields += ", pub(crate) PhantomData<&'a ()>";
 
             ancestorTypes += `
                 #[repr(transparent)]
                 #[derive(Debug)]
-                pub struct ${structName}(${structFields});
+                pub struct ${structName}(
+                    pub(crate) *const ${type.name}${lifetime}
+                );
 
                 impl${lifetime} ${structName} {
                     ${methodsCode}
@@ -123,7 +125,6 @@ function generateAncestorsCode(types) {
 
             enumVariants += `${variantName}(${structName}) = ${discriminant},\n`;
             field.ancestorDiscriminant = discriminant;
-            field.ancestorHasLifetime = hasLifetime;
             discriminant++;
 
             if (fieldType.kind === 'enum') {
@@ -166,8 +167,6 @@ function generateAncestorsCode(types) {
 
         // TODO: Remove unneeded offset consts, then remove next line
         #![allow(dead_code)]
-
-        use std::marker::PhantomData;
 
         use memoffset::offset_of;
 
@@ -296,10 +295,7 @@ function generateWalkFunctionsCode(types) {
                 fieldsCodes.unshift(`
                     ctx.push_stack(
                         Ancestor::${type.name}${fieldCamelName}(
-                            ancestor::${type.name}Without${fieldCamelName}(
-                                node as *const u8,
-                                ${field.ancestorHasLifetime ? 'PhantomData,' : ''}
-                            )
+                            ancestor::${type.name}Without${fieldCamelName}(node)
                         )
                     );
                 `);
@@ -390,8 +386,6 @@ function generateWalkFunctionsCode(types) {
             clippy::borrow_as_ptr,
             clippy::cast_ptr_alignment
         )]
-
-        use std::marker::PhantomData;
 
         use oxc_allocator::Vec;
         #[allow(clippy::wildcard_imports)]

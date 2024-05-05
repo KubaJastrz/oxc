@@ -10,8 +10,6 @@
 // TODO: Remove unneeded offset consts, then remove next line
 #![allow(dead_code)]
 
-use std::marker::PhantomData;
-
 use memoffset::offset_of;
 
 use oxc_allocator::{Box, Vec};
@@ -35,8 +33,8 @@ pub enum Ancestor<'a> {
     ProgramDirectives(ProgramWithoutDirectives<'a>) = 1,
     ProgramHashbang(ProgramWithoutHashbang<'a>) = 2,
     ProgramBody(ProgramWithoutBody<'a>) = 3,
-    ArrayExpressionElements(ArrayExpressionWithoutElements) = 4,
-    ObjectExpressionProperties(ObjectExpressionWithoutProperties) = 5,
+    ArrayExpressionElements(ArrayExpressionWithoutElements<'a>) = 4,
+    ObjectExpressionProperties(ObjectExpressionWithoutProperties<'a>) = 5,
     ObjectPropertyKey(ObjectPropertyWithoutKey<'a>) = 6,
     ObjectPropertyValue(ObjectPropertyWithoutValue<'a>) = 7,
     ObjectPropertyInit(ObjectPropertyWithoutInit<'a>) = 8,
@@ -59,9 +57,9 @@ pub enum Ancestor<'a> {
     NewExpressionTypeParameters(NewExpressionWithoutTypeParameters<'a>) = 25,
     MetaPropertyMeta(MetaPropertyWithoutMeta<'a>) = 26,
     MetaPropertyProperty(MetaPropertyWithoutProperty<'a>) = 27,
-    SpreadElementArgument(SpreadElementWithoutArgument) = 28,
-    UpdateExpressionArgument(UpdateExpressionWithoutArgument) = 29,
-    UnaryExpressionArgument(UnaryExpressionWithoutArgument) = 30,
+    SpreadElementArgument(SpreadElementWithoutArgument<'a>) = 28,
+    UpdateExpressionArgument(UpdateExpressionWithoutArgument<'a>) = 29,
+    UnaryExpressionArgument(UnaryExpressionWithoutArgument<'a>) = 30,
     BinaryExpressionLeft(BinaryExpressionWithoutLeft<'a>) = 31,
     BinaryExpressionRight(BinaryExpressionWithoutRight<'a>) = 32,
     PrivateInExpressionLeft(PrivateInExpressionWithoutLeft<'a>) = 33,
@@ -77,7 +75,7 @@ pub enum Ancestor<'a> {
     ArrayAssignmentTargetRest(ArrayAssignmentTargetWithoutRest<'a>) = 43,
     ObjectAssignmentTargetProperties(ObjectAssignmentTargetWithoutProperties<'a>) = 44,
     ObjectAssignmentTargetRest(ObjectAssignmentTargetWithoutRest<'a>) = 45,
-    AssignmentTargetRestTarget(AssignmentTargetRestWithoutTarget) = 46,
+    AssignmentTargetRestTarget(AssignmentTargetRestWithoutTarget<'a>) = 46,
     AssignmentTargetWithDefaultBinding(AssignmentTargetWithDefaultWithoutBinding<'a>) = 47,
     AssignmentTargetWithDefaultInit(AssignmentTargetWithDefaultWithoutInit<'a>) = 48,
     AssignmentTargetPropertyIdentifierBinding(AssignmentTargetPropertyIdentifierWithoutBinding<'a>) =
@@ -86,17 +84,17 @@ pub enum Ancestor<'a> {
     AssignmentTargetPropertyPropertyName(AssignmentTargetPropertyPropertyWithoutName<'a>) = 51,
     AssignmentTargetPropertyPropertyBinding(AssignmentTargetPropertyPropertyWithoutBinding<'a>) =
         52,
-    SequenceExpressionExpressions(SequenceExpressionWithoutExpressions) = 53,
-    AwaitExpressionArgument(AwaitExpressionWithoutArgument) = 54,
-    ChainExpressionExpression(ChainExpressionWithoutExpression) = 55,
-    ParenthesizedExpressionExpression(ParenthesizedExpressionWithoutExpression) = 56,
+    SequenceExpressionExpressions(SequenceExpressionWithoutExpressions<'a>) = 53,
+    AwaitExpressionArgument(AwaitExpressionWithoutArgument<'a>) = 54,
+    ChainExpressionExpression(ChainExpressionWithoutExpression<'a>) = 55,
+    ParenthesizedExpressionExpression(ParenthesizedExpressionWithoutExpression<'a>) = 56,
     DirectiveExpression(DirectiveWithoutExpression<'a>) = 57,
-    BlockStatementBody(BlockStatementWithoutBody) = 58,
+    BlockStatementBody(BlockStatementWithoutBody<'a>) = 58,
     VariableDeclarationDeclarations(VariableDeclarationWithoutDeclarations<'a>) = 59,
     VariableDeclaratorId(VariableDeclaratorWithoutId<'a>) = 60,
     VariableDeclaratorInit(VariableDeclaratorWithoutInit<'a>) = 61,
-    UsingDeclarationDeclarations(UsingDeclarationWithoutDeclarations) = 62,
-    ExpressionStatementExpression(ExpressionStatementWithoutExpression) = 63,
+    UsingDeclarationDeclarations(UsingDeclarationWithoutDeclarations<'a>) = 62,
+    ExpressionStatementExpression(ExpressionStatementWithoutExpression<'a>) = 63,
     IfStatementTest(IfStatementWithoutTest<'a>) = 64,
     IfStatementConsequent(IfStatementWithoutConsequent<'a>) = 65,
     IfStatementAlternate(IfStatementWithoutAlternate<'a>) = 66,
@@ -114,9 +112,9 @@ pub enum Ancestor<'a> {
     ForOfStatementLeft(ForOfStatementWithoutLeft<'a>) = 78,
     ForOfStatementRight(ForOfStatementWithoutRight<'a>) = 79,
     ForOfStatementBody(ForOfStatementWithoutBody<'a>) = 80,
-    ContinueStatementLabel(ContinueStatementWithoutLabel) = 81,
-    BreakStatementLabel(BreakStatementWithoutLabel) = 82,
-    ReturnStatementArgument(ReturnStatementWithoutArgument) = 83,
+    ContinueStatementLabel(ContinueStatementWithoutLabel<'a>) = 81,
+    BreakStatementLabel(BreakStatementWithoutLabel<'a>) = 82,
+    ReturnStatementArgument(ReturnStatementWithoutArgument<'a>) = 83,
     WithStatementObject(WithStatementWithoutObject<'a>) = 84,
     WithStatementBody(WithStatementWithoutBody<'a>) = 85,
     SwitchStatementDiscriminant(SwitchStatementWithoutDiscriminant<'a>) = 86,
@@ -125,13 +123,13 @@ pub enum Ancestor<'a> {
     SwitchCaseConsequent(SwitchCaseWithoutConsequent<'a>) = 89,
     LabeledStatementLabel(LabeledStatementWithoutLabel<'a>) = 90,
     LabeledStatementBody(LabeledStatementWithoutBody<'a>) = 91,
-    ThrowStatementArgument(ThrowStatementWithoutArgument) = 92,
+    ThrowStatementArgument(ThrowStatementWithoutArgument<'a>) = 92,
     TryStatementBlock(TryStatementWithoutBlock<'a>) = 93,
     TryStatementHandler(TryStatementWithoutHandler<'a>) = 94,
     TryStatementFinalizer(TryStatementWithoutFinalizer<'a>) = 95,
     CatchClauseParam(CatchClauseWithoutParam<'a>) = 96,
     CatchClauseBody(CatchClauseWithoutBody<'a>) = 97,
-    CatchParameterPattern(CatchParameterWithoutPattern) = 98,
+    CatchParameterPattern(CatchParameterWithoutPattern<'a>) = 98,
     BindingPatternKind(BindingPatternWithoutKind<'a>) = 99,
     BindingPatternTypeAnnotation(BindingPatternWithoutTypeAnnotation<'a>) = 100,
     AssignmentPatternLeft(AssignmentPatternWithoutLeft<'a>) = 101,
@@ -142,7 +140,7 @@ pub enum Ancestor<'a> {
     BindingPropertyValue(BindingPropertyWithoutValue<'a>) = 106,
     ArrayPatternElements(ArrayPatternWithoutElements<'a>) = 107,
     ArrayPatternRest(ArrayPatternWithoutRest<'a>) = 108,
-    BindingRestElementArgument(BindingRestElementWithoutArgument) = 109,
+    BindingRestElementArgument(BindingRestElementWithoutArgument<'a>) = 109,
     FunctionId(FunctionWithoutId<'a>) = 110,
     FunctionThisParam(FunctionWithoutThisParam<'a>) = 111,
     FunctionParams(FunctionWithoutParams<'a>) = 112,
@@ -159,7 +157,7 @@ pub enum Ancestor<'a> {
     ArrowFunctionExpressionBody(ArrowFunctionExpressionWithoutBody<'a>) = 123,
     ArrowFunctionExpressionTypeParameters(ArrowFunctionExpressionWithoutTypeParameters<'a>) = 124,
     ArrowFunctionExpressionReturnType(ArrowFunctionExpressionWithoutReturnType<'a>) = 125,
-    YieldExpressionArgument(YieldExpressionWithoutArgument) = 126,
+    YieldExpressionArgument(YieldExpressionWithoutArgument<'a>) = 126,
     ClassId(ClassWithoutId<'a>) = 127,
     ClassSuperClass(ClassWithoutSuperClass<'a>) = 128,
     ClassBody(ClassWithoutBody<'a>) = 129,
@@ -167,7 +165,7 @@ pub enum Ancestor<'a> {
     ClassSuperTypeParameters(ClassWithoutSuperTypeParameters<'a>) = 131,
     ClassImplements(ClassWithoutImplements<'a>) = 132,
     ClassDecorators(ClassWithoutDecorators<'a>) = 133,
-    ClassBodyBody(ClassBodyWithoutBody) = 134,
+    ClassBodyBody(ClassBodyWithoutBody<'a>) = 134,
     MethodDefinitionKey(MethodDefinitionWithoutKey<'a>) = 135,
     MethodDefinitionValue(MethodDefinitionWithoutValue<'a>) = 136,
     MethodDefinitionDecorators(MethodDefinitionWithoutDecorators<'a>) = 137,
@@ -175,7 +173,7 @@ pub enum Ancestor<'a> {
     PropertyDefinitionValue(PropertyDefinitionWithoutValue<'a>) = 139,
     PropertyDefinitionTypeAnnotation(PropertyDefinitionWithoutTypeAnnotation<'a>) = 140,
     PropertyDefinitionDecorators(PropertyDefinitionWithoutDecorators<'a>) = 141,
-    StaticBlockBody(StaticBlockWithoutBody) = 142,
+    StaticBlockBody(StaticBlockWithoutBody<'a>) = 142,
     AccessorPropertyKey(AccessorPropertyWithoutKey<'a>) = 143,
     AccessorPropertyValue(AccessorPropertyWithoutValue<'a>) = 144,
     AccessorPropertyDecorators(AccessorPropertyWithoutDecorators<'a>) = 145,
@@ -186,8 +184,8 @@ pub enum Ancestor<'a> {
     ImportDeclarationWithClause(ImportDeclarationWithoutWithClause<'a>) = 150,
     ImportSpecifierImported(ImportSpecifierWithoutImported<'a>) = 151,
     ImportSpecifierLocal(ImportSpecifierWithoutLocal<'a>) = 152,
-    ImportDefaultSpecifierLocal(ImportDefaultSpecifierWithoutLocal) = 153,
-    ImportNamespaceSpecifierLocal(ImportNamespaceSpecifierWithoutLocal) = 154,
+    ImportDefaultSpecifierLocal(ImportDefaultSpecifierWithoutLocal<'a>) = 153,
+    ImportNamespaceSpecifierLocal(ImportNamespaceSpecifierWithoutLocal<'a>) = 154,
     WithClauseAttributesKeyword(WithClauseWithoutAttributesKeyword<'a>) = 155,
     WithClauseWithEntries(WithClauseWithoutWithEntries<'a>) = 156,
     ImportAttributeKey(ImportAttributeWithoutKey<'a>) = 157,
@@ -209,49 +207,49 @@ pub enum Ancestor<'a> {
     JSXOpeningElementName(JSXOpeningElementWithoutName<'a>) = 173,
     JSXOpeningElementAttributes(JSXOpeningElementWithoutAttributes<'a>) = 174,
     JSXOpeningElementTypeParameters(JSXOpeningElementWithoutTypeParameters<'a>) = 175,
-    JSXClosingElementName(JSXClosingElementWithoutName) = 176,
-    JSXFragmentChildren(JSXFragmentWithoutChildren) = 177,
+    JSXClosingElementName(JSXClosingElementWithoutName<'a>) = 176,
+    JSXFragmentChildren(JSXFragmentWithoutChildren<'a>) = 177,
     JSXNamespacedNameNamespace(JSXNamespacedNameWithoutNamespace<'a>) = 178,
     JSXNamespacedNameProperty(JSXNamespacedNameWithoutProperty<'a>) = 179,
     JSXMemberExpressionObject(JSXMemberExpressionWithoutObject<'a>) = 180,
     JSXMemberExpressionProperty(JSXMemberExpressionWithoutProperty<'a>) = 181,
-    JSXExpressionContainerExpression(JSXExpressionContainerWithoutExpression) = 182,
+    JSXExpressionContainerExpression(JSXExpressionContainerWithoutExpression<'a>) = 182,
     JSXAttributeName(JSXAttributeWithoutName<'a>) = 183,
     JSXAttributeValue(JSXAttributeWithoutValue<'a>) = 184,
-    JSXSpreadAttributeArgument(JSXSpreadAttributeWithoutArgument) = 185,
-    JSXSpreadChildExpression(JSXSpreadChildWithoutExpression) = 186,
+    JSXSpreadAttributeArgument(JSXSpreadAttributeWithoutArgument<'a>) = 185,
+    JSXSpreadChildExpression(JSXSpreadChildWithoutExpression<'a>) = 186,
     TSThisParameterThis(TSThisParameterWithoutThis<'a>) = 187,
     TSThisParameterTypeAnnotation(TSThisParameterWithoutTypeAnnotation<'a>) = 188,
     TSEnumDeclarationId(TSEnumDeclarationWithoutId<'a>) = 189,
     TSEnumDeclarationMembers(TSEnumDeclarationWithoutMembers<'a>) = 190,
     TSEnumMemberId(TSEnumMemberWithoutId<'a>) = 191,
     TSEnumMemberInitializer(TSEnumMemberWithoutInitializer<'a>) = 192,
-    TSTypeAnnotationTypeAnnotation(TSTypeAnnotationWithoutTypeAnnotation) = 193,
-    TSLiteralTypeLiteral(TSLiteralTypeWithoutLiteral) = 194,
+    TSTypeAnnotationTypeAnnotation(TSTypeAnnotationWithoutTypeAnnotation<'a>) = 193,
+    TSLiteralTypeLiteral(TSLiteralTypeWithoutLiteral<'a>) = 194,
     TSConditionalTypeCheckType(TSConditionalTypeWithoutCheckType<'a>) = 195,
     TSConditionalTypeExtendsType(TSConditionalTypeWithoutExtendsType<'a>) = 196,
     TSConditionalTypeTrueType(TSConditionalTypeWithoutTrueType<'a>) = 197,
     TSConditionalTypeFalseType(TSConditionalTypeWithoutFalseType<'a>) = 198,
-    TSUnionTypeTypes(TSUnionTypeWithoutTypes) = 199,
-    TSIntersectionTypeTypes(TSIntersectionTypeWithoutTypes) = 200,
-    TSTypeOperatorTypeAnnotation(TSTypeOperatorWithoutTypeAnnotation) = 201,
-    TSArrayTypeElementType(TSArrayTypeWithoutElementType) = 202,
+    TSUnionTypeTypes(TSUnionTypeWithoutTypes<'a>) = 199,
+    TSIntersectionTypeTypes(TSIntersectionTypeWithoutTypes<'a>) = 200,
+    TSTypeOperatorTypeAnnotation(TSTypeOperatorWithoutTypeAnnotation<'a>) = 201,
+    TSArrayTypeElementType(TSArrayTypeWithoutElementType<'a>) = 202,
     TSIndexedAccessTypeObjectType(TSIndexedAccessTypeWithoutObjectType<'a>) = 203,
     TSIndexedAccessTypeIndexType(TSIndexedAccessTypeWithoutIndexType<'a>) = 204,
-    TSTupleTypeElementTypes(TSTupleTypeWithoutElementTypes) = 205,
+    TSTupleTypeElementTypes(TSTupleTypeWithoutElementTypes<'a>) = 205,
     TSNamedTupleMemberElementType(TSNamedTupleMemberWithoutElementType<'a>) = 206,
     TSNamedTupleMemberLabel(TSNamedTupleMemberWithoutLabel<'a>) = 207,
-    TSOptionalTypeTypeAnnotation(TSOptionalTypeWithoutTypeAnnotation) = 208,
-    TSRestTypeTypeAnnotation(TSRestTypeWithoutTypeAnnotation) = 209,
+    TSOptionalTypeTypeAnnotation(TSOptionalTypeWithoutTypeAnnotation<'a>) = 208,
+    TSRestTypeTypeAnnotation(TSRestTypeWithoutTypeAnnotation<'a>) = 209,
     TSTypeReferenceTypeName(TSTypeReferenceWithoutTypeName<'a>) = 210,
     TSTypeReferenceTypeParameters(TSTypeReferenceWithoutTypeParameters<'a>) = 211,
     TSQualifiedNameLeft(TSQualifiedNameWithoutLeft<'a>) = 212,
     TSQualifiedNameRight(TSQualifiedNameWithoutRight<'a>) = 213,
-    TSTypeParameterInstantiationParams(TSTypeParameterInstantiationWithoutParams) = 214,
+    TSTypeParameterInstantiationParams(TSTypeParameterInstantiationWithoutParams<'a>) = 214,
     TSTypeParameterName(TSTypeParameterWithoutName<'a>) = 215,
     TSTypeParameterConstraint(TSTypeParameterWithoutConstraint<'a>) = 216,
     TSTypeParameterDefault(TSTypeParameterWithoutDefault<'a>) = 217,
-    TSTypeParameterDeclarationParams(TSTypeParameterDeclarationWithoutParams) = 218,
+    TSTypeParameterDeclarationParams(TSTypeParameterDeclarationWithoutParams<'a>) = 218,
     TSTypeAliasDeclarationId(TSTypeAliasDeclarationWithoutId<'a>) = 219,
     TSTypeAliasDeclarationTypeAnnotation(TSTypeAliasDeclarationWithoutTypeAnnotation<'a>) = 220,
     TSTypeAliasDeclarationTypeParameters(TSTypeAliasDeclarationWithoutTypeParameters<'a>) = 221,
@@ -261,7 +259,7 @@ pub enum Ancestor<'a> {
     TSInterfaceDeclarationBody(TSInterfaceDeclarationWithoutBody<'a>) = 225,
     TSInterfaceDeclarationTypeParameters(TSInterfaceDeclarationWithoutTypeParameters<'a>) = 226,
     TSInterfaceDeclarationExtends(TSInterfaceDeclarationWithoutExtends<'a>) = 227,
-    TSInterfaceBodyBody(TSInterfaceBodyWithoutBody) = 228,
+    TSInterfaceBodyBody(TSInterfaceBodyWithoutBody<'a>) = 228,
     TSPropertySignatureKey(TSPropertySignatureWithoutKey<'a>) = 229,
     TSPropertySignatureTypeAnnotation(TSPropertySignatureWithoutTypeAnnotation<'a>) = 230,
     TSIndexSignatureParameters(TSIndexSignatureWithoutParameters<'a>) = 231,
@@ -289,16 +287,16 @@ pub enum Ancestor<'a> {
     TSTypePredicateTypeAnnotation(TSTypePredicateWithoutTypeAnnotation<'a>) = 249,
     TSModuleDeclarationId(TSModuleDeclarationWithoutId<'a>) = 250,
     TSModuleDeclarationBody(TSModuleDeclarationWithoutBody<'a>) = 251,
-    TSModuleBlockBody(TSModuleBlockWithoutBody) = 252,
-    TSTypeLiteralMembers(TSTypeLiteralWithoutMembers) = 253,
-    TSInferTypeTypeParameter(TSInferTypeWithoutTypeParameter) = 254,
+    TSModuleBlockBody(TSModuleBlockWithoutBody<'a>) = 252,
+    TSTypeLiteralMembers(TSTypeLiteralWithoutMembers<'a>) = 253,
+    TSInferTypeTypeParameter(TSInferTypeWithoutTypeParameter<'a>) = 254,
     TSTypeQueryExprName(TSTypeQueryWithoutExprName<'a>) = 255,
     TSTypeQueryTypeParameters(TSTypeQueryWithoutTypeParameters<'a>) = 256,
     TSImportTypeArgument(TSImportTypeWithoutArgument<'a>) = 257,
     TSImportTypeQualifier(TSImportTypeWithoutQualifier<'a>) = 258,
     TSImportTypeAttributes(TSImportTypeWithoutAttributes<'a>) = 259,
     TSImportTypeTypeParameters(TSImportTypeWithoutTypeParameters<'a>) = 260,
-    TSImportAttributesElements(TSImportAttributesWithoutElements) = 261,
+    TSImportAttributesElements(TSImportAttributesWithoutElements<'a>) = 261,
     TSImportAttributeName(TSImportAttributeWithoutName<'a>) = 262,
     TSImportAttributeValue(TSImportAttributeWithoutValue<'a>) = 263,
     TSFunctionTypeThisParam(TSFunctionTypeWithoutThisParam<'a>) = 264,
@@ -322,15 +320,15 @@ pub enum Ancestor<'a> {
     TSImportEqualsDeclarationId(TSImportEqualsDeclarationWithoutId<'a>) = 282,
     TSImportEqualsDeclarationModuleReference(TSImportEqualsDeclarationWithoutModuleReference<'a>) =
         283,
-    TSExternalModuleReferenceExpression(TSExternalModuleReferenceWithoutExpression) = 284,
-    TSNonNullExpressionExpression(TSNonNullExpressionWithoutExpression) = 285,
-    DecoratorExpression(DecoratorWithoutExpression) = 286,
-    TSExportAssignmentExpression(TSExportAssignmentWithoutExpression) = 287,
-    TSNamespaceExportDeclarationId(TSNamespaceExportDeclarationWithoutId) = 288,
+    TSExternalModuleReferenceExpression(TSExternalModuleReferenceWithoutExpression<'a>) = 284,
+    TSNonNullExpressionExpression(TSNonNullExpressionWithoutExpression<'a>) = 285,
+    DecoratorExpression(DecoratorWithoutExpression<'a>) = 286,
+    TSExportAssignmentExpression(TSExportAssignmentWithoutExpression<'a>) = 287,
+    TSNamespaceExportDeclarationId(TSNamespaceExportDeclarationWithoutId<'a>) = 288,
     TSInstantiationExpressionExpression(TSInstantiationExpressionWithoutExpression<'a>) = 289,
     TSInstantiationExpressionTypeParameters(TSInstantiationExpressionWithoutTypeParameters<'a>) =
         290,
-    JSDocNullableTypeTypeAnnotation(JSDocNullableTypeWithoutTypeAnnotation) = 291,
+    JSDocNullableTypeTypeAnnotation(JSDocNullableTypeWithoutTypeAnnotation<'a>) = 291,
 }
 
 impl<'a> Ancestor<'a> {
@@ -1637,79 +1635,93 @@ pub(crate) const OFFSET_PROGRAM_BODY: usize = offset_of!(Program, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutDirectives<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ProgramWithoutDirectives<'a>(pub(crate) *const Program<'a>);
 
 impl<'a> ProgramWithoutDirectives<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source_type(&self) -> &SourceType {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
     }
 
     #[inline]
     pub fn hashbang(&self) -> &Option<Hashbang<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Vec<'a, Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_BODY) as *const Vec<'a, Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_BODY) as *const Vec<'a, Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutHashbang<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ProgramWithoutHashbang<'a>(pub(crate) *const Program<'a>);
 
 impl<'a> ProgramWithoutHashbang<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source_type(&self) -> &SourceType {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
     }
 
     #[inline]
     pub fn directives(&self) -> &Vec<'a, Directive<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_DIRECTIVES) as *const Vec<'a, Directive<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_DIRECTIVES)
+                as *const Vec<'a, Directive<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Vec<'a, Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_BODY) as *const Vec<'a, Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_BODY) as *const Vec<'a, Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ProgramWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ProgramWithoutBody<'a>(pub(crate) *const Program<'a>);
 
 impl<'a> ProgramWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source_type(&self) -> &SourceType {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROGRAM_SOURCE_TYPE) as *const SourceType) }
     }
 
     #[inline]
     pub fn directives(&self) -> &Vec<'a, Directive<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_DIRECTIVES) as *const Vec<'a, Directive<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_DIRECTIVES)
+                as *const Vec<'a, Directive<'a>>)
+        }
     }
 
     #[inline]
     pub fn hashbang(&self) -> &Option<Hashbang<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_IDENTIFIER_NAME_SPAN: usize = offset_of!(IdentifierName, span);
@@ -1734,17 +1746,20 @@ pub(crate) const OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayExpressionWithoutElements(pub(crate) *const u8);
+pub struct ArrayExpressionWithoutElements<'a>(pub(crate) *const ArrayExpression<'a>);
 
-impl ArrayExpressionWithoutElements {
+impl<'a> ArrayExpressionWithoutElements<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ARRAY_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn trailing_comma(&self) -> &Option<Span> {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA)
+                as *const Option<Span>)
+        }
     }
 }
 pub(crate) const OFFSET_ELISION_SPAN: usize = offset_of!(Elision, span);
@@ -1756,17 +1771,20 @@ pub(crate) const OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectExpressionWithoutProperties(pub(crate) *const u8);
+pub struct ObjectExpressionWithoutProperties<'a>(pub(crate) *const ObjectExpression<'a>);
 
-impl ObjectExpressionWithoutProperties {
+impl<'a> ObjectExpressionWithoutProperties<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn trailing_comma(&self) -> &Option<Span> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA)
+                as *const Option<Span>)
+        }
     }
 }
 pub(crate) const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
@@ -1780,124 +1798,138 @@ pub(crate) const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectPrope
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutKey<'a>(pub(crate) *const ObjectProperty<'a>);
 
 impl<'a> ObjectPropertyWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
     pub fn value(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_INIT) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_INIT)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn method(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
     }
 
     #[inline]
     pub fn shorthand(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutValue<'a>(pub(crate) *const ObjectProperty<'a>);
 
 impl<'a> ObjectPropertyWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_INIT) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_INIT)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn method(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
     }
 
     #[inline]
     pub fn shorthand(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPropertyWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ObjectPropertyWithoutInit<'a>(pub(crate) *const ObjectProperty<'a>);
 
 impl<'a> ObjectPropertyWithoutInit<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn value(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn method(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_METHOD) as *const bool) }
     }
 
     #[inline]
     pub fn shorthand(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_SHORTHAND) as *const bool) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
     }
 }
 pub(crate) const OFFSET_TEMPLATE_LITERAL_SPAN: usize = offset_of!(TemplateLiteral, span);
@@ -1907,39 +1939,38 @@ pub(crate) const OFFSET_TEMPLATE_LITERAL_EXPRESSIONS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TemplateLiteralWithoutQuasis<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TemplateLiteralWithoutQuasis<'a>(pub(crate) *const TemplateLiteral<'a>);
 
 impl<'a> TemplateLiteralWithoutQuasis<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TEMPLATE_LITERAL_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TEMPLATE_LITERAL_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expressions(&self) -> &Vec<'a, Expression<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TEMPLATE_LITERAL_EXPRESSIONS) as *const Vec<'a, Expression<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TEMPLATE_LITERAL_EXPRESSIONS)
+                as *const Vec<'a, Expression<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TemplateLiteralWithoutExpressions<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TemplateLiteralWithoutExpressions<'a>(pub(crate) *const TemplateLiteral<'a>);
 
 impl<'a> TemplateLiteralWithoutExpressions<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TEMPLATE_LITERAL_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TEMPLATE_LITERAL_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn quasis(&self) -> &Vec<'a, TemplateElement<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TEMPLATE_LITERAL_QUASIS) as *const Vec<'a, TemplateElement<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TEMPLATE_LITERAL_QUASIS)
+                as *const Vec<'a, TemplateElement<'a>>)
         }
     }
 }
@@ -1954,28 +1985,28 @@ pub(crate) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TaggedTemplateExpressionWithoutTag<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TaggedTemplateExpressionWithoutTag<'a>(pub(crate) *const TaggedTemplateExpression<'a>);
 
 impl<'a> TaggedTemplateExpressionWithoutTag<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn quasi(&self) -> &TemplateLiteral<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI) as *const TemplateLiteral<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI)
+                as *const TemplateLiteral<'a>)
         }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -1983,26 +2014,28 @@ impl<'a> TaggedTemplateExpressionWithoutTag<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TaggedTemplateExpressionWithoutQuasi<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TaggedTemplateExpressionWithoutQuasi<'a>(pub(crate) *const TaggedTemplateExpression<'a>);
 
 impl<'a> TaggedTemplateExpressionWithoutQuasi<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn tag(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -2011,25 +2044,30 @@ impl<'a> TaggedTemplateExpressionWithoutQuasi<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TaggedTemplateExpressionWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TaggedTemplateExpression<'a>,
 );
 
 impl<'a> TaggedTemplateExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn tag(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn quasi(&self) -> &TemplateLiteral<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI) as *const TemplateLiteral<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI)
+                as *const TemplateLiteral<'a>)
         }
     }
 }
@@ -2048,50 +2086,60 @@ pub(crate) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ComputedMemberExpressionWithoutObject<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ComputedMemberExpression<'a>,
 );
 
 impl<'a> ComputedMemberExpressionWithoutObject<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION) as *const Expression<'a>)
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION)
+                as *const Expression<'a>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ComputedMemberExpressionWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ComputedMemberExpression<'a>,
 );
 
 impl<'a> ComputedMemberExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn object(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_SPAN: usize =
@@ -2105,51 +2153,57 @@ pub(crate) const OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct StaticMemberExpressionWithoutObject<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct StaticMemberExpressionWithoutObject<'a>(pub(crate) *const StaticMemberExpression<'a>);
 
 impl<'a> StaticMemberExpressionWithoutObject<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn property(&self) -> &IdentifierName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY) as *const IdentifierName<'a>)
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY)
+                as *const IdentifierName<'a>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct StaticMemberExpressionWithoutProperty<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct StaticMemberExpressionWithoutProperty<'a>(pub(crate) *const StaticMemberExpression<'a>);
 
 impl<'a> StaticMemberExpressionWithoutProperty<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn object(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN: usize =
@@ -2163,51 +2217,57 @@ pub(crate) const OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PrivateFieldExpressionWithoutObject<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct PrivateFieldExpressionWithoutObject<'a>(pub(crate) *const PrivateFieldExpression<'a>);
 
 impl<'a> PrivateFieldExpressionWithoutObject<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn field(&self) -> &PrivateIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD) as *const PrivateIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD)
+                as *const PrivateIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PrivateFieldExpressionWithoutField<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct PrivateFieldExpressionWithoutField<'a>(pub(crate) *const PrivateFieldExpression<'a>);
 
 impl<'a> PrivateFieldExpressionWithoutField<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn object(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool)
+        }
     }
 }
 pub(crate) const OFFSET_CALL_EXPRESSION_SPAN: usize = offset_of!(CallExpression, span);
@@ -2219,28 +2279,31 @@ pub(crate) const OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CallExpressionWithoutCallee<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct CallExpressionWithoutCallee<'a>(pub(crate) *const CallExpression<'a>);
 
 impl<'a> CallExpressionWithoutCallee<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn arguments(&self) -> &Vec<'a, Argument<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_ARGUMENTS)
+                as *const Vec<'a, Argument<'a>>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -2248,28 +2311,30 @@ impl<'a> CallExpressionWithoutCallee<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CallExpressionWithoutArguments<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct CallExpressionWithoutArguments<'a>(pub(crate) *const CallExpression<'a>);
 
 impl<'a> CallExpressionWithoutArguments<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn callee(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_CALLEE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_CALLEE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -2277,30 +2342,32 @@ impl<'a> CallExpressionWithoutArguments<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CallExpressionWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct CallExpressionWithoutTypeParameters<'a>(pub(crate) *const CallExpression<'a>);
 
 impl<'a> CallExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn callee(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_CALLEE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_CALLEE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn arguments(&self) -> &Vec<'a, Argument<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_ARGUMENTS)
+                as *const Vec<'a, Argument<'a>>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
 pub(crate) const OFFSET_NEW_EXPRESSION_SPAN: usize = offset_of!(NewExpression, span);
@@ -2311,23 +2378,26 @@ pub(crate) const OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct NewExpressionWithoutCallee<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct NewExpressionWithoutCallee<'a>(pub(crate) *const NewExpression<'a>);
 
 impl<'a> NewExpressionWithoutCallee<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn arguments(&self) -> &Vec<'a, Argument<'a>> {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_ARGUMENTS)
+                as *const Vec<'a, Argument<'a>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -2335,23 +2405,25 @@ impl<'a> NewExpressionWithoutCallee<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct NewExpressionWithoutArguments<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct NewExpressionWithoutArguments<'a>(pub(crate) *const NewExpression<'a>);
 
 impl<'a> NewExpressionWithoutArguments<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn callee(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_CALLEE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_CALLEE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -2359,25 +2431,27 @@ impl<'a> NewExpressionWithoutArguments<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct NewExpressionWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct NewExpressionWithoutTypeParameters<'a>(pub(crate) *const NewExpression<'a>);
 
 impl<'a> NewExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn callee(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_CALLEE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_CALLEE) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn arguments(&self) -> &Vec<'a, Argument<'a>> {
-        unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_NEW_EXPRESSION_ARGUMENTS)
+                as *const Vec<'a, Argument<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_META_PROPERTY_SPAN: usize = offset_of!(MetaProperty, span);
@@ -2386,33 +2460,38 @@ pub(crate) const OFFSET_META_PROPERTY_PROPERTY: usize = offset_of!(MetaProperty,
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MetaPropertyWithoutMeta<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct MetaPropertyWithoutMeta<'a>(pub(crate) *const MetaProperty<'a>);
 
 impl<'a> MetaPropertyWithoutMeta<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_META_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_META_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn property(&self) -> &IdentifierName<'a> {
-        unsafe { &*(self.0.add(OFFSET_META_PROPERTY_PROPERTY) as *const IdentifierName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_META_PROPERTY_PROPERTY)
+                as *const IdentifierName<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MetaPropertyWithoutProperty<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct MetaPropertyWithoutProperty<'a>(pub(crate) *const MetaProperty<'a>);
 
 impl<'a> MetaPropertyWithoutProperty<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_META_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_META_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn meta(&self) -> &IdentifierName<'a> {
-        unsafe { &*(self.0.add(OFFSET_META_PROPERTY_META) as *const IdentifierName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_META_PROPERTY_META) as *const IdentifierName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_SPREAD_ELEMENT_SPAN: usize = offset_of!(SpreadElement, span);
@@ -2420,12 +2499,12 @@ pub(crate) const OFFSET_SPREAD_ELEMENT_ARGUMENT: usize = offset_of!(SpreadElemen
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SpreadElementWithoutArgument(pub(crate) *const u8);
+pub struct SpreadElementWithoutArgument<'a>(pub(crate) *const SpreadElement<'a>);
 
-impl SpreadElementWithoutArgument {
+impl<'a> SpreadElementWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SPREAD_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SPREAD_ELEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_UPDATE_EXPRESSION_SPAN: usize = offset_of!(UpdateExpression, span);
@@ -2435,22 +2514,25 @@ pub(crate) const OFFSET_UPDATE_EXPRESSION_ARGUMENT: usize = offset_of!(UpdateExp
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UpdateExpressionWithoutArgument(pub(crate) *const u8);
+pub struct UpdateExpressionWithoutArgument<'a>(pub(crate) *const UpdateExpression<'a>);
 
-impl UpdateExpressionWithoutArgument {
+impl<'a> UpdateExpressionWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_UPDATE_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_UPDATE_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &UpdateOperator {
-        unsafe { &*(self.0.add(OFFSET_UPDATE_EXPRESSION_OPERATOR) as *const UpdateOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_UPDATE_EXPRESSION_OPERATOR)
+                as *const UpdateOperator)
+        }
     }
 
     #[inline]
     pub fn prefix(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_UPDATE_EXPRESSION_PREFIX) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_UPDATE_EXPRESSION_PREFIX) as *const bool) }
     }
 }
 pub(crate) const OFFSET_UNARY_EXPRESSION_SPAN: usize = offset_of!(UnaryExpression, span);
@@ -2459,17 +2541,19 @@ pub(crate) const OFFSET_UNARY_EXPRESSION_ARGUMENT: usize = offset_of!(UnaryExpre
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UnaryExpressionWithoutArgument(pub(crate) *const u8);
+pub struct UnaryExpressionWithoutArgument<'a>(pub(crate) *const UnaryExpression<'a>);
 
-impl UnaryExpressionWithoutArgument {
+impl<'a> UnaryExpressionWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_UNARY_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_UNARY_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &UnaryOperator {
-        unsafe { &*(self.0.add(OFFSET_UNARY_EXPRESSION_OPERATOR) as *const UnaryOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_UNARY_EXPRESSION_OPERATOR) as *const UnaryOperator)
+        }
     }
 }
 pub(crate) const OFFSET_BINARY_EXPRESSION_SPAN: usize = offset_of!(BinaryExpression, span);
@@ -2479,43 +2563,53 @@ pub(crate) const OFFSET_BINARY_EXPRESSION_RIGHT: usize = offset_of!(BinaryExpres
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BinaryExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct BinaryExpressionWithoutLeft<'a>(pub(crate) *const BinaryExpression<'a>);
 
 impl<'a> BinaryExpressionWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &BinaryOperator {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_OPERATOR) as *const BinaryOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_OPERATOR)
+                as *const BinaryOperator)
+        }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_RIGHT) as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BinaryExpressionWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct BinaryExpressionWithoutRight<'a>(pub(crate) *const BinaryExpression<'a>);
 
 impl<'a> BinaryExpressionWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_LEFT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_LEFT) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn operator(&self) -> &BinaryOperator {
-        unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_OPERATOR) as *const BinaryOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINARY_EXPRESSION_OPERATOR)
+                as *const BinaryOperator)
+        }
     }
 }
 pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_SPAN: usize = offset_of!(PrivateInExpression, span);
@@ -2526,46 +2620,55 @@ pub(crate) const OFFSET_PRIVATE_IN_EXPRESSION_RIGHT: usize = offset_of!(PrivateI
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PrivateInExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct PrivateInExpressionWithoutLeft<'a>(pub(crate) *const PrivateInExpression<'a>);
 
 impl<'a> PrivateInExpressionWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &BinaryOperator {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR) as *const BinaryOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR)
+                as *const BinaryOperator)
+        }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_RIGHT)
+                as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PrivateInExpressionWithoutRight<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct PrivateInExpressionWithoutRight<'a>(pub(crate) *const PrivateInExpression<'a>);
 
 impl<'a> PrivateInExpressionWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &PrivateIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_LEFT) as *const PrivateIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_LEFT)
+                as *const PrivateIdentifier<'a>)
+        }
     }
 
     #[inline]
     pub fn operator(&self) -> &BinaryOperator {
-        unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR) as *const BinaryOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR)
+                as *const BinaryOperator)
+        }
     }
 }
 pub(crate) const OFFSET_LOGICAL_EXPRESSION_SPAN: usize = offset_of!(LogicalExpression, span);
@@ -2576,43 +2679,53 @@ pub(crate) const OFFSET_LOGICAL_EXPRESSION_RIGHT: usize = offset_of!(LogicalExpr
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LogicalExpressionWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct LogicalExpressionWithoutLeft<'a>(pub(crate) *const LogicalExpression<'a>);
 
 impl<'a> LogicalExpressionWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &LogicalOperator {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_OPERATOR) as *const LogicalOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_OPERATOR)
+                as *const LogicalOperator)
+        }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_RIGHT) as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LogicalExpressionWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct LogicalExpressionWithoutRight<'a>(pub(crate) *const LogicalExpression<'a>);
 
 impl<'a> LogicalExpressionWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_LEFT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_LEFT) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn operator(&self) -> &LogicalOperator {
-        unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_OPERATOR) as *const LogicalOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LOGICAL_EXPRESSION_OPERATOR)
+                as *const LogicalOperator)
+        }
     }
 }
 pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_SPAN: usize =
@@ -2626,73 +2739,82 @@ pub(crate) const OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ConditionalExpressionWithoutTest<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ConditionalExpressionWithoutTest<'a>(pub(crate) *const ConditionalExpression<'a>);
 
 impl<'a> ConditionalExpressionWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn consequent(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn alternate(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE)
+                as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ConditionalExpressionWithoutConsequent<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ConditionalExpressionWithoutConsequent<'a>(pub(crate) *const ConditionalExpression<'a>);
 
 impl<'a> ConditionalExpressionWithoutConsequent<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_TEST) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_TEST)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn alternate(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE)
+                as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ConditionalExpressionWithoutAlternate<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ConditionalExpressionWithoutAlternate<'a>(pub(crate) *const ConditionalExpression<'a>);
 
 impl<'a> ConditionalExpressionWithoutAlternate<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_TEST) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_TEST)
+                as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn consequent(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT)
+                as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_SPAN: usize = offset_of!(AssignmentExpression, span);
@@ -2704,53 +2826,55 @@ pub(crate) const OFFSET_ASSIGNMENT_EXPRESSION_RIGHT: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentExpressionWithoutLeft<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct AssignmentExpressionWithoutLeft<'a>(pub(crate) *const AssignmentExpression<'a>);
 
 impl<'a> AssignmentExpressionWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &AssignmentOperator {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR) as *const AssignmentOperator)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR)
+                as *const AssignmentOperator)
         }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_RIGHT)
+                as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentExpressionWithoutRight<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct AssignmentExpressionWithoutRight<'a>(pub(crate) *const AssignmentExpression<'a>);
 
 impl<'a> AssignmentExpressionWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &AssignmentOperator {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR) as *const AssignmentOperator)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR)
+                as *const AssignmentOperator)
         }
     }
 
     #[inline]
     pub fn left(&self) -> &AssignmentTarget<'a> {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_LEFT) as *const AssignmentTarget<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_EXPRESSION_LEFT)
+                as *const AssignmentTarget<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN: usize =
@@ -2764,21 +2888,18 @@ pub(crate) const OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayAssignmentTargetWithoutElements<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ArrayAssignmentTargetWithoutElements<'a>(pub(crate) *const ArrayAssignmentTarget<'a>);
 
 impl<'a> ArrayAssignmentTargetWithoutElements<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn rest(&self) -> &Option<AssignmentTargetRest<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_REST)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_REST)
                 as *const Option<AssignmentTargetRest<'a>>)
         }
     }
@@ -2786,28 +2907,26 @@ impl<'a> ArrayAssignmentTargetWithoutElements<'a> {
     #[inline]
     pub fn trailing_comma(&self) -> &Option<Span> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA) as *const Option<Span>)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA)
+                as *const Option<Span>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayAssignmentTargetWithoutRest<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ArrayAssignmentTargetWithoutRest<'a>(pub(crate) *const ArrayAssignmentTarget<'a>);
 
 impl<'a> ArrayAssignmentTargetWithoutRest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn elements(&self) -> &Vec<'a, Option<AssignmentTargetMaybeDefault<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS)
                 as *const Vec<'a, Option<AssignmentTargetMaybeDefault<'a>>>)
         }
     }
@@ -2815,7 +2934,8 @@ impl<'a> ArrayAssignmentTargetWithoutRest<'a> {
     #[inline]
     pub fn trailing_comma(&self) -> &Option<Span> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA) as *const Option<Span>)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA)
+                as *const Option<Span>)
         }
     }
 }
@@ -2829,20 +2949,21 @@ pub(crate) const OFFSET_OBJECT_ASSIGNMENT_TARGET_REST: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ObjectAssignmentTargetWithoutProperties<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ObjectAssignmentTarget<'a>,
 );
 
 impl<'a> ObjectAssignmentTargetWithoutProperties<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn rest(&self) -> &Option<AssignmentTargetRest<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_OBJECT_ASSIGNMENT_TARGET_REST)
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_ASSIGNMENT_TARGET_REST)
                 as *const Option<AssignmentTargetRest<'a>>)
         }
     }
@@ -2850,21 +2971,20 @@ impl<'a> ObjectAssignmentTargetWithoutProperties<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectAssignmentTargetWithoutRest<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ObjectAssignmentTargetWithoutRest<'a>(pub(crate) *const ObjectAssignmentTarget<'a>);
 
 impl<'a> ObjectAssignmentTargetWithoutRest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn properties(&self) -> &Vec<'a, AssignmentTargetProperty<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES)
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES)
                 as *const Vec<'a, AssignmentTargetProperty<'a>>)
         }
     }
@@ -2875,12 +2995,12 @@ pub(crate) const OFFSET_ASSIGNMENT_TARGET_REST_TARGET: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentTargetRestWithoutTarget(pub(crate) *const u8);
+pub struct AssignmentTargetRestWithoutTarget<'a>(pub(crate) *const AssignmentTargetRest<'a>);
 
-impl AssignmentTargetRestWithoutTarget {
+impl<'a> AssignmentTargetRestWithoutTarget<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_REST_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_REST_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN: usize =
@@ -2893,20 +3013,22 @@ pub(crate) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetWithDefaultWithoutBinding<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetWithDefault<'a>,
 );
 
 impl<'a> AssignmentTargetWithDefaultWithoutBinding<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn init(&self) -> &Expression<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT) as *const Expression<'a>)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT)
+                as *const Expression<'a>)
         }
     }
 }
@@ -2914,20 +3036,21 @@ impl<'a> AssignmentTargetWithDefaultWithoutBinding<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetWithDefaultWithoutInit<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetWithDefault<'a>,
 );
 
 impl<'a> AssignmentTargetWithDefaultWithoutInit<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn binding(&self) -> &AssignmentTarget<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING)
                 as *const AssignmentTarget<'a>)
         }
     }
@@ -2942,20 +3065,22 @@ pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyIdentifierWithoutBinding<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetPropertyIdentifier<'a>,
 );
 
 impl<'a> AssignmentTargetPropertyIdentifierWithoutBinding<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT)
                 as *const Option<Expression<'a>>)
         }
     }
@@ -2964,20 +3089,22 @@ impl<'a> AssignmentTargetPropertyIdentifierWithoutBinding<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyIdentifierWithoutInit<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetPropertyIdentifier<'a>,
 );
 
 impl<'a> AssignmentTargetPropertyIdentifierWithoutInit<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn binding(&self) -> &IdentifierReference<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING)
                 as *const IdentifierReference<'a>)
         }
     }
@@ -2992,20 +3119,22 @@ pub(crate) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyPropertyWithoutName<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetPropertyProperty<'a>,
 );
 
 impl<'a> AssignmentTargetPropertyPropertyWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn binding(&self) -> &AssignmentTargetMaybeDefault<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING)
                 as *const AssignmentTargetMaybeDefault<'a>)
         }
     }
@@ -3014,20 +3143,22 @@ impl<'a> AssignmentTargetPropertyPropertyWithoutName<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct AssignmentTargetPropertyPropertyWithoutBinding<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const AssignmentTargetPropertyProperty<'a>,
 );
 
 impl<'a> AssignmentTargetPropertyPropertyWithoutBinding<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn name(&self) -> &PropertyKey<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME)
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME)
                 as *const PropertyKey<'a>)
         }
     }
@@ -3038,12 +3169,12 @@ pub(crate) const OFFSET_SEQUENCE_EXPRESSION_EXPRESSIONS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SequenceExpressionWithoutExpressions(pub(crate) *const u8);
+pub struct SequenceExpressionWithoutExpressions<'a>(pub(crate) *const SequenceExpression<'a>);
 
-impl SequenceExpressionWithoutExpressions {
+impl<'a> SequenceExpressionWithoutExpressions<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SEQUENCE_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SEQUENCE_EXPRESSION_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_SUPER_SPAN: usize = offset_of!(Super, span);
@@ -3052,12 +3183,12 @@ pub(crate) const OFFSET_AWAIT_EXPRESSION_ARGUMENT: usize = offset_of!(AwaitExpre
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AwaitExpressionWithoutArgument(pub(crate) *const u8);
+pub struct AwaitExpressionWithoutArgument<'a>(pub(crate) *const AwaitExpression<'a>);
 
-impl AwaitExpressionWithoutArgument {
+impl<'a> AwaitExpressionWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_AWAIT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_AWAIT_EXPRESSION_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_CHAIN_EXPRESSION_SPAN: usize = offset_of!(ChainExpression, span);
@@ -3066,12 +3197,12 @@ pub(crate) const OFFSET_CHAIN_EXPRESSION_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ChainExpressionWithoutExpression(pub(crate) *const u8);
+pub struct ChainExpressionWithoutExpression<'a>(pub(crate) *const ChainExpression<'a>);
 
-impl ChainExpressionWithoutExpression {
+impl<'a> ChainExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CHAIN_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CHAIN_EXPRESSION_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_PARENTHESIZED_EXPRESSION_SPAN: usize =
@@ -3081,12 +3212,16 @@ pub(crate) const OFFSET_PARENTHESIZED_EXPRESSION_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ParenthesizedExpressionWithoutExpression(pub(crate) *const u8);
+pub struct ParenthesizedExpressionWithoutExpression<'a>(
+    pub(crate) *const ParenthesizedExpression<'a>,
+);
 
-impl ParenthesizedExpressionWithoutExpression {
+impl<'a> ParenthesizedExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PARENTHESIZED_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PARENTHESIZED_EXPRESSION_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_DIRECTIVE_SPAN: usize = offset_of!(Directive, span);
@@ -3095,17 +3230,17 @@ pub(crate) const OFFSET_DIRECTIVE_DIRECTIVE: usize = offset_of!(Directive, direc
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DirectiveWithoutExpression<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct DirectiveWithoutExpression<'a>(pub(crate) *const Directive<'a>);
 
 impl<'a> DirectiveWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_DIRECTIVE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_DIRECTIVE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn directive(&self) -> &Atom<'a> {
-        unsafe { &*(self.0.add(OFFSET_DIRECTIVE_DIRECTIVE) as *const Atom<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_DIRECTIVE_DIRECTIVE) as *const Atom<'a>) }
     }
 }
 pub(crate) const OFFSET_HASHBANG_SPAN: usize = offset_of!(Hashbang, span);
@@ -3115,12 +3250,12 @@ pub(crate) const OFFSET_BLOCK_STATEMENT_BODY: usize = offset_of!(BlockStatement,
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BlockStatementWithoutBody(pub(crate) *const u8);
+pub struct BlockStatementWithoutBody<'a>(pub(crate) *const BlockStatement<'a>);
 
-impl BlockStatementWithoutBody {
+impl<'a> BlockStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BLOCK_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BLOCK_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_VARIABLE_DECLARATION_SPAN: usize = offset_of!(VariableDeclaration, span);
@@ -3132,27 +3267,28 @@ pub(crate) const OFFSET_VARIABLE_DECLARATION_MODIFIERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct VariableDeclarationWithoutDeclarations<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct VariableDeclarationWithoutDeclarations<'a>(pub(crate) *const VariableDeclaration<'a>);
 
 impl<'a> VariableDeclarationWithoutDeclarations<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &VariableDeclarationKind {
         unsafe {
-            &*(self.0.add(OFFSET_VARIABLE_DECLARATION_KIND) as *const VariableDeclarationKind)
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATION_KIND)
+                as *const VariableDeclarationKind)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
@@ -3164,53 +3300,65 @@ pub(crate) const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct VariableDeclaratorWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct VariableDeclaratorWithoutId<'a>(pub(crate) *const VariableDeclarator<'a>);
 
 impl<'a> VariableDeclaratorWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &VariableDeclarationKind {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_KIND)
+                as *const VariableDeclarationKind)
+        }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_INIT) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_INIT)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct VariableDeclaratorWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct VariableDeclaratorWithoutInit<'a>(pub(crate) *const VariableDeclarator<'a>);
 
 impl<'a> VariableDeclaratorWithoutInit<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &VariableDeclarationKind {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_KIND)
+                as *const VariableDeclarationKind)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingPattern<'a> {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_ID) as *const BindingPattern<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_ID)
+                as *const BindingPattern<'a>)
+        }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
     }
 }
 pub(crate) const OFFSET_USING_DECLARATION_SPAN: usize = offset_of!(UsingDeclaration, span);
@@ -3220,17 +3368,17 @@ pub(crate) const OFFSET_USING_DECLARATION_DECLARATIONS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct UsingDeclarationWithoutDeclarations(pub(crate) *const u8);
+pub struct UsingDeclarationWithoutDeclarations<'a>(pub(crate) *const UsingDeclaration<'a>);
 
-impl UsingDeclarationWithoutDeclarations {
+impl<'a> UsingDeclarationWithoutDeclarations<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_USING_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_USING_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn is_await(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_USING_DECLARATION_IS_AWAIT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_USING_DECLARATION_IS_AWAIT) as *const bool) }
     }
 }
 pub(crate) const OFFSET_EMPTY_STATEMENT_SPAN: usize = offset_of!(EmptyStatement, span);
@@ -3240,12 +3388,12 @@ pub(crate) const OFFSET_EXPRESSION_STATEMENT_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExpressionStatementWithoutExpression(pub(crate) *const u8);
+pub struct ExpressionStatementWithoutExpression<'a>(pub(crate) *const ExpressionStatement<'a>);
 
-impl ExpressionStatementWithoutExpression {
+impl<'a> ExpressionStatementWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPRESSION_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPRESSION_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_IF_STATEMENT_SPAN: usize = offset_of!(IfStatement, span);
@@ -3255,64 +3403,74 @@ pub(crate) const OFFSET_IF_STATEMENT_ALTERNATE: usize = offset_of!(IfStatement, 
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct IfStatementWithoutTest<'a>(pub(crate) *const IfStatement<'a>);
 
 impl<'a> IfStatementWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn consequent(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>)
+        }
     }
 
     #[inline]
     pub fn alternate(&self) -> &Option<Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_ALTERNATE) as *const Option<Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_ALTERNATE)
+                as *const Option<Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutConsequent<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct IfStatementWithoutConsequent<'a>(pub(crate) *const IfStatement<'a>);
 
 impl<'a> IfStatementWithoutConsequent<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_TEST) as *const Expression<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_TEST) as *const Expression<'a>) }
     }
 
     #[inline]
     pub fn alternate(&self) -> &Option<Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_ALTERNATE) as *const Option<Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_ALTERNATE)
+                as *const Option<Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct IfStatementWithoutAlternate<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct IfStatementWithoutAlternate<'a>(pub(crate) *const IfStatement<'a>);
 
 impl<'a> IfStatementWithoutAlternate<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_TEST) as *const Expression<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_TEST) as *const Expression<'a>) }
     }
 
     #[inline]
     pub fn consequent(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_DO_WHILE_STATEMENT_SPAN: usize = offset_of!(DoWhileStatement, span);
@@ -3321,33 +3479,37 @@ pub(crate) const OFFSET_DO_WHILE_STATEMENT_TEST: usize = offset_of!(DoWhileState
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DoWhileStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct DoWhileStatementWithoutBody<'a>(pub(crate) *const DoWhileStatement<'a>);
 
 impl<'a> DoWhileStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_DO_WHILE_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_TEST) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_DO_WHILE_STATEMENT_TEST) as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DoWhileStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct DoWhileStatementWithoutTest<'a>(pub(crate) *const DoWhileStatement<'a>);
 
 impl<'a> DoWhileStatementWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_DO_WHILE_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_DO_WHILE_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_WHILE_STATEMENT_SPAN: usize = offset_of!(WhileStatement, span);
@@ -3356,33 +3518,37 @@ pub(crate) const OFFSET_WHILE_STATEMENT_BODY: usize = offset_of!(WhileStatement,
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WhileStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct WhileStatementWithoutTest<'a>(pub(crate) *const WhileStatement<'a>);
 
 impl<'a> WhileStatementWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WHILE_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_WHILE_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WhileStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct WhileStatementWithoutBody<'a>(pub(crate) *const WhileStatement<'a>);
 
 impl<'a> WhileStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WHILE_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_TEST) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_WHILE_STATEMENT_TEST) as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_FOR_STATEMENT_SPAN: usize = offset_of!(ForStatement, span);
@@ -3393,105 +3559,132 @@ pub(crate) const OFFSET_FOR_STATEMENT_BODY: usize = offset_of!(ForStatement, bod
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutInit<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForStatementWithoutInit<'a>(pub(crate) *const ForStatement<'a>);
 
 impl<'a> ForStatementWithoutInit<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_TEST) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_TEST)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn update(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_UPDATE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_UPDATE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForStatementWithoutTest<'a>(pub(crate) *const ForStatement<'a>);
 
 impl<'a> ForStatementWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<ForStatementInit<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_INIT) as *const Option<ForStatementInit<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_INIT)
+                as *const Option<ForStatementInit<'a>>)
+        }
     }
 
     #[inline]
     pub fn update(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_UPDATE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_UPDATE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutUpdate<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForStatementWithoutUpdate<'a>(pub(crate) *const ForStatement<'a>);
 
 impl<'a> ForStatementWithoutUpdate<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<ForStatementInit<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_INIT) as *const Option<ForStatementInit<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_INIT)
+                as *const Option<ForStatementInit<'a>>)
+        }
     }
 
     #[inline]
     pub fn test(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_TEST) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_TEST)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForStatementWithoutBody<'a>(pub(crate) *const ForStatement<'a>);
 
 impl<'a> ForStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn init(&self) -> &Option<ForStatementInit<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_INIT) as *const Option<ForStatementInit<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_INIT)
+                as *const Option<ForStatementInit<'a>>)
+        }
     }
 
     #[inline]
     pub fn test(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_TEST) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_TEST)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn update(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_UPDATE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_STATEMENT_UPDATE)
+                as *const Option<Expression<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_FOR_IN_STATEMENT_SPAN: usize = offset_of!(ForInStatement, span);
@@ -3501,64 +3694,78 @@ pub(crate) const OFFSET_FOR_IN_STATEMENT_BODY: usize = offset_of!(ForInStatement
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutLeft<'a>(pub(crate) *const ForInStatement<'a>);
 
 impl<'a> ForInStatementWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutRight<'a>(pub(crate) *const ForInStatement<'a>);
 
 impl<'a> ForInStatementWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &ForStatementLeft<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_LEFT) as *const ForStatementLeft<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_LEFT)
+                as *const ForStatementLeft<'a>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForInStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForInStatementWithoutBody<'a>(pub(crate) *const ForInStatement<'a>);
 
 impl<'a> ForInStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &ForStatementLeft<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_LEFT) as *const ForStatementLeft<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_LEFT)
+                as *const ForStatementLeft<'a>)
+        }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_FOR_OF_STATEMENT_SPAN: usize = offset_of!(ForOfStatement, span);
@@ -3569,79 +3776,93 @@ pub(crate) const OFFSET_FOR_OF_STATEMENT_BODY: usize = offset_of!(ForOfStatement
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutLeft<'a>(pub(crate) *const ForOfStatement<'a>);
 
 impl<'a> ForOfStatementWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#await(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutRight<'a>(pub(crate) *const ForOfStatement<'a>);
 
 impl<'a> ForOfStatementWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#await(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
     }
 
     #[inline]
     pub fn left(&self) -> &ForStatementLeft<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_LEFT) as *const ForStatementLeft<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_LEFT)
+                as *const ForStatementLeft<'a>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ForOfStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ForOfStatementWithoutBody<'a>(pub(crate) *const ForOfStatement<'a>);
 
 impl<'a> ForOfStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#await(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_AWAIT) as *const bool) }
     }
 
     #[inline]
     pub fn left(&self) -> &ForStatementLeft<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_LEFT) as *const ForStatementLeft<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_LEFT)
+                as *const ForStatementLeft<'a>)
+        }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_CONTINUE_STATEMENT_SPAN: usize = offset_of!(ContinueStatement, span);
@@ -3649,12 +3870,12 @@ pub(crate) const OFFSET_CONTINUE_STATEMENT_LABEL: usize = offset_of!(ContinueSta
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ContinueStatementWithoutLabel(pub(crate) *const u8);
+pub struct ContinueStatementWithoutLabel<'a>(pub(crate) *const ContinueStatement<'a>);
 
-impl ContinueStatementWithoutLabel {
+impl<'a> ContinueStatementWithoutLabel<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CONTINUE_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CONTINUE_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_BREAK_STATEMENT_SPAN: usize = offset_of!(BreakStatement, span);
@@ -3662,12 +3883,12 @@ pub(crate) const OFFSET_BREAK_STATEMENT_LABEL: usize = offset_of!(BreakStatement
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BreakStatementWithoutLabel(pub(crate) *const u8);
+pub struct BreakStatementWithoutLabel<'a>(pub(crate) *const BreakStatement<'a>);
 
-impl BreakStatementWithoutLabel {
+impl<'a> BreakStatementWithoutLabel<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BREAK_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BREAK_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_RETURN_STATEMENT_SPAN: usize = offset_of!(ReturnStatement, span);
@@ -3675,12 +3896,12 @@ pub(crate) const OFFSET_RETURN_STATEMENT_ARGUMENT: usize = offset_of!(ReturnStat
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ReturnStatementWithoutArgument(pub(crate) *const u8);
+pub struct ReturnStatementWithoutArgument<'a>(pub(crate) *const ReturnStatement<'a>);
 
-impl ReturnStatementWithoutArgument {
+impl<'a> ReturnStatementWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_RETURN_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_RETURN_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_WITH_STATEMENT_SPAN: usize = offset_of!(WithStatement, span);
@@ -3689,33 +3910,35 @@ pub(crate) const OFFSET_WITH_STATEMENT_BODY: usize = offset_of!(WithStatement, b
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithStatementWithoutObject<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct WithStatementWithoutObject<'a>(pub(crate) *const WithStatement<'a>);
 
 impl<'a> WithStatementWithoutObject<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WITH_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WITH_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct WithStatementWithoutBody<'a>(pub(crate) *const WithStatement<'a>);
 
 impl<'a> WithStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WITH_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn object(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_OBJECT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_WITH_STATEMENT_OBJECT) as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_SWITCH_STATEMENT_SPAN: usize = offset_of!(SwitchStatement, span);
@@ -3725,36 +3948,39 @@ pub(crate) const OFFSET_SWITCH_STATEMENT_CASES: usize = offset_of!(SwitchStateme
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchStatementWithoutDiscriminant<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct SwitchStatementWithoutDiscriminant<'a>(pub(crate) *const SwitchStatement<'a>);
 
 impl<'a> SwitchStatementWithoutDiscriminant<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SWITCH_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn cases(&self) -> &Vec<'a, SwitchCase<'a>> {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_CASES) as *const Vec<'a, SwitchCase<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_SWITCH_STATEMENT_CASES)
+                as *const Vec<'a, SwitchCase<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchStatementWithoutCases<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct SwitchStatementWithoutCases<'a>(pub(crate) *const SwitchStatement<'a>);
 
 impl<'a> SwitchStatementWithoutCases<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SWITCH_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn discriminant(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_DISCRIMINANT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_SWITCH_STATEMENT_DISCRIMINANT)
+                as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_SWITCH_CASE_SPAN: usize = offset_of!(SwitchCase, span);
@@ -3763,33 +3989,38 @@ pub(crate) const OFFSET_SWITCH_CASE_CONSEQUENT: usize = offset_of!(SwitchCase, c
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchCaseWithoutTest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct SwitchCaseWithoutTest<'a>(pub(crate) *const SwitchCase<'a>);
 
 impl<'a> SwitchCaseWithoutTest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SWITCH_CASE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn consequent(&self) -> &Vec<'a, Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_CONSEQUENT) as *const Vec<'a, Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_SWITCH_CASE_CONSEQUENT)
+                as *const Vec<'a, Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct SwitchCaseWithoutConsequent<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct SwitchCaseWithoutConsequent<'a>(pub(crate) *const SwitchCase<'a>);
 
 impl<'a> SwitchCaseWithoutConsequent<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_SWITCH_CASE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn test(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_TEST) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_SWITCH_CASE_TEST) as *const Option<Expression<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_LABELED_STATEMENT_SPAN: usize = offset_of!(LabeledStatement, span);
@@ -3798,33 +4029,38 @@ pub(crate) const OFFSET_LABELED_STATEMENT_BODY: usize = offset_of!(LabeledStatem
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LabeledStatementWithoutLabel<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct LabeledStatementWithoutLabel<'a>(pub(crate) *const LabeledStatement<'a>);
 
 impl<'a> LabeledStatementWithoutLabel<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_LABELED_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Statement<'a> {
-        unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_BODY) as *const Statement<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LABELED_STATEMENT_BODY) as *const Statement<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct LabeledStatementWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct LabeledStatementWithoutBody<'a>(pub(crate) *const LabeledStatement<'a>);
 
 impl<'a> LabeledStatementWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_LABELED_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn label(&self) -> &LabelIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_LABEL) as *const LabelIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_LABELED_STATEMENT_LABEL)
+                as *const LabelIdentifier<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_THROW_STATEMENT_SPAN: usize = offset_of!(ThrowStatement, span);
@@ -3832,12 +4068,12 @@ pub(crate) const OFFSET_THROW_STATEMENT_ARGUMENT: usize = offset_of!(ThrowStatem
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ThrowStatementWithoutArgument(pub(crate) *const u8);
+pub struct ThrowStatementWithoutArgument<'a>(pub(crate) *const ThrowStatement<'a>);
 
-impl ThrowStatementWithoutArgument {
+impl<'a> ThrowStatementWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_THROW_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_THROW_STATEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TRY_STATEMENT_SPAN: usize = offset_of!(TryStatement, span);
@@ -3847,25 +4083,26 @@ pub(crate) const OFFSET_TRY_STATEMENT_FINALIZER: usize = offset_of!(TryStatement
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutBlock<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TryStatementWithoutBlock<'a>(pub(crate) *const TryStatement<'a>);
 
 impl<'a> TryStatementWithoutBlock<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn handler(&self) -> &Option<Box<'a, CatchClause<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TRY_STATEMENT_HANDLER) as *const Option<Box<'a, CatchClause<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_HANDLER)
+                as *const Option<Box<'a, CatchClause<'a>>>)
         }
     }
 
     #[inline]
     pub fn finalizer(&self) -> &Option<Box<'a, BlockStatement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TRY_STATEMENT_FINALIZER)
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_FINALIZER)
                 as *const Option<Box<'a, BlockStatement<'a>>>)
         }
     }
@@ -3873,23 +4110,26 @@ impl<'a> TryStatementWithoutBlock<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutHandler<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TryStatementWithoutHandler<'a>(pub(crate) *const TryStatement<'a>);
 
 impl<'a> TryStatementWithoutHandler<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn block(&self) -> &Box<'a, BlockStatement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TRY_STATEMENT_BLOCK) as *const Box<'a, BlockStatement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_BLOCK)
+                as *const Box<'a, BlockStatement<'a>>)
+        }
     }
 
     #[inline]
     pub fn finalizer(&self) -> &Option<Box<'a, BlockStatement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TRY_STATEMENT_FINALIZER)
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_FINALIZER)
                 as *const Option<Box<'a, BlockStatement<'a>>>)
         }
     }
@@ -3897,23 +4137,27 @@ impl<'a> TryStatementWithoutHandler<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TryStatementWithoutFinalizer<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TryStatementWithoutFinalizer<'a>(pub(crate) *const TryStatement<'a>);
 
 impl<'a> TryStatementWithoutFinalizer<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn block(&self) -> &Box<'a, BlockStatement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TRY_STATEMENT_BLOCK) as *const Box<'a, BlockStatement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_BLOCK)
+                as *const Box<'a, BlockStatement<'a>>)
+        }
     }
 
     #[inline]
     pub fn handler(&self) -> &Option<Box<'a, CatchClause<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TRY_STATEMENT_HANDLER) as *const Option<Box<'a, CatchClause<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_TRY_STATEMENT_HANDLER)
+                as *const Option<Box<'a, CatchClause<'a>>>)
         }
     }
 }
@@ -3923,33 +4167,39 @@ pub(crate) const OFFSET_CATCH_CLAUSE_BODY: usize = offset_of!(CatchClause, body)
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchClauseWithoutParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct CatchClauseWithoutParam<'a>(pub(crate) *const CatchClause<'a>);
 
 impl<'a> CatchClauseWithoutParam<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CATCH_CLAUSE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, BlockStatement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_BODY) as *const Box<'a, BlockStatement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CATCH_CLAUSE_BODY)
+                as *const Box<'a, BlockStatement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchClauseWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct CatchClauseWithoutBody<'a>(pub(crate) *const CatchClause<'a>);
 
 impl<'a> CatchClauseWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CATCH_CLAUSE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn param(&self) -> &Option<CatchParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_PARAM) as *const Option<CatchParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CATCH_CLAUSE_PARAM)
+                as *const Option<CatchParameter<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_CATCH_PARAMETER_SPAN: usize = offset_of!(CatchParameter, span);
@@ -3957,12 +4207,12 @@ pub(crate) const OFFSET_CATCH_PARAMETER_PATTERN: usize = offset_of!(CatchParamet
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct CatchParameterWithoutPattern(pub(crate) *const u8);
+pub struct CatchParameterWithoutPattern<'a>(pub(crate) *const CatchParameter<'a>);
 
-impl CatchParameterWithoutPattern {
+impl<'a> CatchParameterWithoutPattern<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CATCH_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CATCH_PARAMETER_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_DEBUGGER_STATEMENT_SPAN: usize = offset_of!(DebuggerStatement, span);
@@ -3973,39 +4223,39 @@ pub(crate) const OFFSET_BINDING_PATTERN_OPTIONAL: usize = offset_of!(BindingPatt
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPatternWithoutKind<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct BindingPatternWithoutKind<'a>(pub(crate) *const BindingPattern<'a>);
 
 impl<'a> BindingPatternWithoutKind<'a> {
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_BINDING_PATTERN_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_BINDING_PATTERN_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPatternWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct BindingPatternWithoutTypeAnnotation<'a>(pub(crate) *const BindingPattern<'a>);
 
 impl<'a> BindingPatternWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn kind(&self) -> &BindingPatternKind<'a> {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PATTERN_KIND) as *const BindingPatternKind<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINDING_PATTERN_KIND)
+                as *const BindingPatternKind<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
     }
 }
 pub(crate) const OFFSET_ASSIGNMENT_PATTERN_SPAN: usize = offset_of!(AssignmentPattern, span);
@@ -4014,33 +4264,38 @@ pub(crate) const OFFSET_ASSIGNMENT_PATTERN_RIGHT: usize = offset_of!(AssignmentP
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentPatternWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct AssignmentPatternWithoutLeft<'a>(pub(crate) *const AssignmentPattern<'a>);
 
 impl<'a> AssignmentPatternWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn right(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_RIGHT) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_PATTERN_RIGHT) as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AssignmentPatternWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct AssignmentPatternWithoutRight<'a>(pub(crate) *const AssignmentPattern<'a>);
 
 impl<'a> AssignmentPatternWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &BindingPattern<'a> {
-        unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_LEFT) as *const BindingPattern<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ASSIGNMENT_PATTERN_LEFT)
+                as *const BindingPattern<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_OBJECT_PATTERN_SPAN: usize = offset_of!(ObjectPattern, span);
@@ -4049,18 +4304,18 @@ pub(crate) const OFFSET_OBJECT_PATTERN_REST: usize = offset_of!(ObjectPattern, r
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPatternWithoutProperties<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ObjectPatternWithoutProperties<'a>(pub(crate) *const ObjectPattern<'a>);
 
 impl<'a> ObjectPatternWithoutProperties<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn rest(&self) -> &Option<Box<'a, BindingRestElement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_OBJECT_PATTERN_REST)
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PATTERN_REST)
                 as *const Option<Box<'a, BindingRestElement<'a>>>)
         }
     }
@@ -4068,18 +4323,19 @@ impl<'a> ObjectPatternWithoutProperties<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ObjectPatternWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ObjectPatternWithoutRest<'a>(pub(crate) *const ObjectPattern<'a>);
 
 impl<'a> ObjectPatternWithoutRest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_OBJECT_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn properties(&self) -> &Vec<'a, BindingProperty<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_OBJECT_PATTERN_PROPERTIES) as *const Vec<'a, BindingProperty<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_OBJECT_PATTERN_PROPERTIES)
+                as *const Vec<'a, BindingProperty<'a>>)
         }
     }
 }
@@ -4091,53 +4347,58 @@ pub(crate) const OFFSET_BINDING_PROPERTY_COMPUTED: usize = offset_of!(BindingPro
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct BindingPropertyWithoutKey<'a>(pub(crate) *const BindingProperty<'a>);
 
 impl<'a> BindingPropertyWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &BindingPattern<'a> {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_VALUE) as *const BindingPattern<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_VALUE)
+                as *const BindingPattern<'a>)
+        }
     }
 
     #[inline]
     pub fn shorthand(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_SHORTHAND) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_SHORTHAND) as *const bool) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct BindingPropertyWithoutValue<'a>(pub(crate) *const BindingProperty<'a>);
 
 impl<'a> BindingPropertyWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn shorthand(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_SHORTHAND) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_SHORTHAND) as *const bool) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
     }
 }
 pub(crate) const OFFSET_ARRAY_PATTERN_SPAN: usize = offset_of!(ArrayPattern, span);
@@ -4146,18 +4407,18 @@ pub(crate) const OFFSET_ARRAY_PATTERN_REST: usize = offset_of!(ArrayPattern, res
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayPatternWithoutElements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ArrayPatternWithoutElements<'a>(pub(crate) *const ArrayPattern<'a>);
 
 impl<'a> ArrayPatternWithoutElements<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ARRAY_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn rest(&self) -> &Option<Box<'a, BindingRestElement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_PATTERN_REST)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_PATTERN_REST)
                 as *const Option<Box<'a, BindingRestElement<'a>>>)
         }
     }
@@ -4165,18 +4426,18 @@ impl<'a> ArrayPatternWithoutElements<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrayPatternWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ArrayPatternWithoutRest<'a>(pub(crate) *const ArrayPattern<'a>);
 
 impl<'a> ArrayPatternWithoutRest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARRAY_PATTERN_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ARRAY_PATTERN_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn elements(&self) -> &Vec<'a, Option<BindingPattern<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARRAY_PATTERN_ELEMENTS)
+            &*((self.0 as *const u8).add(OFFSET_ARRAY_PATTERN_ELEMENTS)
                 as *const Vec<'a, Option<BindingPattern<'a>>>)
         }
     }
@@ -4187,12 +4448,12 @@ pub(crate) const OFFSET_BINDING_REST_ELEMENT_ARGUMENT: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct BindingRestElementWithoutArgument(pub(crate) *const u8);
+pub struct BindingRestElementWithoutArgument<'a>(pub(crate) *const BindingRestElement<'a>);
 
-impl BindingRestElementWithoutArgument {
+impl<'a> BindingRestElementWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_BINDING_REST_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_BINDING_REST_ELEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
@@ -4209,48 +4470,57 @@ pub(crate) const OFFSET_FUNCTION_MODIFIERS: usize = offset_of!(Function, modifie
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutId<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutId<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_THIS_PARAM) as *const Option<TSThisParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_PARAMS) as *const Box<'a, FormalParameters<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<Box<'a, FunctionBody<'a>>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY) as *const Option<Box<'a, FunctionBody<'a>>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY)
+                as *const Option<Box<'a, FunctionBody<'a>>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4258,61 +4528,70 @@ impl<'a> FunctionWithoutId<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutThisParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutThisParam<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutThisParam<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_ID)
+                as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_PARAMS) as *const Box<'a, FormalParameters<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<Box<'a, FunctionBody<'a>>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY) as *const Option<Box<'a, FunctionBody<'a>>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY)
+                as *const Option<Box<'a, FunctionBody<'a>>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4320,61 +4599,70 @@ impl<'a> FunctionWithoutThisParam<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutParams<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutParams<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_ID)
+                as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_THIS_PARAM) as *const Option<TSThisParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<Box<'a, FunctionBody<'a>>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY) as *const Option<Box<'a, FunctionBody<'a>>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY)
+                as *const Option<Box<'a, FunctionBody<'a>>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4382,61 +4670,70 @@ impl<'a> FunctionWithoutParams<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutBody<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutBody<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_ID)
+                as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_THIS_PARAM) as *const Option<TSThisParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_PARAMS) as *const Box<'a, FormalParameters<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4444,132 +4741,156 @@ impl<'a> FunctionWithoutBody<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutTypeParameters<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutTypeParameters<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutTypeParameters<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_ID)
+                as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_THIS_PARAM) as *const Option<TSThisParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_PARAMS) as *const Box<'a, FormalParameters<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<Box<'a, FunctionBody<'a>>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY) as *const Option<Box<'a, FunctionBody<'a>>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY)
+                as *const Option<Box<'a, FunctionBody<'a>>>)
+        }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionWithoutReturnType<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionWithoutReturnType<'a>(pub(crate) *const Function<'a>);
 
 impl<'a> FunctionWithoutReturnType<'a> {
     #[inline]
     pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_ID)
+                as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn generator(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_GENERATOR) as *const bool) }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_ASYNC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_ASYNC) as *const bool) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_THIS_PARAM) as *const Option<TSThisParameter<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_PARAMS) as *const Box<'a, FormalParameters<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<Box<'a, FunctionBody<'a>>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY) as *const Option<Box<'a, FunctionBody<'a>>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY)
+                as *const Option<Box<'a, FunctionBody<'a>>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FUNCTION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 pub(crate) const OFFSET_FORMAL_PARAMETERS_SPAN: usize = offset_of!(FormalParameters, span);
@@ -4579,23 +4900,26 @@ pub(crate) const OFFSET_FORMAL_PARAMETERS_REST: usize = offset_of!(FormalParamet
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParametersWithoutItems<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FormalParametersWithoutItems<'a>(pub(crate) *const FormalParameters<'a>);
 
 impl<'a> FormalParametersWithoutItems<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETERS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &FormalParameterKind {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETERS_KIND) as *const FormalParameterKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_KIND)
+                as *const FormalParameterKind)
+        }
     }
 
     #[inline]
     pub fn rest(&self) -> &Option<Box<'a, BindingRestElement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_FORMAL_PARAMETERS_REST)
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_REST)
                 as *const Option<Box<'a, BindingRestElement<'a>>>)
         }
     }
@@ -4603,23 +4927,27 @@ impl<'a> FormalParametersWithoutItems<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParametersWithoutRest<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FormalParametersWithoutRest<'a>(pub(crate) *const FormalParameters<'a>);
 
 impl<'a> FormalParametersWithoutRest<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETERS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn kind(&self) -> &FormalParameterKind {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETERS_KIND) as *const FormalParameterKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_KIND)
+                as *const FormalParameterKind)
+        }
     }
 
     #[inline]
     pub fn items(&self) -> &Vec<'a, FormalParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_FORMAL_PARAMETERS_ITEMS) as *const Vec<'a, FormalParameter<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETERS_ITEMS)
+                as *const Vec<'a, FormalParameter<'a>>)
         }
     }
 }
@@ -4634,72 +4962,75 @@ pub(crate) const OFFSET_FORMAL_PARAMETER_DECORATORS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParameterWithoutPattern<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FormalParameterWithoutPattern<'a>(pub(crate) *const FormalParameter<'a>);
 
 impl<'a> FormalParameterWithoutPattern<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_FORMAL_PARAMETER_ACCESSIBILITY) as *const Option<TSAccessibility>)
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_ACCESSIBILITY)
+                as *const Option<TSAccessibility>)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_FORMAL_PARAMETER_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FormalParameterWithoutDecorators<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct FormalParameterWithoutDecorators<'a>(pub(crate) *const FormalParameter<'a>);
 
 impl<'a> FormalParameterWithoutDecorators<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn pattern(&self) -> &BindingPattern<'a> {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_PATTERN) as *const BindingPattern<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_PATTERN)
+                as *const BindingPattern<'a>)
+        }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_FORMAL_PARAMETER_ACCESSIBILITY) as *const Option<TSAccessibility>)
+            &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_ACCESSIBILITY)
+                as *const Option<TSAccessibility>)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
     }
 }
 pub(crate) const OFFSET_FUNCTION_BODY_SPAN: usize = offset_of!(FunctionBody, span);
@@ -4708,33 +5039,39 @@ pub(crate) const OFFSET_FUNCTION_BODY_STATEMENTS: usize = offset_of!(FunctionBod
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionBodyWithoutDirectives<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionBodyWithoutDirectives<'a>(pub(crate) *const FunctionBody<'a>);
 
 impl<'a> FunctionBodyWithoutDirectives<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn statements(&self) -> &Vec<'a, Statement<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_STATEMENTS) as *const Vec<'a, Statement<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY_STATEMENTS)
+                as *const Vec<'a, Statement<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct FunctionBodyWithoutStatements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct FunctionBodyWithoutStatements<'a>(pub(crate) *const FunctionBody<'a>);
 
 impl<'a> FunctionBodyWithoutStatements<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn directives(&self) -> &Vec<'a, Directive<'a>> {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_DIRECTIVES) as *const Vec<'a, Directive<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_FUNCTION_BODY_DIRECTIVES)
+                as *const Vec<'a, Directive<'a>>)
+        }
     }
 }
 pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN: usize =
@@ -4754,31 +5091,35 @@ pub(crate) const OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrowFunctionExpressionWithoutParams<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ArrowFunctionExpressionWithoutParams<'a>(pub(crate) *const ArrowFunctionExpression<'a>);
 
 impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION)
+                as *const bool)
+        }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, FunctionBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
                 as *const Box<'a, FunctionBody<'a>>)
         }
     }
@@ -4786,7 +5127,7 @@ impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4794,7 +5135,7 @@ impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -4802,31 +5143,35 @@ impl<'a> ArrowFunctionExpressionWithoutParams<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ArrowFunctionExpressionWithoutBody<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ArrowFunctionExpressionWithoutBody<'a>(pub(crate) *const ArrowFunctionExpression<'a>);
 
 impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION)
+                as *const bool)
+        }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -4834,7 +5179,7 @@ impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4842,7 +5187,7 @@ impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -4851,30 +5196,36 @@ impl<'a> ArrowFunctionExpressionWithoutBody<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ArrowFunctionExpression<'a>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION)
+                as *const bool)
+        }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -4882,7 +5233,7 @@ impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn body(&self) -> &Box<'a, FunctionBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
                 as *const Box<'a, FunctionBody<'a>>)
         }
     }
@@ -4890,7 +5241,7 @@ impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -4899,30 +5250,36 @@ impl<'a> ArrowFunctionExpressionWithoutTypeParameters<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ArrowFunctionExpressionWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ArrowFunctionExpression<'a>,
 );
 
 impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION)
+                as *const bool)
+        }
     }
 
     #[inline]
     pub fn r#async(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC) as *const bool)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -4930,7 +5287,7 @@ impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
     #[inline]
     pub fn body(&self) -> &Box<'a, FunctionBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_BODY)
                 as *const Box<'a, FunctionBody<'a>>)
         }
     }
@@ -4938,7 +5295,7 @@ impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -4949,17 +5306,17 @@ pub(crate) const OFFSET_YIELD_EXPRESSION_ARGUMENT: usize = offset_of!(YieldExpre
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct YieldExpressionWithoutArgument(pub(crate) *const u8);
+pub struct YieldExpressionWithoutArgument<'a>(pub(crate) *const YieldExpression<'a>);
 
-impl YieldExpressionWithoutArgument {
+impl<'a> YieldExpressionWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_YIELD_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_YIELD_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn delegate(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_YIELD_EXPRESSION_DELEGATE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_YIELD_EXPRESSION_DELEGATE) as *const bool) }
     }
 }
 pub(crate) const OFFSET_CLASS_TYPE: usize = offset_of!(Class, r#type);
@@ -4976,33 +5333,35 @@ pub(crate) const OFFSET_CLASS_MODIFIERS: usize = offset_of!(Class, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutId<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutId<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5010,7 +5369,7 @@ impl<'a> ClassWithoutId<'a> {
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -5018,50 +5377,55 @@ impl<'a> ClassWithoutId<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutSuperClass<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutSuperClass<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutSuperClass<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5069,7 +5433,7 @@ impl<'a> ClassWithoutSuperClass<'a> {
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -5077,50 +5441,57 @@ impl<'a> ClassWithoutSuperClass<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutBody<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutBody<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5128,7 +5499,7 @@ impl<'a> ClassWithoutBody<'a> {
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -5136,55 +5507,62 @@ impl<'a> ClassWithoutBody<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutTypeParameters<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutTypeParameters<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutTypeParameters<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -5192,58 +5570,62 @@ impl<'a> ClassWithoutTypeParameters<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutSuperTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ClassWithoutSuperTypeParameters<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutSuperTypeParameters<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5251,55 +5633,62 @@ impl<'a> ClassWithoutSuperTypeParameters<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutImplements<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutImplements<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutImplements<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5307,56 +5696,62 @@ impl<'a> ClassWithoutImplements<'a> {
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassWithoutDecorators<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ClassWithoutDecorators<'a>(pub(crate) *const Class<'a>);
 
 impl<'a> ClassWithoutDecorators<'a> {
     #[inline]
     pub fn r#type(&self) -> &ClassType {
-        unsafe { &*(self.0.add(OFFSET_CLASS_TYPE) as *const ClassType) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE) as *const ClassType) }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_ID) as *const Option<BindingIdentifier<'a>>)
+        }
     }
 
     #[inline]
     pub fn super_class(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_CLASS) as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, ClassBody<'a>> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY) as *const Box<'a, ClassBody<'a>>) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -5364,7 +5759,7 @@ impl<'a> ClassWithoutDecorators<'a> {
     #[inline]
     pub fn super_type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_SUPER_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -5372,13 +5767,14 @@ impl<'a> ClassWithoutDecorators<'a> {
     #[inline]
     pub fn implements(&self) -> &Option<Vec<'a, TSClassImplements<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_CLASS_IMPLEMENTS) as *const Option<Vec<'a, TSClassImplements<'a>>>)
+            &*((self.0 as *const u8).add(OFFSET_CLASS_IMPLEMENTS)
+                as *const Option<Vec<'a, TSClassImplements<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
 pub(crate) const OFFSET_CLASS_BODY_SPAN: usize = offset_of!(ClassBody, span);
@@ -5386,12 +5782,12 @@ pub(crate) const OFFSET_CLASS_BODY_BODY: usize = offset_of!(ClassBody, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ClassBodyWithoutBody(pub(crate) *const u8);
+pub struct ClassBodyWithoutBody<'a>(pub(crate) *const ClassBody<'a>);
 
-impl ClassBodyWithoutBody {
+impl<'a> ClassBodyWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_CLASS_BODY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_CLASS_BODY_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
@@ -5411,181 +5807,211 @@ pub(crate) const OFFSET_METHOD_DEFINITION_DECORATORS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MethodDefinitionWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct MethodDefinitionWithoutKey<'a>(pub(crate) *const MethodDefinition<'a>);
 
 impl<'a> MethodDefinitionWithoutKey<'a> {
     #[inline]
     pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_TYPE)
+                as *const MethodDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &Box<'a, Function<'a>> {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_VALUE) as *const Box<'a, Function<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_VALUE)
+                as *const Box<'a, Function<'a>>)
+        }
     }
 
     #[inline]
     pub fn kind(&self) -> &MethodDefinitionKind {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KIND) as *const MethodDefinitionKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_KIND)
+                as *const MethodDefinitionKind)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY) as *const Option<TSAccessibility>)
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY)
+                as *const Option<TSAccessibility>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_METHOD_DEFINITION_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MethodDefinitionWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct MethodDefinitionWithoutValue<'a>(pub(crate) *const MethodDefinition<'a>);
 
 impl<'a> MethodDefinitionWithoutValue<'a> {
     #[inline]
     pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_TYPE)
+                as *const MethodDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn kind(&self) -> &MethodDefinitionKind {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KIND) as *const MethodDefinitionKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_KIND)
+                as *const MethodDefinitionKind)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY) as *const Option<TSAccessibility>)
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY)
+                as *const Option<TSAccessibility>)
         }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_METHOD_DEFINITION_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct MethodDefinitionWithoutDecorators<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct MethodDefinitionWithoutDecorators<'a>(pub(crate) *const MethodDefinition<'a>);
 
 impl<'a> MethodDefinitionWithoutDecorators<'a> {
     #[inline]
     pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_TYPE)
+                as *const MethodDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn value(&self) -> &Box<'a, Function<'a>> {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_VALUE) as *const Box<'a, Function<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_VALUE)
+                as *const Box<'a, Function<'a>>)
+        }
     }
 
     #[inline]
     pub fn kind(&self) -> &MethodDefinitionKind {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KIND) as *const MethodDefinitionKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_KIND)
+                as *const MethodDefinitionKind)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY) as *const Option<TSAccessibility>)
+            &*((self.0 as *const u8).add(OFFSET_METHOD_DEFINITION_ACCESSIBILITY)
+                as *const Option<TSAccessibility>)
         }
     }
 }
@@ -5616,63 +6042,69 @@ pub(crate) const OFFSET_PROPERTY_DEFINITION_DECORATORS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct PropertyDefinitionWithoutKey<'a>(pub(crate) *const PropertyDefinition<'a>);
 
 impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
     pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE)
+                as *const PropertyDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_VALUE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn declare(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -5680,7 +6112,7 @@ impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
                 as *const Option<TSAccessibility>)
         }
     }
@@ -5688,70 +6120,76 @@ impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct PropertyDefinitionWithoutValue<'a>(pub(crate) *const PropertyDefinition<'a>);
 
 impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
     pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE)
+                as *const PropertyDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn declare(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -5759,7 +6197,7 @@ impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
                 as *const Option<TSAccessibility>)
         }
     }
@@ -5767,78 +6205,84 @@ impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct PropertyDefinitionWithoutTypeAnnotation<'a>(pub(crate) *const PropertyDefinition<'a>);
 
 impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE)
+                as *const PropertyDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_VALUE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn declare(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
                 as *const Option<TSAccessibility>)
         }
     }
@@ -5846,78 +6290,84 @@ impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct PropertyDefinitionWithoutDecorators<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct PropertyDefinitionWithoutDecorators<'a>(pub(crate) *const PropertyDefinition<'a>);
 
 impl<'a> PropertyDefinitionWithoutDecorators<'a> {
     #[inline]
     pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE)
+                as *const PropertyDefinitionType)
+        }
     }
 
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_VALUE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn declare(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DECLARE) as *const bool) }
     }
 
     #[inline]
     pub fn r#override(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OVERRIDE) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn definite(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_DEFINITE) as *const bool) }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_READONLY) as *const bool) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -5925,7 +6375,7 @@ impl<'a> PropertyDefinitionWithoutDecorators<'a> {
     #[inline]
     pub fn accessibility(&self) -> &Option<TSAccessibility> {
         unsafe {
-            &*(self.0.add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
+            &*((self.0 as *const u8).add(OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY)
                 as *const Option<TSAccessibility>)
         }
     }
@@ -5937,12 +6387,12 @@ pub(crate) const OFFSET_STATIC_BLOCK_BODY: usize = offset_of!(StaticBlock, body)
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct StaticBlockWithoutBody(pub(crate) *const u8);
+pub struct StaticBlockWithoutBody<'a>(pub(crate) *const StaticBlock<'a>);
 
-impl StaticBlockWithoutBody {
+impl<'a> StaticBlockWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_STATIC_BLOCK_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_STATIC_BLOCK_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_ACCESSOR_PROPERTY_SPAN: usize = offset_of!(AccessorProperty, span);
@@ -5955,101 +6405,110 @@ pub(crate) const OFFSET_ACCESSOR_PROPERTY_DECORATORS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AccessorPropertyWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct AccessorPropertyWithoutKey<'a>(pub(crate) *const AccessorProperty<'a>);
 
 impl<'a> AccessorPropertyWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_VALUE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_VALUE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AccessorPropertyWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct AccessorPropertyWithoutValue<'a>(pub(crate) *const AccessorProperty<'a>);
 
 impl<'a> AccessorPropertyWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
     }
 
     #[inline]
     pub fn decorators(&self) -> &Vec<'a, Decorator<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_DECORATORS) as *const Vec<'a, Decorator<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_DECORATORS)
+                as *const Vec<'a, Decorator<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct AccessorPropertyWithoutDecorators<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct AccessorPropertyWithoutDecorators<'a>(pub(crate) *const AccessorProperty<'a>);
 
 impl<'a> AccessorPropertyWithoutDecorators<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_VALUE) as *const Option<Expression<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_VALUE)
+                as *const Option<Expression<'a>>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn r#static(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
     }
 }
 pub(crate) const OFFSET_IMPORT_EXPRESSION_SPAN: usize = offset_of!(ImportExpression, span);
@@ -6059,38 +6518,38 @@ pub(crate) const OFFSET_IMPORT_EXPRESSION_ARGUMENTS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportExpressionWithoutSource<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportExpressionWithoutSource<'a>(pub(crate) *const ImportExpression<'a>);
 
 impl<'a> ImportExpressionWithoutSource<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn arguments(&self) -> &Vec<'a, Expression<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_EXPRESSION_ARGUMENTS) as *const Vec<'a, Expression<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_EXPRESSION_ARGUMENTS)
+                as *const Vec<'a, Expression<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportExpressionWithoutArguments<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ImportExpressionWithoutArguments<'a>(pub(crate) *const ImportExpression<'a>);
 
 impl<'a> ImportExpressionWithoutArguments<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_EXPRESSION_SOURCE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_EXPRESSION_SOURCE) as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_IMPORT_DECLARATION_SPAN: usize = offset_of!(ImportDeclaration, span);
@@ -6104,51 +6563,53 @@ pub(crate) const OFFSET_IMPORT_DECLARATION_IMPORT_KIND: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDeclarationWithoutSpecifiers<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ImportDeclarationWithoutSpecifiers<'a>(pub(crate) *const ImportDeclaration<'a>);
 
 impl<'a> ImportDeclarationWithoutSpecifiers<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source(&self) -> &StringLiteral<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DECLARATION_SOURCE) as *const StringLiteral<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SOURCE)
+                as *const StringLiteral<'a>)
+        }
     }
 
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_WITH_CLAUSE) as *const Option<WithClause<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_WITH_CLAUSE)
+                as *const Option<WithClause<'a>>)
         }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDeclarationWithoutSource<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportDeclarationWithoutSource<'a>(pub(crate) *const ImportDeclaration<'a>);
 
 impl<'a> ImportDeclarationWithoutSource<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn specifiers(&self) -> &Option<Vec<'a, ImportDeclarationSpecifier<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_SPECIFIERS)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SPECIFIERS)
                 as *const Option<Vec<'a, ImportDeclarationSpecifier<'a>>>)
         }
     }
@@ -6156,48 +6617,51 @@ impl<'a> ImportDeclarationWithoutSource<'a> {
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_WITH_CLAUSE) as *const Option<WithClause<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_WITH_CLAUSE)
+                as *const Option<WithClause<'a>>)
         }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDeclarationWithoutWithClause<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ImportDeclarationWithoutWithClause<'a>(pub(crate) *const ImportDeclaration<'a>);
 
 impl<'a> ImportDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn specifiers(&self) -> &Option<Vec<'a, ImportDeclarationSpecifier<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_SPECIFIERS)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SPECIFIERS)
                 as *const Option<Vec<'a, ImportDeclarationSpecifier<'a>>>)
         }
     }
 
     #[inline]
     pub fn source(&self) -> &StringLiteral<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DECLARATION_SOURCE) as *const StringLiteral<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_SOURCE)
+                as *const StringLiteral<'a>)
+        }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DECLARATION_IMPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
@@ -6209,43 +6673,55 @@ pub(crate) const OFFSET_IMPORT_SPECIFIER_IMPORT_KIND: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportSpecifierWithoutImported<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportSpecifierWithoutImported<'a>(pub(crate) *const ImportSpecifier<'a>);
 
 impl<'a> ImportSpecifierWithoutImported<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn local(&self) -> &BindingIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_LOCAL) as *const BindingIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_LOCAL)
+                as *const BindingIdentifier<'a>)
+        }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND) as *const ImportOrExportKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND)
+                as *const ImportOrExportKind)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportSpecifierWithoutLocal<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportSpecifierWithoutLocal<'a>(pub(crate) *const ImportSpecifier<'a>);
 
 impl<'a> ImportSpecifierWithoutLocal<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn imported(&self) -> &ModuleExportName<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_IMPORTED) as *const ModuleExportName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_IMPORTED)
+                as *const ModuleExportName<'a>)
+        }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND) as *const ImportOrExportKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND)
+                as *const ImportOrExportKind)
+        }
     }
 }
 pub(crate) const OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN: usize =
@@ -6255,12 +6731,14 @@ pub(crate) const OFFSET_IMPORT_DEFAULT_SPECIFIER_LOCAL: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportDefaultSpecifierWithoutLocal(pub(crate) *const u8);
+pub struct ImportDefaultSpecifierWithoutLocal<'a>(pub(crate) *const ImportDefaultSpecifier<'a>);
 
-impl ImportDefaultSpecifierWithoutLocal {
+impl<'a> ImportDefaultSpecifierWithoutLocal<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN: usize =
@@ -6270,12 +6748,14 @@ pub(crate) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_LOCAL: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportNamespaceSpecifierWithoutLocal(pub(crate) *const u8);
+pub struct ImportNamespaceSpecifierWithoutLocal<'a>(pub(crate) *const ImportNamespaceSpecifier<'a>);
 
-impl ImportNamespaceSpecifierWithoutLocal {
+impl<'a> ImportNamespaceSpecifierWithoutLocal<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_WITH_CLAUSE_SPAN: usize = offset_of!(WithClause, span);
@@ -6285,39 +6765,38 @@ pub(crate) const OFFSET_WITH_CLAUSE_WITH_ENTRIES: usize = offset_of!(WithClause,
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithClauseWithoutAttributesKeyword<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct WithClauseWithoutAttributesKeyword<'a>(pub(crate) *const WithClause<'a>);
 
 impl<'a> WithClauseWithoutAttributesKeyword<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WITH_CLAUSE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WITH_CLAUSE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn with_entries(&self) -> &Vec<'a, ImportAttribute<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_WITH_CLAUSE_WITH_ENTRIES) as *const Vec<'a, ImportAttribute<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_WITH_CLAUSE_WITH_ENTRIES)
+                as *const Vec<'a, ImportAttribute<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct WithClauseWithoutWithEntries<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct WithClauseWithoutWithEntries<'a>(pub(crate) *const WithClause<'a>);
 
 impl<'a> WithClauseWithoutWithEntries<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_WITH_CLAUSE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_WITH_CLAUSE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn attributes_keyword(&self) -> &IdentifierName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD) as *const IdentifierName<'a>)
+            &*((self.0 as *const u8).add(OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD)
+                as *const IdentifierName<'a>)
         }
     }
 }
@@ -6327,33 +6806,38 @@ pub(crate) const OFFSET_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(ImportAttribu
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportAttributeWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportAttributeWithoutKey<'a>(pub(crate) *const ImportAttribute<'a>);
 
 impl<'a> ImportAttributeWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &StringLiteral<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_VALUE) as *const StringLiteral<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_ATTRIBUTE_VALUE) as *const StringLiteral<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ImportAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ImportAttributeWithoutValue<'a>(pub(crate) *const ImportAttribute<'a>);
 
 impl<'a> ImportAttributeWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &ImportAttributeKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_KEY) as *const ImportAttributeKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_IMPORT_ATTRIBUTE_KEY)
+                as *const ImportAttributeKey<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_SPAN: usize =
@@ -6372,20 +6856,21 @@ pub(crate) const OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutDeclaration<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ExportNamedDeclaration<'a>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn specifiers(&self) -> &Vec<'a, ExportSpecifier<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
                 as *const Vec<'a, ExportSpecifier<'a>>)
         }
     }
@@ -6393,7 +6878,7 @@ impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
     #[inline]
     pub fn source(&self) -> &Option<StringLiteral<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
                 as *const Option<StringLiteral<'a>>)
         }
     }
@@ -6401,14 +6886,15 @@ impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
                 as *const Option<WithClause<'a>>)
         }
     }
@@ -6417,20 +6903,21 @@ impl<'a> ExportNamedDeclarationWithoutDeclaration<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutSpecifiers<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ExportNamedDeclaration<'a>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn declaration(&self) -> &Option<Declaration<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
                 as *const Option<Declaration<'a>>)
         }
     }
@@ -6438,7 +6925,7 @@ impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
     #[inline]
     pub fn source(&self) -> &Option<StringLiteral<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
                 as *const Option<StringLiteral<'a>>)
         }
     }
@@ -6446,14 +6933,15 @@ impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
                 as *const Option<WithClause<'a>>)
         }
     }
@@ -6461,21 +6949,20 @@ impl<'a> ExportNamedDeclarationWithoutSpecifiers<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportNamedDeclarationWithoutSource<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ExportNamedDeclarationWithoutSource<'a>(pub(crate) *const ExportNamedDeclaration<'a>);
 
 impl<'a> ExportNamedDeclarationWithoutSource<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn declaration(&self) -> &Option<Declaration<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
                 as *const Option<Declaration<'a>>)
         }
     }
@@ -6483,7 +6970,7 @@ impl<'a> ExportNamedDeclarationWithoutSource<'a> {
     #[inline]
     pub fn specifiers(&self) -> &Vec<'a, ExportSpecifier<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
                 as *const Vec<'a, ExportSpecifier<'a>>)
         }
     }
@@ -6491,14 +6978,15 @@ impl<'a> ExportNamedDeclarationWithoutSource<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE)
                 as *const Option<WithClause<'a>>)
         }
     }
@@ -6507,20 +6995,21 @@ impl<'a> ExportNamedDeclarationWithoutSource<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportNamedDeclarationWithoutWithClause<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ExportNamedDeclaration<'a>,
 );
 
 impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn declaration(&self) -> &Option<Declaration<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION)
                 as *const Option<Declaration<'a>>)
         }
     }
@@ -6528,7 +7017,7 @@ impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn specifiers(&self) -> &Vec<'a, ExportSpecifier<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS)
                 as *const Vec<'a, ExportSpecifier<'a>>)
         }
     }
@@ -6536,7 +7025,7 @@ impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn source(&self) -> &Option<StringLiteral<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_SOURCE)
                 as *const Option<StringLiteral<'a>>)
         }
     }
@@ -6544,7 +7033,8 @@ impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
@@ -6558,20 +7048,21 @@ pub(crate) const OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportDefaultDeclarationWithoutDeclaration<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ExportDefaultDeclaration<'a>,
 );
 
 impl<'a> ExportDefaultDeclarationWithoutDeclaration<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn exported(&self) -> &ModuleExportName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED)
                 as *const ModuleExportName<'a>)
         }
     }
@@ -6580,20 +7071,21 @@ impl<'a> ExportDefaultDeclarationWithoutDeclaration<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct ExportDefaultDeclarationWithoutExported<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const ExportDefaultDeclaration<'a>,
 );
 
 impl<'a> ExportDefaultDeclarationWithoutExported<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn declaration(&self) -> &ExportDefaultDeclarationKind<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION)
                 as *const ExportDefaultDeclarationKind<'a>)
         }
     }
@@ -6610,26 +7102,26 @@ pub(crate) const OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportAllDeclarationWithoutExported<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ExportAllDeclarationWithoutExported<'a>(pub(crate) *const ExportAllDeclaration<'a>);
 
 impl<'a> ExportAllDeclarationWithoutExported<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn source(&self) -> &StringLiteral<'a> {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_SOURCE) as *const StringLiteral<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_SOURCE)
+                as *const StringLiteral<'a>)
+        }
     }
 
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE)
                 as *const Option<WithClause<'a>>)
         }
     }
@@ -6637,28 +7129,26 @@ impl<'a> ExportAllDeclarationWithoutExported<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportAllDeclarationWithoutSource<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ExportAllDeclarationWithoutSource<'a>(pub(crate) *const ExportAllDeclaration<'a>);
 
 impl<'a> ExportAllDeclarationWithoutSource<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn exported(&self) -> &Option<ModuleExportName<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_EXPORTED)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_EXPORTED)
                 as *const Option<ModuleExportName<'a>>)
         }
     }
@@ -6666,7 +7156,7 @@ impl<'a> ExportAllDeclarationWithoutSource<'a> {
     #[inline]
     pub fn with_clause(&self) -> &Option<WithClause<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE)
                 as *const Option<WithClause<'a>>)
         }
     }
@@ -6674,41 +7164,43 @@ impl<'a> ExportAllDeclarationWithoutSource<'a> {
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportAllDeclarationWithoutWithClause<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct ExportAllDeclarationWithoutWithClause<'a>(pub(crate) *const ExportAllDeclaration<'a>);
 
 impl<'a> ExportAllDeclarationWithoutWithClause<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn exported(&self) -> &Option<ModuleExportName<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_EXPORTED)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_EXPORTED)
                 as *const Option<ModuleExportName<'a>>)
         }
     }
 
     #[inline]
     pub fn source(&self) -> &StringLiteral<'a> {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_SOURCE) as *const StringLiteral<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_SOURCE)
+                as *const StringLiteral<'a>)
+        }
     }
 
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND) as *const ImportOrExportKind)
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND)
+                as *const ImportOrExportKind)
         }
     }
 }
@@ -6720,43 +7212,55 @@ pub(crate) const OFFSET_EXPORT_SPECIFIER_EXPORT_KIND: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportSpecifierWithoutLocal<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ExportSpecifierWithoutLocal<'a>(pub(crate) *const ExportSpecifier<'a>);
 
 impl<'a> ExportSpecifierWithoutLocal<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn exported(&self) -> &ModuleExportName<'a> {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_EXPORTED) as *const ModuleExportName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_EXPORTED)
+                as *const ModuleExportName<'a>)
+        }
     }
 
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND) as *const ImportOrExportKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND)
+                as *const ImportOrExportKind)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct ExportSpecifierWithoutExported<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct ExportSpecifierWithoutExported<'a>(pub(crate) *const ExportSpecifier<'a>);
 
 impl<'a> ExportSpecifierWithoutExported<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn local(&self) -> &ModuleExportName<'a> {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_LOCAL) as *const ModuleExportName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_LOCAL)
+                as *const ModuleExportName<'a>)
+        }
     }
 
     #[inline]
     pub fn export_kind(&self) -> &ImportOrExportKind {
-        unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND) as *const ImportOrExportKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND)
+                as *const ImportOrExportKind)
+        }
     }
 }
 pub(crate) const OFFSET_JSX_ELEMENT_SPAN: usize = offset_of!(JSXElement, span);
@@ -6768,72 +7272,72 @@ pub(crate) const OFFSET_JSX_ELEMENT_CHILDREN: usize = offset_of!(JSXElement, chi
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXElementWithoutOpeningElement<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXElementWithoutOpeningElement<'a>(pub(crate) *const JSXElement<'a>);
 
 impl<'a> JSXElementWithoutOpeningElement<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn closing_element(&self) -> &Option<Box<'a, JSXClosingElement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_ELEMENT_CLOSING_ELEMENT)
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_CLOSING_ELEMENT)
                 as *const Option<Box<'a, JSXClosingElement<'a>>>)
         }
     }
 
     #[inline]
     pub fn children(&self) -> &Vec<'a, JSXChild<'a>> {
-        unsafe { &*(self.0.add(OFFSET_JSX_ELEMENT_CHILDREN) as *const Vec<'a, JSXChild<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_CHILDREN)
+                as *const Vec<'a, JSXChild<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXElementWithoutClosingElement<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXElementWithoutClosingElement<'a>(pub(crate) *const JSXElement<'a>);
 
 impl<'a> JSXElementWithoutClosingElement<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn opening_element(&self) -> &Box<'a, JSXOpeningElement<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_ELEMENT_OPENING_ELEMENT)
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_OPENING_ELEMENT)
                 as *const Box<'a, JSXOpeningElement<'a>>)
         }
     }
 
     #[inline]
     pub fn children(&self) -> &Vec<'a, JSXChild<'a>> {
-        unsafe { &*(self.0.add(OFFSET_JSX_ELEMENT_CHILDREN) as *const Vec<'a, JSXChild<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_CHILDREN)
+                as *const Vec<'a, JSXChild<'a>>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXElementWithoutChildren<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct JSXElementWithoutChildren<'a>(pub(crate) *const JSXElement<'a>);
 
 impl<'a> JSXElementWithoutChildren<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn opening_element(&self) -> &Box<'a, JSXOpeningElement<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_ELEMENT_OPENING_ELEMENT)
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_OPENING_ELEMENT)
                 as *const Box<'a, JSXOpeningElement<'a>>)
         }
     }
@@ -6841,7 +7345,7 @@ impl<'a> JSXElementWithoutChildren<'a> {
     #[inline]
     pub fn closing_element(&self) -> &Option<Box<'a, JSXClosingElement<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_ELEMENT_CLOSING_ELEMENT)
+            &*((self.0 as *const u8).add(OFFSET_JSX_ELEMENT_CLOSING_ELEMENT)
                 as *const Option<Box<'a, JSXClosingElement<'a>>>)
         }
     }
@@ -6857,23 +7361,25 @@ pub(crate) const OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXOpeningElementWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct JSXOpeningElementWithoutName<'a>(pub(crate) *const JSXOpeningElement<'a>);
 
 impl<'a> JSXOpeningElementWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn self_closing(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool)
+        }
     }
 
     #[inline]
     pub fn attributes(&self) -> &Vec<'a, JSXAttributeItem<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES)
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES)
                 as *const Vec<'a, JSXAttributeItem<'a>>)
         }
     }
@@ -6881,7 +7387,7 @@ impl<'a> JSXOpeningElementWithoutName<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -6889,31 +7395,33 @@ impl<'a> JSXOpeningElementWithoutName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXOpeningElementWithoutAttributes<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXOpeningElementWithoutAttributes<'a>(pub(crate) *const JSXOpeningElement<'a>);
 
 impl<'a> JSXOpeningElementWithoutAttributes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn self_closing(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool)
+        }
     }
 
     #[inline]
     pub fn name(&self) -> &JSXElementName<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_NAME) as *const JSXElementName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_NAME)
+                as *const JSXElementName<'a>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -6921,31 +7429,33 @@ impl<'a> JSXOpeningElementWithoutAttributes<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXOpeningElementWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXOpeningElementWithoutTypeParameters<'a>(pub(crate) *const JSXOpeningElement<'a>);
 
 impl<'a> JSXOpeningElementWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn self_closing(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING) as *const bool)
+        }
     }
 
     #[inline]
     pub fn name(&self) -> &JSXElementName<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_NAME) as *const JSXElementName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_NAME)
+                as *const JSXElementName<'a>)
+        }
     }
 
     #[inline]
     pub fn attributes(&self) -> &Vec<'a, JSXAttributeItem<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES)
+            &*((self.0 as *const u8).add(OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES)
                 as *const Vec<'a, JSXAttributeItem<'a>>)
         }
     }
@@ -6955,12 +7465,12 @@ pub(crate) const OFFSET_JSX_CLOSING_ELEMENT_NAME: usize = offset_of!(JSXClosingE
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXClosingElementWithoutName(pub(crate) *const u8);
+pub struct JSXClosingElementWithoutName<'a>(pub(crate) *const JSXClosingElement<'a>);
 
-impl JSXClosingElementWithoutName {
+impl<'a> JSXClosingElementWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_CLOSING_ELEMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_CLOSING_ELEMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_JSX_FRAGMENT_SPAN: usize = offset_of!(JSXFragment, span);
@@ -6972,22 +7482,28 @@ pub(crate) const OFFSET_JSX_FRAGMENT_CHILDREN: usize = offset_of!(JSXFragment, c
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXFragmentWithoutChildren(pub(crate) *const u8);
+pub struct JSXFragmentWithoutChildren<'a>(pub(crate) *const JSXFragment<'a>);
 
-impl JSXFragmentWithoutChildren {
+impl<'a> JSXFragmentWithoutChildren<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_FRAGMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_FRAGMENT_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn opening_fragment(&self) -> &JSXOpeningFragment {
-        unsafe { &*(self.0.add(OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT) as *const JSXOpeningFragment) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT)
+                as *const JSXOpeningFragment)
+        }
     }
 
     #[inline]
     pub fn closing_fragment(&self) -> &JSXClosingFragment {
-        unsafe { &*(self.0.add(OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT) as *const JSXClosingFragment) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT)
+                as *const JSXClosingFragment)
+        }
     }
 }
 pub(crate) const OFFSET_JSX_NAMESPACED_NAME_SPAN: usize = offset_of!(JSXNamespacedName, span);
@@ -6998,39 +7514,39 @@ pub(crate) const OFFSET_JSX_NAMESPACED_NAME_PROPERTY: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXNamespacedNameWithoutNamespace<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXNamespacedNameWithoutNamespace<'a>(pub(crate) *const JSXNamespacedName<'a>);
 
 impl<'a> JSXNamespacedNameWithoutNamespace<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_NAMESPACED_NAME_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn property(&self) -> &JSXIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_PROPERTY) as *const JSXIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_NAMESPACED_NAME_PROPERTY)
+                as *const JSXIdentifier<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXNamespacedNameWithoutProperty<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXNamespacedNameWithoutProperty<'a>(pub(crate) *const JSXNamespacedName<'a>);
 
 impl<'a> JSXNamespacedNameWithoutProperty<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_NAMESPACED_NAME_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn namespace(&self) -> &JSXIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_NAMESPACE) as *const JSXIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_NAMESPACED_NAME_NAMESPACE)
+                as *const JSXIdentifier<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_JSX_MEMBER_EXPRESSION_SPAN: usize = offset_of!(JSXMemberExpression, span);
@@ -7041,40 +7557,37 @@ pub(crate) const OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXMemberExpressionWithoutObject<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXMemberExpressionWithoutObject<'a>(pub(crate) *const JSXMemberExpression<'a>);
 
 impl<'a> JSXMemberExpressionWithoutObject<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_MEMBER_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn property(&self) -> &JSXIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY) as *const JSXIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY)
+                as *const JSXIdentifier<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXMemberExpressionWithoutProperty<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct JSXMemberExpressionWithoutProperty<'a>(pub(crate) *const JSXMemberExpression<'a>);
 
 impl<'a> JSXMemberExpressionWithoutProperty<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_MEMBER_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_MEMBER_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn object(&self) -> &JSXMemberExpressionObject<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_MEMBER_EXPRESSION_OBJECT)
+            &*((self.0 as *const u8).add(OFFSET_JSX_MEMBER_EXPRESSION_OBJECT)
                 as *const JSXMemberExpressionObject<'a>)
         }
     }
@@ -7086,12 +7599,16 @@ pub(crate) const OFFSET_JSX_EXPRESSION_CONTAINER_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXExpressionContainerWithoutExpression(pub(crate) *const u8);
+pub struct JSXExpressionContainerWithoutExpression<'a>(
+    pub(crate) *const JSXExpressionContainer<'a>,
+);
 
-impl JSXExpressionContainerWithoutExpression {
+impl<'a> JSXExpressionContainerWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_EXPRESSION_CONTAINER_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_EXPRESSION_CONTAINER_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_JSX_EMPTY_EXPRESSION_SPAN: usize = offset_of!(JSXEmptyExpression, span);
@@ -7101,35 +7618,38 @@ pub(crate) const OFFSET_JSX_ATTRIBUTE_VALUE: usize = offset_of!(JSXAttribute, va
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXAttributeWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct JSXAttributeWithoutName<'a>(pub(crate) *const JSXAttribute<'a>);
 
 impl<'a> JSXAttributeWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &Option<JSXAttributeValue<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_JSX_ATTRIBUTE_VALUE) as *const Option<JSXAttributeValue<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_JSX_ATTRIBUTE_VALUE)
+                as *const Option<JSXAttributeValue<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct JSXAttributeWithoutValue<'a>(pub(crate) *const JSXAttribute<'a>);
 
 impl<'a> JSXAttributeWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name(&self) -> &JSXAttributeName<'a> {
-        unsafe { &*(self.0.add(OFFSET_JSX_ATTRIBUTE_NAME) as *const JSXAttributeName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_JSX_ATTRIBUTE_NAME) as *const JSXAttributeName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN: usize = offset_of!(JSXSpreadAttribute, span);
@@ -7138,12 +7658,12 @@ pub(crate) const OFFSET_JSX_SPREAD_ATTRIBUTE_ARGUMENT: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXSpreadAttributeWithoutArgument(pub(crate) *const u8);
+pub struct JSXSpreadAttributeWithoutArgument<'a>(pub(crate) *const JSXSpreadAttribute<'a>);
 
-impl JSXSpreadAttributeWithoutArgument {
+impl<'a> JSXSpreadAttributeWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_JSX_IDENTIFIER_SPAN: usize = offset_of!(JSXIdentifier, span);
@@ -7153,12 +7673,12 @@ pub(crate) const OFFSET_JSX_SPREAD_CHILD_EXPRESSION: usize = offset_of!(JSXSprea
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSXSpreadChildWithoutExpression(pub(crate) *const u8);
+pub struct JSXSpreadChildWithoutExpression<'a>(pub(crate) *const JSXSpreadChild<'a>);
 
-impl JSXSpreadChildWithoutExpression {
+impl<'a> JSXSpreadChildWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_CHILD_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JSX_SPREAD_CHILD_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_JSX_TEXT_SPAN: usize = offset_of!(JSXText, span);
@@ -7185,18 +7705,18 @@ pub(crate) const OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSThisParameterWithoutThis<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSThisParameterWithoutThis<'a>(pub(crate) *const TSThisParameter<'a>);
 
 impl<'a> TSThisParameterWithoutThis<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_THIS_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_THIS_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -7204,20 +7724,20 @@ impl<'a> TSThisParameterWithoutThis<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSThisParameterWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSThisParameterWithoutTypeAnnotation<'a>(pub(crate) *const TSThisParameter<'a>);
 
 impl<'a> TSThisParameterWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_THIS_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_THIS_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn this(&self) -> &IdentifierName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_THIS_PARAMETER_THIS) as *const IdentifierName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_THIS_PARAMETER_THIS)
+                as *const IdentifierName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_ENUM_DECLARATION_SPAN: usize = offset_of!(TSEnumDeclaration, span);
@@ -7228,48 +7748,55 @@ pub(crate) const OFFSET_TS_ENUM_DECLARATION_MODIFIERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumDeclarationWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSEnumDeclarationWithoutId<'a>(pub(crate) *const TSEnumDeclaration<'a>);
 
 impl<'a> TSEnumDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn members(&self) -> &Vec<'a, TSEnumMember<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_MEMBERS) as *const Vec<'a, TSEnumMember<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_MEMBERS)
+                as *const Vec<'a, TSEnumMember<'a>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumDeclarationWithoutMembers<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSEnumDeclarationWithoutMembers<'a>(pub(crate) *const TSEnumDeclaration<'a>);
 
 impl<'a> TSEnumDeclarationWithoutMembers<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_ID) as *const BindingIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
+        }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_ENUM_MEMBER_SPAN: usize = offset_of!(TSEnumMember, span);
@@ -7278,35 +7805,38 @@ pub(crate) const OFFSET_TS_ENUM_MEMBER_INITIALIZER: usize = offset_of!(TSEnumMem
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumMemberWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSEnumMemberWithoutId<'a>(pub(crate) *const TSEnumMember<'a>);
 
 impl<'a> TSEnumMemberWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_MEMBER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_ENUM_MEMBER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn initializer(&self) -> &Option<Expression<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_ENUM_MEMBER_INITIALIZER) as *const Option<Expression<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_MEMBER_INITIALIZER)
+                as *const Option<Expression<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSEnumMemberWithoutInitializer<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSEnumMemberWithoutInitializer<'a>(pub(crate) *const TSEnumMember<'a>);
 
 impl<'a> TSEnumMemberWithoutInitializer<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_MEMBER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_ENUM_MEMBER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &TSEnumMemberName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_ENUM_MEMBER_ID) as *const TSEnumMemberName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_ENUM_MEMBER_ID) as *const TSEnumMemberName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_ANNOTATION_SPAN: usize = offset_of!(TSTypeAnnotation, span);
@@ -7315,12 +7845,12 @@ pub(crate) const OFFSET_TS_TYPE_ANNOTATION_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeAnnotationWithoutTypeAnnotation(pub(crate) *const u8);
+pub struct TSTypeAnnotationWithoutTypeAnnotation<'a>(pub(crate) *const TSTypeAnnotation<'a>);
 
-impl TSTypeAnnotationWithoutTypeAnnotation {
+impl<'a> TSTypeAnnotationWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ANNOTATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ANNOTATION_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_LITERAL_TYPE_SPAN: usize = offset_of!(TSLiteralType, span);
@@ -7328,12 +7858,12 @@ pub(crate) const OFFSET_TS_LITERAL_TYPE_LITERAL: usize = offset_of!(TSLiteralTyp
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSLiteralTypeWithoutLiteral(pub(crate) *const u8);
+pub struct TSLiteralTypeWithoutLiteral<'a>(pub(crate) *const TSLiteralType<'a>);
 
-impl TSLiteralTypeWithoutLiteral {
+impl<'a> TSLiteralTypeWithoutLiteral<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_LITERAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_LITERAL_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_SPAN: usize = offset_of!(TSConditionalType, span);
@@ -7348,117 +7878,138 @@ pub(crate) const OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConditionalTypeWithoutCheckType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConditionalTypeWithoutCheckType<'a>(pub(crate) *const TSConditionalType<'a>);
 
 impl<'a> TSConditionalTypeWithoutCheckType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn extends_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn true_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn false_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConditionalTypeWithoutExtendsType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConditionalTypeWithoutExtendsType<'a>(pub(crate) *const TSConditionalType<'a>);
 
 impl<'a> TSConditionalTypeWithoutExtendsType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn check_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn true_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn false_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConditionalTypeWithoutTrueType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConditionalTypeWithoutTrueType<'a>(pub(crate) *const TSConditionalType<'a>);
 
 impl<'a> TSConditionalTypeWithoutTrueType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn check_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn extends_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn false_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConditionalTypeWithoutFalseType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConditionalTypeWithoutFalseType<'a>(pub(crate) *const TSConditionalType<'a>);
 
 impl<'a> TSConditionalTypeWithoutFalseType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn check_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn extends_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn true_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_UNION_TYPE_SPAN: usize = offset_of!(TSUnionType, span);
@@ -7466,12 +8017,12 @@ pub(crate) const OFFSET_TS_UNION_TYPE_TYPES: usize = offset_of!(TSUnionType, typ
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSUnionTypeWithoutTypes(pub(crate) *const u8);
+pub struct TSUnionTypeWithoutTypes<'a>(pub(crate) *const TSUnionType<'a>);
 
-impl TSUnionTypeWithoutTypes {
+impl<'a> TSUnionTypeWithoutTypes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_UNION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_UNION_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_INTERSECTION_TYPE_SPAN: usize = offset_of!(TSIntersectionType, span);
@@ -7479,12 +8030,12 @@ pub(crate) const OFFSET_TS_INTERSECTION_TYPE_TYPES: usize = offset_of!(TSInterse
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIntersectionTypeWithoutTypes(pub(crate) *const u8);
+pub struct TSIntersectionTypeWithoutTypes<'a>(pub(crate) *const TSIntersectionType<'a>);
 
-impl TSIntersectionTypeWithoutTypes {
+impl<'a> TSIntersectionTypeWithoutTypes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERSECTION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INTERSECTION_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_OPERATOR_SPAN: usize = offset_of!(TSTypeOperator, span);
@@ -7494,17 +8045,20 @@ pub(crate) const OFFSET_TS_TYPE_OPERATOR_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeOperatorWithoutTypeAnnotation(pub(crate) *const u8);
+pub struct TSTypeOperatorWithoutTypeAnnotation<'a>(pub(crate) *const TSTypeOperator<'a>);
 
-impl TSTypeOperatorWithoutTypeAnnotation {
+impl<'a> TSTypeOperatorWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_OPERATOR_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_OPERATOR_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn operator(&self) -> &TSTypeOperatorOperator {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_OPERATOR_OPERATOR) as *const TSTypeOperatorOperator) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_OPERATOR_OPERATOR)
+                as *const TSTypeOperatorOperator)
+        }
     }
 }
 pub(crate) const OFFSET_TS_ARRAY_TYPE_SPAN: usize = offset_of!(TSArrayType, span);
@@ -7512,12 +8066,12 @@ pub(crate) const OFFSET_TS_ARRAY_TYPE_ELEMENT_TYPE: usize = offset_of!(TSArrayTy
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSArrayTypeWithoutElementType(pub(crate) *const u8);
+pub struct TSArrayTypeWithoutElementType<'a>(pub(crate) *const TSArrayType<'a>);
 
-impl TSArrayTypeWithoutElementType {
+impl<'a> TSArrayTypeWithoutElementType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_ARRAY_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_ARRAY_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN: usize = offset_of!(TSIndexedAccessType, span);
@@ -7528,39 +8082,39 @@ pub(crate) const OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIndexedAccessTypeWithoutObjectType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSIndexedAccessTypeWithoutObjectType<'a>(pub(crate) *const TSIndexedAccessType<'a>);
 
 impl<'a> TSIndexedAccessTypeWithoutObjectType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn index_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIndexedAccessTypeWithoutIndexType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSIndexedAccessTypeWithoutIndexType<'a>(pub(crate) *const TSIndexedAccessType<'a>);
 
 impl<'a> TSIndexedAccessTypeWithoutIndexType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn object_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE)
+                as *const TSType<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TUPLE_TYPE_SPAN: usize = offset_of!(TSTupleType, span);
@@ -7568,12 +8122,12 @@ pub(crate) const OFFSET_TS_TUPLE_TYPE_ELEMENT_TYPES: usize = offset_of!(TSTupleT
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTupleTypeWithoutElementTypes(pub(crate) *const u8);
+pub struct TSTupleTypeWithoutElementTypes<'a>(pub(crate) *const TSTupleType<'a>);
 
-impl TSTupleTypeWithoutElementTypes {
+impl<'a> TSTupleTypeWithoutElementTypes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TUPLE_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TUPLE_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN: usize = offset_of!(TSNamedTupleMember, span);
@@ -7585,46 +8139,53 @@ pub(crate) const OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNamedTupleMemberWithoutElementType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSNamedTupleMemberWithoutElementType<'a>(pub(crate) *const TSNamedTupleMember<'a>);
 
 impl<'a> TSNamedTupleMemberWithoutElementType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn label(&self) -> &IdentifierName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL) as *const IdentifierName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL)
+                as *const IdentifierName<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNamedTupleMemberWithoutLabel<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSNamedTupleMemberWithoutLabel<'a>(pub(crate) *const TSNamedTupleMember<'a>);
 
 impl<'a> TSNamedTupleMemberWithoutLabel<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn element_type(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE)
+                as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool)
+        }
     }
 }
 pub(crate) const OFFSET_TS_OPTIONAL_TYPE_SPAN: usize = offset_of!(TSOptionalType, span);
@@ -7633,12 +8194,12 @@ pub(crate) const OFFSET_TS_OPTIONAL_TYPE_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSOptionalTypeWithoutTypeAnnotation(pub(crate) *const u8);
+pub struct TSOptionalTypeWithoutTypeAnnotation<'a>(pub(crate) *const TSOptionalType<'a>);
 
-impl TSOptionalTypeWithoutTypeAnnotation {
+impl<'a> TSOptionalTypeWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_OPTIONAL_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_OPTIONAL_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_REST_TYPE_SPAN: usize = offset_of!(TSRestType, span);
@@ -7647,12 +8208,12 @@ pub(crate) const OFFSET_TS_REST_TYPE_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSRestTypeWithoutTypeAnnotation(pub(crate) *const u8);
+pub struct TSRestTypeWithoutTypeAnnotation<'a>(pub(crate) *const TSRestType<'a>);
 
-impl TSRestTypeWithoutTypeAnnotation {
+impl<'a> TSRestTypeWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_REST_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_REST_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_ANY_KEYWORD_SPAN: usize = offset_of!(TSAnyKeyword, span);
@@ -7675,18 +8236,18 @@ pub(crate) const OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeReferenceWithoutTypeName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSTypeReferenceWithoutTypeName<'a>(pub(crate) *const TSTypeReference<'a>);
 
 impl<'a> TSTypeReferenceWithoutTypeName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_REFERENCE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -7694,20 +8255,20 @@ impl<'a> TSTypeReferenceWithoutTypeName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeReferenceWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeReferenceWithoutTypeParameters<'a>(pub(crate) *const TSTypeReference<'a>);
 
 impl<'a> TSTypeReferenceWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_REFERENCE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_name(&self) -> &TSTypeName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_TYPE_NAME) as *const TSTypeName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_REFERENCE_TYPE_NAME)
+                as *const TSTypeName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_QUALIFIED_NAME_SPAN: usize = offset_of!(TSQualifiedName, span);
@@ -7716,33 +8277,38 @@ pub(crate) const OFFSET_TS_QUALIFIED_NAME_RIGHT: usize = offset_of!(TSQualifiedN
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSQualifiedNameWithoutLeft<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSQualifiedNameWithoutLeft<'a>(pub(crate) *const TSQualifiedName<'a>);
 
 impl<'a> TSQualifiedNameWithoutLeft<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_QUALIFIED_NAME_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn right(&self) -> &IdentifierName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_RIGHT) as *const IdentifierName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_QUALIFIED_NAME_RIGHT)
+                as *const IdentifierName<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSQualifiedNameWithoutRight<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSQualifiedNameWithoutRight<'a>(pub(crate) *const TSQualifiedName<'a>);
 
 impl<'a> TSQualifiedNameWithoutRight<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_QUALIFIED_NAME_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn left(&self) -> &TSTypeName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_LEFT) as *const TSTypeName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_QUALIFIED_NAME_LEFT) as *const TSTypeName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN: usize =
@@ -7752,12 +8318,17 @@ pub(crate) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_PARAMS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterInstantiationWithoutParams(pub(crate) *const u8);
+pub struct TSTypeParameterInstantiationWithoutParams<'a>(
+    pub(crate) *const TSTypeParameterInstantiation<'a>,
+);
 
-impl TSTypeParameterInstantiationWithoutParams {
+impl<'a> TSTypeParameterInstantiationWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN)
+                as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_PARAMETER_SPAN: usize = offset_of!(TSTypeParameter, span);
@@ -7771,112 +8342,127 @@ pub(crate) const OFFSET_TS_TYPE_PARAMETER_CONST: usize = offset_of!(TSTypeParame
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSTypeParameterWithoutName<'a>(pub(crate) *const TSTypeParameter<'a>);
 
 impl<'a> TSTypeParameterWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn constraint(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONSTRAINT) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_CONSTRAINT)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn default(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_DEFAULT) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_DEFAULT)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn r#in(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
     }
 
     #[inline]
     pub fn out(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
     }
 
     #[inline]
     pub fn r#const(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterWithoutConstraint<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeParameterWithoutConstraint<'a>(pub(crate) *const TSTypeParameter<'a>);
 
 impl<'a> TSTypeParameterWithoutConstraint<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name(&self) -> &BindingIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_NAME) as *const BindingIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_NAME)
+                as *const BindingIdentifier<'a>)
+        }
     }
 
     #[inline]
     pub fn default(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_DEFAULT) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_DEFAULT)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn r#in(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
     }
 
     #[inline]
     pub fn out(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
     }
 
     #[inline]
     pub fn r#const(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterWithoutDefault<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSTypeParameterWithoutDefault<'a>(pub(crate) *const TSTypeParameter<'a>);
 
 impl<'a> TSTypeParameterWithoutDefault<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name(&self) -> &BindingIdentifier<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_NAME) as *const BindingIdentifier<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_NAME)
+                as *const BindingIdentifier<'a>)
+        }
     }
 
     #[inline]
     pub fn constraint(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONSTRAINT) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_CONSTRAINT)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn r#in(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_IN) as *const bool) }
     }
 
     #[inline]
     pub fn out(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_OUT) as *const bool) }
     }
 
     #[inline]
     pub fn r#const(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN: usize =
@@ -7886,12 +8472,16 @@ pub(crate) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_PARAMS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeParameterDeclarationWithoutParams(pub(crate) *const u8);
+pub struct TSTypeParameterDeclarationWithoutParams<'a>(
+    pub(crate) *const TSTypeParameterDeclaration<'a>,
+);
 
-impl TSTypeParameterDeclarationWithoutParams {
+impl<'a> TSTypeParameterDeclarationWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN: usize =
@@ -7907,28 +8497,28 @@ pub(crate) const OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeAliasDeclarationWithoutId<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeAliasDeclarationWithoutId<'a>(pub(crate) *const TSTypeAliasDeclaration<'a>);
 
 impl<'a> TSTypeAliasDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &TSType<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION) as *const TSType<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION)
+                as *const TSType<'a>)
         }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -7936,7 +8526,8 @@ impl<'a> TSTypeAliasDeclarationWithoutId<'a> {
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS) as *const Modifiers<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
         }
     }
 }
@@ -7944,27 +8535,29 @@ impl<'a> TSTypeAliasDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAliasDeclarationWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSTypeAliasDeclaration<'a>,
 );
 
 impl<'a> TSTypeAliasDeclarationWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -7972,7 +8565,8 @@ impl<'a> TSTypeAliasDeclarationWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS) as *const Modifiers<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
         }
     }
 }
@@ -7980,34 +8574,38 @@ impl<'a> TSTypeAliasDeclarationWithoutTypeAnnotation<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSTypeAliasDeclarationWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSTypeAliasDeclaration<'a>,
 );
 
 impl<'a> TSTypeAliasDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &TSType<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION) as *const TSType<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION)
+                as *const TSType<'a>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS) as *const Modifiers<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
         }
     }
 }
@@ -8019,21 +8617,18 @@ pub(crate) const OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSClassImplementsWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSClassImplementsWithoutExpression<'a>(pub(crate) *const TSClassImplements<'a>);
 
 impl<'a> TSClassImplementsWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CLASS_IMPLEMENTS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -8041,20 +8636,20 @@ impl<'a> TSClassImplementsWithoutExpression<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSClassImplementsWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSClassImplementsWithoutTypeParameters<'a>(pub(crate) *const TSClassImplements<'a>);
 
 impl<'a> TSClassImplementsWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CLASS_IMPLEMENTS_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expression(&self) -> &TSTypeName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION) as *const TSTypeName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION)
+                as *const TSTypeName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_SPAN: usize =
@@ -8071,21 +8666,20 @@ pub(crate) const OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceDeclarationWithoutId<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSInterfaceDeclarationWithoutId<'a>(pub(crate) *const TSInterfaceDeclaration<'a>);
 
 impl<'a> TSInterfaceDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, TSInterfaceBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
                 as *const Box<'a, TSInterfaceBody<'a>>)
         }
     }
@@ -8093,7 +8687,7 @@ impl<'a> TSInterfaceDeclarationWithoutId<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8101,41 +8695,44 @@ impl<'a> TSInterfaceDeclarationWithoutId<'a> {
     #[inline]
     pub fn extends(&self) -> &Option<Vec<'a, TSInterfaceHeritage<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
                 as *const Option<Vec<'a, TSInterfaceHeritage<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceDeclarationWithoutBody<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSInterfaceDeclarationWithoutBody<'a>(pub(crate) *const TSInterfaceDeclaration<'a>);
 
 impl<'a> TSInterfaceDeclarationWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8143,41 +8740,46 @@ impl<'a> TSInterfaceDeclarationWithoutBody<'a> {
     #[inline]
     pub fn extends(&self) -> &Option<Vec<'a, TSInterfaceHeritage<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
                 as *const Option<Vec<'a, TSInterfaceHeritage<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInterfaceDeclarationWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSInterfaceDeclaration<'a>,
 );
 
 impl<'a> TSInterfaceDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, TSInterfaceBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
                 as *const Box<'a, TSInterfaceBody<'a>>)
         }
     }
@@ -8185,41 +8787,44 @@ impl<'a> TSInterfaceDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn extends(&self) -> &Option<Vec<'a, TSInterfaceHeritage<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_EXTENDS)
                 as *const Option<Vec<'a, TSInterfaceHeritage<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceDeclarationWithoutExtends<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSInterfaceDeclarationWithoutExtends<'a>(pub(crate) *const TSInterfaceDeclaration<'a>);
 
 impl<'a> TSInterfaceDeclarationWithoutExtends<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn body(&self) -> &Box<'a, TSInterfaceBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_BODY)
                 as *const Box<'a, TSInterfaceBody<'a>>)
         }
     }
@@ -8227,14 +8832,17 @@ impl<'a> TSInterfaceDeclarationWithoutExtends<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_INTERFACE_BODY_SPAN: usize = offset_of!(TSInterfaceBody, span);
@@ -8242,12 +8850,12 @@ pub(crate) const OFFSET_TS_INTERFACE_BODY_BODY: usize = offset_of!(TSInterfaceBo
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceBodyWithoutBody(pub(crate) *const u8);
+pub struct TSInterfaceBodyWithoutBody<'a>(pub(crate) *const TSInterfaceBody<'a>);
 
-impl TSInterfaceBodyWithoutBody {
+impl<'a> TSInterfaceBodyWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_BODY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_BODY_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_SPAN: usize = offset_of!(TSPropertySignature, span);
@@ -8263,33 +8871,39 @@ pub(crate) const OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSPropertySignatureWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSPropertySignatureWithoutKey<'a>(pub(crate) *const TSPropertySignature<'a>);
 
 impl<'a> TSPropertySignatureWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED) as *const bool)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL) as *const bool)
+        }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_READONLY) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_READONLY) as *const bool)
+        }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8297,35 +8911,41 @@ impl<'a> TSPropertySignatureWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSPropertySignatureWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSPropertySignatureWithoutTypeAnnotation<'a>(pub(crate) *const TSPropertySignature<'a>);
 
 impl<'a> TSPropertySignatureWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED) as *const bool)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL) as *const bool)
+        }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_READONLY) as *const bool) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_READONLY) as *const bool)
+        }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_PROPERTY_SIGNATURE_KEY)
+                as *const PropertyKey<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_INDEX_SIGNATURE_SPAN: usize = offset_of!(TSIndexSignature, span);
@@ -8337,55 +8957,49 @@ pub(crate) const OFFSET_TS_INDEX_SIGNATURE_READONLY: usize = offset_of!(TSIndexS
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIndexSignatureWithoutParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSIndexSignatureWithoutParameters<'a>(pub(crate) *const TSIndexSignature<'a>);
 
 impl<'a> TSIndexSignatureWithoutParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSIndexSignatureWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSIndexSignatureWithoutTypeAnnotation<'a>(pub(crate) *const TSIndexSignature<'a>);
 
 impl<'a> TSIndexSignatureWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn parameters(&self) -> &Vec<'a, TSIndexSignatureName<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_PARAMETERS)
                 as *const Vec<'a, TSIndexSignatureName<'a>>)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
     }
 }
 pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN: usize =
@@ -8402,20 +9016,21 @@ pub(crate) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutThisParam<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSCallSignatureDeclaration<'a>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8423,7 +9038,7 @@ impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8431,7 +9046,7 @@ impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8440,20 +9055,21 @@ impl<'a> TSCallSignatureDeclarationWithoutThisParam<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutParams<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSCallSignatureDeclaration<'a>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8461,7 +9077,7 @@ impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8469,7 +9085,7 @@ impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8478,20 +9094,21 @@ impl<'a> TSCallSignatureDeclarationWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSCallSignatureDeclaration<'a>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8499,7 +9116,7 @@ impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8507,7 +9124,7 @@ impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8516,20 +9133,21 @@ impl<'a> TSCallSignatureDeclarationWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSCallSignatureDeclarationWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSCallSignatureDeclaration<'a>,
 );
 
 impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8537,7 +9155,7 @@ impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8545,7 +9163,7 @@ impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8567,33 +9185,36 @@ pub(crate) const OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutKey<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSMethodSignatureWithoutKey<'a>(pub(crate) *const TSMethodSignature<'a>);
 
 impl<'a> TSMethodSignatureWithoutKey<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSMethodSignatureKind {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KIND) as *const TSMethodSignatureKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KIND)
+                as *const TSMethodSignatureKind)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8601,7 +9222,7 @@ impl<'a> TSMethodSignatureWithoutKey<'a> {
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8609,7 +9230,7 @@ impl<'a> TSMethodSignatureWithoutKey<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8617,7 +9238,7 @@ impl<'a> TSMethodSignatureWithoutKey<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8625,41 +9246,43 @@ impl<'a> TSMethodSignatureWithoutKey<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutThisParam<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSMethodSignatureWithoutThisParam<'a>(pub(crate) *const TSMethodSignature<'a>);
 
 impl<'a> TSMethodSignatureWithoutThisParam<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSMethodSignatureKind {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KIND) as *const TSMethodSignatureKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KIND)
+                as *const TSMethodSignatureKind)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8667,7 +9290,7 @@ impl<'a> TSMethodSignatureWithoutThisParam<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8675,7 +9298,7 @@ impl<'a> TSMethodSignatureWithoutThisParam<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8683,38 +9306,43 @@ impl<'a> TSMethodSignatureWithoutThisParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSMethodSignatureWithoutParams<'a>(pub(crate) *const TSMethodSignature<'a>);
 
 impl<'a> TSMethodSignatureWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSMethodSignatureKind {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KIND) as *const TSMethodSignatureKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KIND)
+                as *const TSMethodSignatureKind)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8722,7 +9350,7 @@ impl<'a> TSMethodSignatureWithoutParams<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8730,7 +9358,7 @@ impl<'a> TSMethodSignatureWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8738,41 +9366,43 @@ impl<'a> TSMethodSignatureWithoutParams<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSMethodSignatureWithoutReturnType<'a>(pub(crate) *const TSMethodSignature<'a>);
 
 impl<'a> TSMethodSignatureWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSMethodSignatureKind {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KIND) as *const TSMethodSignatureKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KIND)
+                as *const TSMethodSignatureKind)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8780,7 +9410,7 @@ impl<'a> TSMethodSignatureWithoutReturnType<'a> {
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8788,7 +9418,7 @@ impl<'a> TSMethodSignatureWithoutReturnType<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8796,41 +9426,43 @@ impl<'a> TSMethodSignatureWithoutReturnType<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMethodSignatureWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSMethodSignatureWithoutTypeParameters<'a>(pub(crate) *const TSMethodSignature<'a>);
 
 impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KEY) as *const PropertyKey<'a>)
+        }
     }
 
     #[inline]
     pub fn computed(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_COMPUTED) as *const bool) }
     }
 
     #[inline]
     pub fn optional(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_OPTIONAL) as *const bool) }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSMethodSignatureKind {
-        unsafe { &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_KIND) as *const TSMethodSignatureKind) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_KIND)
+                as *const TSMethodSignatureKind)
+        }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM)
                 as *const Option<TSThisParameter<'a>>)
         }
     }
@@ -8838,7 +9470,7 @@ impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8846,7 +9478,7 @@ impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8863,20 +9495,22 @@ pub(crate) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usiz
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutParams<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSConstructSignatureDeclaration<'a>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8884,7 +9518,7 @@ impl<'a> TSConstructSignatureDeclarationWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8893,20 +9527,22 @@ impl<'a> TSConstructSignatureDeclarationWithoutParams<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSConstructSignatureDeclaration<'a>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8914,7 +9550,7 @@ impl<'a> TSConstructSignatureDeclarationWithoutReturnType<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -8923,20 +9559,22 @@ impl<'a> TSConstructSignatureDeclarationWithoutReturnType<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSConstructSignatureDeclarationWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSConstructSignatureDeclaration<'a>,
 );
 
 impl<'a> TSConstructSignatureDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN)
+                as *const Span)
+        }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -8944,7 +9582,7 @@ impl<'a> TSConstructSignatureDeclarationWithoutTypeParameters<'a> {
     #[inline]
     pub fn return_type(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -8959,19 +9597,20 @@ pub(crate) const OFFSET_TS_INDEX_SIGNATURE_NAME_TYPE_ANNOTATION: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSIndexSignatureNameWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSIndexSignatureName<'a>,
 );
 
 impl<'a> TSIndexSignatureNameWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name(&self) -> &Atom<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_NAME_NAME) as *const Atom<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INDEX_SIGNATURE_NAME_NAME) as *const Atom<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_INTERFACE_HERITAGE_SPAN: usize = offset_of!(TSInterfaceHeritage, span);
@@ -8982,21 +9621,18 @@ pub(crate) const OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceHeritageWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSInterfaceHeritageWithoutExpression<'a>(pub(crate) *const TSInterfaceHeritage<'a>);
 
 impl<'a> TSInterfaceHeritageWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_HERITAGE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -9004,20 +9640,20 @@ impl<'a> TSInterfaceHeritageWithoutExpression<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInterfaceHeritageWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSInterfaceHeritageWithoutTypeParameters<'a>(pub(crate) *const TSInterfaceHeritage<'a>);
 
 impl<'a> TSInterfaceHeritageWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_HERITAGE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION)
+                as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_PREDICATE_SPAN: usize = offset_of!(TSTypePredicate, span);
@@ -9029,26 +9665,23 @@ pub(crate) const OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypePredicateWithoutParameterName<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypePredicateWithoutParameterName<'a>(pub(crate) *const TSTypePredicate<'a>);
 
 impl<'a> TSTypePredicateWithoutParameterName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn asserts(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<Box<'a, TSTypeAnnotation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION)
                 as *const Option<Box<'a, TSTypeAnnotation<'a>>>)
         }
     }
@@ -9056,28 +9689,25 @@ impl<'a> TSTypePredicateWithoutParameterName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypePredicateWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypePredicateWithoutTypeAnnotation<'a>(pub(crate) *const TSTypePredicate<'a>);
 
 impl<'a> TSTypePredicateWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn parameter_name(&self) -> &TSTypePredicateName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME)
                 as *const TSTypePredicateName<'a>)
         }
     }
 
     #[inline]
     pub fn asserts(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
     }
 }
 pub(crate) const OFFSET_TS_MODULE_DECLARATION_SPAN: usize = offset_of!(TSModuleDeclaration, span);
@@ -9089,18 +9719,18 @@ pub(crate) const OFFSET_TS_MODULE_DECLARATION_MODIFIERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleDeclarationWithoutId<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSModuleDeclarationWithoutId<'a>(pub(crate) *const TSModuleDeclaration<'a>);
 
 impl<'a> TSModuleDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn body(&self) -> &Option<TSModuleDeclarationBody<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_BODY)
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_BODY)
                 as *const Option<TSModuleDeclarationBody<'a>>)
         }
     }
@@ -9108,43 +9738,52 @@ impl<'a> TSModuleDeclarationWithoutId<'a> {
     #[inline]
     pub fn kind(&self) -> &TSModuleDeclarationKind {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_KIND) as *const TSModuleDeclarationKind)
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_KIND)
+                as *const TSModuleDeclarationKind)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleDeclarationWithoutBody<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSModuleDeclarationWithoutBody<'a>(pub(crate) *const TSModuleDeclaration<'a>);
 
 impl<'a> TSModuleDeclarationWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn id(&self) -> &TSModuleDeclarationName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_ID) as *const TSModuleDeclarationName<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_ID)
+                as *const TSModuleDeclarationName<'a>)
         }
     }
 
     #[inline]
     pub fn kind(&self) -> &TSModuleDeclarationKind {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_KIND) as *const TSModuleDeclarationKind)
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_KIND)
+                as *const TSModuleDeclarationKind)
         }
     }
 
     #[inline]
     pub fn modifiers(&self) -> &Modifiers<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS)
+                as *const Modifiers<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_MODULE_BLOCK_SPAN: usize = offset_of!(TSModuleBlock, span);
@@ -9152,12 +9791,12 @@ pub(crate) const OFFSET_TS_MODULE_BLOCK_BODY: usize = offset_of!(TSModuleBlock, 
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSModuleBlockWithoutBody(pub(crate) *const u8);
+pub struct TSModuleBlockWithoutBody<'a>(pub(crate) *const TSModuleBlock<'a>);
 
-impl TSModuleBlockWithoutBody {
+impl<'a> TSModuleBlockWithoutBody<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MODULE_BLOCK_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MODULE_BLOCK_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_LITERAL_SPAN: usize = offset_of!(TSTypeLiteral, span);
@@ -9165,12 +9804,12 @@ pub(crate) const OFFSET_TS_TYPE_LITERAL_MEMBERS: usize = offset_of!(TSTypeLitera
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeLiteralWithoutMembers(pub(crate) *const u8);
+pub struct TSTypeLiteralWithoutMembers<'a>(pub(crate) *const TSTypeLiteral<'a>);
 
-impl TSTypeLiteralWithoutMembers {
+impl<'a> TSTypeLiteralWithoutMembers<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_LITERAL_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_LITERAL_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_INFER_TYPE_SPAN: usize = offset_of!(TSInferType, span);
@@ -9179,12 +9818,12 @@ pub(crate) const OFFSET_TS_INFER_TYPE_TYPE_PARAMETER: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSInferTypeWithoutTypeParameter(pub(crate) *const u8);
+pub struct TSInferTypeWithoutTypeParameter<'a>(pub(crate) *const TSInferType<'a>);
 
-impl TSInferTypeWithoutTypeParameter {
+impl<'a> TSInferTypeWithoutTypeParameter<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INFER_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_INFER_TYPE_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_TYPE_QUERY_SPAN: usize = offset_of!(TSTypeQuery, span);
@@ -9194,18 +9833,18 @@ pub(crate) const OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeQueryWithoutExprName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSTypeQueryWithoutExprName<'a>(pub(crate) *const TSTypeQuery<'a>);
 
 impl<'a> TSTypeQueryWithoutExprName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_QUERY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_QUERY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -9213,20 +9852,20 @@ impl<'a> TSTypeQueryWithoutExprName<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeQueryWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeQueryWithoutTypeParameters<'a>(pub(crate) *const TSTypeQuery<'a>);
 
 impl<'a> TSTypeQueryWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_QUERY_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_QUERY_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expr_name(&self) -> &TSTypeQueryExprName<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_QUERY_EXPR_NAME) as *const TSTypeQueryExprName<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_QUERY_EXPR_NAME)
+                as *const TSTypeQueryExprName<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_IMPORT_TYPE_SPAN: usize = offset_of!(TSImportType, span);
@@ -9238,23 +9877,26 @@ pub(crate) const OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutArgument<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutArgument<'a>(pub(crate) *const TSImportType<'a>);
 
 impl<'a> TSImportTypeWithoutArgument<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn qualifier(&self) -> &Option<TSTypeName<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_QUALIFIER) as *const Option<TSTypeName<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_QUALIFIER)
+                as *const Option<TSTypeName<'a>>)
+        }
     }
 
     #[inline]
     pub fn attributes(&self) -> &Option<TSImportAttributes<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
                 as *const Option<TSImportAttributes<'a>>)
         }
     }
@@ -9262,7 +9904,7 @@ impl<'a> TSImportTypeWithoutArgument<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -9270,23 +9912,25 @@ impl<'a> TSImportTypeWithoutArgument<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutQualifier<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutQualifier<'a>(pub(crate) *const TSImportType<'a>);
 
 impl<'a> TSImportTypeWithoutQualifier<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn argument(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn attributes(&self) -> &Option<TSImportAttributes<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
                 as *const Option<TSImportAttributes<'a>>)
         }
     }
@@ -9294,7 +9938,7 @@ impl<'a> TSImportTypeWithoutQualifier<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -9302,28 +9946,33 @@ impl<'a> TSImportTypeWithoutQualifier<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutAttributes<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSImportTypeWithoutAttributes<'a>(pub(crate) *const TSImportType<'a>);
 
 impl<'a> TSImportTypeWithoutAttributes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn argument(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn qualifier(&self) -> &Option<TSTypeName<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_QUALIFIER) as *const Option<TSTypeName<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_QUALIFIER)
+                as *const Option<TSTypeName<'a>>)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterInstantiation<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterInstantiation<'a>>>)
         }
     }
@@ -9331,31 +9980,33 @@ impl<'a> TSImportTypeWithoutAttributes<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportTypeWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSImportTypeWithoutTypeParameters<'a>(pub(crate) *const TSImportType<'a>);
 
 impl<'a> TSImportTypeWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn argument(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ARGUMENT) as *const TSType<'a>)
+        }
     }
 
     #[inline]
     pub fn qualifier(&self) -> &Option<TSTypeName<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_TYPE_QUALIFIER) as *const Option<TSTypeName<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_QUALIFIER)
+                as *const Option<TSTypeName<'a>>)
+        }
     }
 
     #[inline]
     pub fn attributes(&self) -> &Option<TSImportAttributes<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_TYPE_ATTRIBUTES)
                 as *const Option<TSImportAttributes<'a>>)
         }
     }
@@ -9366,12 +10017,12 @@ pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTES_ELEMENTS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributesWithoutElements(pub(crate) *const u8);
+pub struct TSImportAttributesWithoutElements<'a>(pub(crate) *const TSImportAttributes<'a>);
 
-impl TSImportAttributesWithoutElements {
+impl<'a> TSImportAttributesWithoutElements<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTES_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_ATTRIBUTES_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(TSImportAttribute, span);
@@ -9380,34 +10031,37 @@ pub(crate) const OFFSET_TS_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(TSImportAt
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributeWithoutName<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSImportAttributeWithoutName<'a>(pub(crate) *const TSImportAttribute<'a>);
 
 impl<'a> TSImportAttributeWithoutName<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn value(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTE_VALUE) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_ATTRIBUTE_VALUE) as *const Expression<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportAttributeWithoutValue<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSImportAttributeWithoutValue<'a>(pub(crate) *const TSImportAttribute<'a>);
 
 impl<'a> TSImportAttributeWithoutValue<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_ATTRIBUTE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name(&self) -> &TSImportAttributeName<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTE_NAME) as *const TSImportAttributeName<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_ATTRIBUTE_NAME)
+                as *const TSImportAttributeName<'a>)
         }
     }
 }
@@ -9421,25 +10075,26 @@ pub(crate) const OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutThisParam<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSFunctionTypeWithoutThisParam<'a>(pub(crate) *const TSFunctionType<'a>);
 
 impl<'a> TSFunctionTypeWithoutThisParam<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_PARAMS) as *const Box<'a, FormalParameters<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
         }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
@@ -9447,7 +10102,7 @@ impl<'a> TSFunctionTypeWithoutThisParam<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -9455,25 +10110,26 @@ impl<'a> TSFunctionTypeWithoutThisParam<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSFunctionTypeWithoutParams<'a>(pub(crate) *const TSFunctionType<'a>);
 
 impl<'a> TSFunctionTypeWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM) as *const Option<TSThisParameter<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
         }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
@@ -9481,7 +10137,7 @@ impl<'a> TSFunctionTypeWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -9489,35 +10145,34 @@ impl<'a> TSFunctionTypeWithoutParams<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSFunctionTypeWithoutReturnType<'a>(pub(crate) *const TSFunctionType<'a>);
 
 impl<'a> TSFunctionTypeWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM) as *const Option<TSThisParameter<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
         }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_PARAMS) as *const Box<'a, FormalParameters<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
         }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -9525,35 +10180,34 @@ impl<'a> TSFunctionTypeWithoutReturnType<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSFunctionTypeWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSFunctionTypeWithoutTypeParameters<'a>(pub(crate) *const TSFunctionType<'a>);
 
 impl<'a> TSFunctionTypeWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn this_param(&self) -> &Option<TSThisParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM) as *const Option<TSThisParameter<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_THIS_PARAM)
+                as *const Option<TSThisParameter<'a>>)
         }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_PARAMS) as *const Box<'a, FormalParameters<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_PARAMS)
+                as *const Box<'a, FormalParameters<'a>>)
         }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
@@ -9569,23 +10223,23 @@ pub(crate) const OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConstructorTypeWithoutParams<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSConstructorTypeWithoutParams<'a>(pub(crate) *const TSConstructorType<'a>);
 
 impl<'a> TSConstructorTypeWithoutParams<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#abstract(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
     }
 
     #[inline]
     pub fn return_type(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
@@ -9593,7 +10247,7 @@ impl<'a> TSConstructorTypeWithoutParams<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -9601,26 +10255,23 @@ impl<'a> TSConstructorTypeWithoutParams<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConstructorTypeWithoutReturnType<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConstructorTypeWithoutReturnType<'a>(pub(crate) *const TSConstructorType<'a>);
 
 impl<'a> TSConstructorTypeWithoutReturnType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#abstract(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -9628,7 +10279,7 @@ impl<'a> TSConstructorTypeWithoutReturnType<'a> {
     #[inline]
     pub fn type_parameters(&self) -> &Option<Box<'a, TSTypeParameterDeclaration<'a>>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS)
                 as *const Option<Box<'a, TSTypeParameterDeclaration<'a>>>)
         }
     }
@@ -9636,26 +10287,23 @@ impl<'a> TSConstructorTypeWithoutReturnType<'a> {
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSConstructorTypeWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSConstructorTypeWithoutTypeParameters<'a>(pub(crate) *const TSConstructorType<'a>);
 
 impl<'a> TSConstructorTypeWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn r#abstract(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT) as *const bool) }
     }
 
     #[inline]
     pub fn params(&self) -> &Box<'a, FormalParameters<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS)
                 as *const Box<'a, FormalParameters<'a>>)
         }
     }
@@ -9663,7 +10311,7 @@ impl<'a> TSConstructorTypeWithoutTypeParameters<'a> {
     #[inline]
     pub fn return_type(&self) -> &Box<'a, TSTypeAnnotation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE)
+            &*((self.0 as *const u8).add(OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE)
                 as *const Box<'a, TSTypeAnnotation<'a>>)
         }
     }
@@ -9679,58 +10327,61 @@ pub(crate) const OFFSET_TS_MAPPED_TYPE_READONLY: usize = offset_of!(TSMappedType
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMappedTypeWithoutTypeParameter<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSMappedTypeWithoutTypeParameter<'a>(pub(crate) *const TSMappedType<'a>);
 
 impl<'a> TSMappedTypeWithoutTypeParameter<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn name_type(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_MAPPED_TYPE_NAME_TYPE) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_NAME_TYPE)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &Option<TSType<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION) as *const Option<TSType<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION)
+                as *const Option<TSType<'a>>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_OPTIONAL) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_OPTIONAL)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_READONLY) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_READONLY)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMappedTypeWithoutNameType<'a>(pub(crate) *const u8, pub(crate) PhantomData<&'a ()>);
+pub struct TSMappedTypeWithoutNameType<'a>(pub(crate) *const TSMappedType<'a>);
 
 impl<'a> TSMappedTypeWithoutNameType<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameter(&self) -> &Box<'a, TSTypeParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER)
                 as *const Box<'a, TSTypeParameter<'a>>)
         }
     }
@@ -9738,62 +10389,67 @@ impl<'a> TSMappedTypeWithoutNameType<'a> {
     #[inline]
     pub fn type_annotation(&self) -> &Option<TSType<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION) as *const Option<TSType<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION)
+                as *const Option<TSType<'a>>)
         }
     }
 
     #[inline]
     pub fn optional(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_OPTIONAL) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_OPTIONAL)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_READONLY) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_READONLY)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSMappedTypeWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSMappedTypeWithoutTypeAnnotation<'a>(pub(crate) *const TSMappedType<'a>);
 
 impl<'a> TSMappedTypeWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_parameter(&self) -> &Box<'a, TSTypeParameter<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER)
                 as *const Box<'a, TSTypeParameter<'a>>)
         }
     }
 
     #[inline]
     pub fn name_type(&self) -> &Option<TSType<'a>> {
-        unsafe { &*(self.0.add(OFFSET_TS_MAPPED_TYPE_NAME_TYPE) as *const Option<TSType<'a>>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_NAME_TYPE)
+                as *const Option<TSType<'a>>)
+        }
     }
 
     #[inline]
     pub fn optional(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_OPTIONAL) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_OPTIONAL)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 
     #[inline]
     pub fn readonly(&self) -> &TSMappedTypeModifierOperator {
         unsafe {
-            &*(self.0.add(OFFSET_TS_MAPPED_TYPE_READONLY) as *const TSMappedTypeModifierOperator)
+            &*((self.0 as *const u8).add(OFFSET_TS_MAPPED_TYPE_READONLY)
+                as *const TSMappedTypeModifierOperator)
         }
     }
 }
@@ -9806,42 +10462,41 @@ pub(crate) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTemplateLiteralTypeWithoutQuasis<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTemplateLiteralTypeWithoutQuasis<'a>(pub(crate) *const TSTemplateLiteralType<'a>);
 
 impl<'a> TSTemplateLiteralTypeWithoutQuasis<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn types(&self) -> &Vec<'a, TSType<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES) as *const Vec<'a, TSType<'a>>)
+            &*((self.0 as *const u8).add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES)
+                as *const Vec<'a, TSType<'a>>)
         }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTemplateLiteralTypeWithoutTypes<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTemplateLiteralTypeWithoutTypes<'a>(pub(crate) *const TSTemplateLiteralType<'a>);
 
 impl<'a> TSTemplateLiteralTypeWithoutTypes<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn quasis(&self) -> &Vec<'a, TemplateElement<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS)
+            &*((self.0 as *const u8).add(OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS)
                 as *const Vec<'a, TemplateElement<'a>>)
         }
     }
@@ -9853,39 +10508,39 @@ pub(crate) const OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSAsExpressionWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSAsExpressionWithoutExpression<'a>(pub(crate) *const TSAsExpression<'a>);
 
 impl<'a> TSAsExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_AS_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSAsExpressionWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSAsExpressionWithoutTypeAnnotation<'a>(pub(crate) *const TSAsExpression<'a>);
 
 impl<'a> TSAsExpressionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_AS_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_EXPRESSION) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_AS_EXPRESSION_EXPRESSION)
+                as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_SATISFIES_EXPRESSION_SPAN: usize =
@@ -9897,21 +10552,19 @@ pub(crate) const OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSSatisfiesExpressionWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSSatisfiesExpressionWithoutExpression<'a>(pub(crate) *const TSSatisfiesExpression<'a>);
 
 impl<'a> TSSatisfiesExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_SATISFIES_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_SATISFIES_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &TSType<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION) as *const TSType<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION)
+                as *const TSType<'a>)
         }
     }
 }
@@ -9919,20 +10572,20 @@ impl<'a> TSSatisfiesExpressionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSSatisfiesExpressionWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSSatisfiesExpression<'a>,
 );
 
 impl<'a> TSSatisfiesExpressionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_SATISFIES_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_SATISFIES_EXPRESSION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION) as *const Expression<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION)
+                as *const Expression<'a>)
         }
     }
 }
@@ -9944,39 +10597,39 @@ pub(crate) const OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeAssertionWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeAssertionWithoutExpression<'a>(pub(crate) *const TSTypeAssertion<'a>);
 
 impl<'a> TSTypeAssertionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ASSERTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn type_annotation(&self) -> &TSType<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION) as *const TSType<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION)
+                as *const TSType<'a>)
+        }
     }
 }
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSTypeAssertionWithoutTypeAnnotation<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSTypeAssertionWithoutTypeAnnotation<'a>(pub(crate) *const TSTypeAssertion<'a>);
 
 impl<'a> TSTypeAssertionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ASSERTION_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
-        unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_EXPRESSION) as *const Expression<'a>) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_TYPE_ASSERTION_EXPRESSION)
+                as *const Expression<'a>)
+        }
     }
 }
 pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN: usize =
@@ -9990,21 +10643,20 @@ pub(crate) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSImportEqualsDeclarationWithoutId<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
-);
+pub struct TSImportEqualsDeclarationWithoutId<'a>(pub(crate) *const TSImportEqualsDeclaration<'a>);
 
 impl<'a> TSImportEqualsDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn module_reference(&self) -> &TSModuleReference<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE)
                 as *const TSModuleReference<'a>)
         }
     }
@@ -10012,7 +10664,7 @@ impl<'a> TSImportEqualsDeclarationWithoutId<'a> {
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND)
                 as *const ImportOrExportKind)
         }
     }
@@ -10021,27 +10673,29 @@ impl<'a> TSImportEqualsDeclarationWithoutId<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSImportEqualsDeclarationWithoutModuleReference<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSImportEqualsDeclaration<'a>,
 );
 
 impl<'a> TSImportEqualsDeclarationWithoutModuleReference<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn id(&self) -> &BindingIdentifier<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID) as *const BindingIdentifier<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID)
+                as *const BindingIdentifier<'a>)
         }
     }
 
     #[inline]
     pub fn import_kind(&self) -> &ImportOrExportKind {
         unsafe {
-            &*(self.0.add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND)
+            &*((self.0 as *const u8).add(OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND)
                 as *const ImportOrExportKind)
         }
     }
@@ -10053,12 +10707,16 @@ pub(crate) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSExternalModuleReferenceWithoutExpression(pub(crate) *const u8);
+pub struct TSExternalModuleReferenceWithoutExpression<'a>(
+    pub(crate) *const TSExternalModuleReference<'a>,
+);
 
-impl TSExternalModuleReferenceWithoutExpression {
+impl<'a> TSExternalModuleReferenceWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN) as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_TS_NON_NULL_EXPRESSION_SPAN: usize = offset_of!(TSNonNullExpression, span);
@@ -10067,12 +10725,12 @@ pub(crate) const OFFSET_TS_NON_NULL_EXPRESSION_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNonNullExpressionWithoutExpression(pub(crate) *const u8);
+pub struct TSNonNullExpressionWithoutExpression<'a>(pub(crate) *const TSNonNullExpression<'a>);
 
-impl TSNonNullExpressionWithoutExpression {
+impl<'a> TSNonNullExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_NON_NULL_EXPRESSION_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_NON_NULL_EXPRESSION_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_DECORATOR_SPAN: usize = offset_of!(Decorator, span);
@@ -10080,12 +10738,12 @@ pub(crate) const OFFSET_DECORATOR_EXPRESSION: usize = offset_of!(Decorator, expr
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct DecoratorWithoutExpression(pub(crate) *const u8);
+pub struct DecoratorWithoutExpression<'a>(pub(crate) *const Decorator<'a>);
 
-impl DecoratorWithoutExpression {
+impl<'a> DecoratorWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_DECORATOR_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_DECORATOR_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_EXPORT_ASSIGNMENT_SPAN: usize = offset_of!(TSExportAssignment, span);
@@ -10094,12 +10752,12 @@ pub(crate) const OFFSET_TS_EXPORT_ASSIGNMENT_EXPRESSION: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSExportAssignmentWithoutExpression(pub(crate) *const u8);
+pub struct TSExportAssignmentWithoutExpression<'a>(pub(crate) *const TSExportAssignment<'a>);
 
-impl TSExportAssignmentWithoutExpression {
+impl<'a> TSExportAssignmentWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_EXPORT_ASSIGNMENT_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_TS_EXPORT_ASSIGNMENT_SPAN) as *const Span) }
     }
 }
 pub(crate) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN: usize =
@@ -10109,12 +10767,17 @@ pub(crate) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_ID: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct TSNamespaceExportDeclarationWithoutId(pub(crate) *const u8);
+pub struct TSNamespaceExportDeclarationWithoutId<'a>(
+    pub(crate) *const TSNamespaceExportDeclaration<'a>,
+);
 
-impl TSNamespaceExportDeclarationWithoutId {
+impl<'a> TSNamespaceExportDeclarationWithoutId<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN)
+                as *const Span)
+        }
     }
 }
 pub(crate) const OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN: usize =
@@ -10127,20 +10790,21 @@ pub(crate) const OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS: usize =
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInstantiationExpressionWithoutExpression<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSInstantiationExpression<'a>,
 );
 
 impl<'a> TSInstantiationExpressionWithoutExpression<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn type_parameters(&self) -> &Box<'a, TSTypeParameterInstantiation<'a>> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS)
+            &*((self.0 as *const u8).add(OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS)
                 as *const Box<'a, TSTypeParameterInstantiation<'a>>)
         }
     }
@@ -10149,20 +10813,22 @@ impl<'a> TSInstantiationExpressionWithoutExpression<'a> {
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct TSInstantiationExpressionWithoutTypeParameters<'a>(
-    pub(crate) *const u8,
-    pub(crate) PhantomData<&'a ()>,
+    pub(crate) *const TSInstantiationExpression<'a>,
 );
 
 impl<'a> TSInstantiationExpressionWithoutTypeParameters<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN) as *const Span) }
+        unsafe {
+            &*((self.0 as *const u8).add(OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN) as *const Span)
+        }
     }
 
     #[inline]
     pub fn expression(&self) -> &Expression<'a> {
         unsafe {
-            &*(self.0.add(OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION) as *const Expression<'a>)
+            &*((self.0 as *const u8).add(OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION)
+                as *const Expression<'a>)
         }
     }
 }
@@ -10174,17 +10840,17 @@ pub(crate) const OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX: usize =
 
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct JSDocNullableTypeWithoutTypeAnnotation(pub(crate) *const u8);
+pub struct JSDocNullableTypeWithoutTypeAnnotation<'a>(pub(crate) *const JSDocNullableType<'a>);
 
-impl JSDocNullableTypeWithoutTypeAnnotation {
+impl<'a> JSDocNullableTypeWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_JS_DOC_NULLABLE_TYPE_SPAN) as *const Span) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JS_DOC_NULLABLE_TYPE_SPAN) as *const Span) }
     }
 
     #[inline]
     pub fn postfix(&self) -> &bool {
-        unsafe { &*(self.0.add(OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX) as *const bool) }
+        unsafe { &*((self.0 as *const u8).add(OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX) as *const bool) }
     }
 }
 pub(crate) const OFFSET_JS_DOC_UNKNOWN_TYPE_SPAN: usize = offset_of!(JSDocUnknownType, span);
