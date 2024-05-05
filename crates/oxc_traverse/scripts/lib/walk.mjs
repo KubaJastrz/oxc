@@ -1,6 +1,5 @@
+import assert from 'assert';
 import {typeAndWrappers, unwrapTypeName, toTypeName, camelToSnake, snakeToCamel} from './utils.mjs';
-
-// TODO: Remove `todo!` insertions into code and throw error here instead
 
 export default function generateWalkFunctionsCode(types) {
     let walkMethods = '';
@@ -72,9 +71,8 @@ function generateWalkForStruct(type, types) {
                 }
             } else if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Box') {
                 walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, (&mut **field) as *mut _, ctx);`;
-            } else if (remainingWrappers.length > 0) {
-                walkCode = `todo!("TODO: ${field.type}");`;
             } else {
+                assert(remainingWrappers.length === 0, `Cannot handle struct field with type ${field.type}`);
                 walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field as *mut _, ctx);`;
             }
 
@@ -98,8 +96,11 @@ function generateWalkForStruct(type, types) {
                     iterModifier = '';
                 if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Option') {
                     iterModifier = '.flatten()';
-                } else if (remainingWrappers.length > 0) {
-                    walkCode = `todo!("TODO: ${field.type}");`;
+                } else {
+                    assert(
+                        remainingWrappers.length === 0,
+                        `Cannot handle struct field with type ${field.type}`
+                    );
                 }
                 walkVecCode = `
                     for item in (*(${fieldCode})).iter_mut()${iterModifier} {
@@ -123,7 +124,7 @@ function generateWalkForStruct(type, types) {
             `;
         }
 
-        if (fieldTypeWrappers.length > 0) return `todo!("TODO: ${field.type}");`;
+        assert(fieldTypeWrappers.length === 0, `Cannot handle struct field with type: ${field.type}`);
 
         return `
             ${retagCode}
@@ -162,18 +163,17 @@ function generateWalkForEnum(type, types) {
     const variantCodes = type.variants.map((variant) => {
         const {name: variantTypeName, wrappers: fieldTypeWrappers} = typeAndWrappers(variant.type),
             variantType = types[variantTypeName];
+        assert(variantType, `Cannot handle enum variant with type: ${variant.type}`);
 
-        let unboxedCode;
+        let nodeCode = 'node';
         if (fieldTypeWrappers.length === 1 && fieldTypeWrappers[0] === 'Box') {
-            unboxedCode = '(&mut **node)';
-        } else if (fieldTypeWrappers.length === 0) {
-            unboxedCode = 'node';
+            nodeCode = '(&mut **node)';
+        } else {
+            assert(fieldTypeWrappers.length === 0, `Cannot handle enum variant with type: ${variant.type}`);
         }
 
-        const walkCode = variantType && unboxedCode
-            ? `walk_${camelToSnake(variantTypeName)}(traverser, ${unboxedCode} as *mut _, ctx)`
-            : `todo!("TODO: ${variant.type}")`;
-        return `${type.name}::${variant.name}(node) => ${walkCode},`;
+        return `${type.name}::${variant.name}(node) => `
+            + `walk_${camelToSnake(variantTypeName)}(traverser, ${nodeCode} as *mut _, ctx),`;
     });
 
     const missingVariants = [];
@@ -200,9 +200,7 @@ function generateWalkForEnum(type, types) {
         );
     }
 
-    if (missingVariants.length > 0) {
-        variantCodes.push(`_ => todo!("TODO: Missing ${missingVariants.join(', ')}"),`);
-    }
+    assert(missingVariants.length === 0, `Missing enum variants: ${missingVariants.join(', ')}`);
 
     const snakeName = camelToSnake(type.name);
     return `
