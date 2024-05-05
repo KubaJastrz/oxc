@@ -1947,10 +1947,10 @@ impl ObjectExpressionWithoutProperties {
     }
 }
 pub(super) const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
+pub(super) const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
 pub(super) const OFFSET_OBJECT_PROPERTY_KEY: usize = offset_of!(ObjectProperty, key);
 pub(super) const OFFSET_OBJECT_PROPERTY_VALUE: usize = offset_of!(ObjectProperty, value);
 pub(super) const OFFSET_OBJECT_PROPERTY_INIT: usize = offset_of!(ObjectProperty, init);
-pub(super) const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
 pub(super) const OFFSET_OBJECT_PROPERTY_METHOD: usize = offset_of!(ObjectProperty, method);
 pub(super) const OFFSET_OBJECT_PROPERTY_SHORTHAND: usize = offset_of!(ObjectProperty, shorthand);
 pub(super) const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectProperty, computed);
@@ -1966,6 +1966,11 @@ impl<'a> ObjectPropertyWithoutKey<'a> {
     }
 
     #[inline]
+    pub fn kind(&self) -> &PropertyKind {
+        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+    }
+
+    #[inline]
     pub fn value(&self) -> &Expression<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>) }
     }
@@ -1973,11 +1978,6 @@ impl<'a> ObjectPropertyWithoutKey<'a> {
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_INIT) as *const Option<Expression<'a>>) }
-    }
-
-    #[inline]
-    pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
@@ -2007,6 +2007,11 @@ impl<'a> ObjectPropertyWithoutValue<'a> {
     }
 
     #[inline]
+    pub fn kind(&self) -> &PropertyKind {
+        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+    }
+
+    #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>) }
     }
@@ -2014,11 +2019,6 @@ impl<'a> ObjectPropertyWithoutValue<'a> {
     #[inline]
     pub fn init(&self) -> &Option<Expression<'a>> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_INIT) as *const Option<Expression<'a>>) }
-    }
-
-    #[inline]
-    pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
@@ -2048,6 +2048,11 @@ impl<'a> ObjectPropertyWithoutInit<'a> {
     }
 
     #[inline]
+    pub fn kind(&self) -> &PropertyKind {
+        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
+    }
+
+    #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KEY) as *const PropertyKey<'a>) }
     }
@@ -2055,11 +2060,6 @@ impl<'a> ObjectPropertyWithoutInit<'a> {
     #[inline]
     pub fn value(&self) -> &Expression<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_VALUE) as *const Expression<'a>) }
-    }
-
-    #[inline]
-    pub fn kind(&self) -> &PropertyKind {
-        unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_KIND) as *const PropertyKind) }
     }
 
     #[inline]
@@ -3333,9 +3333,9 @@ impl<'a> VariableDeclarationWithoutDeclarations<'a> {
     }
 }
 pub(super) const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
 pub(super) const OFFSET_VARIABLE_DECLARATOR_ID: usize = offset_of!(VariableDeclarator, id);
 pub(super) const OFFSET_VARIABLE_DECLARATOR_INIT: usize = offset_of!(VariableDeclarator, init);
-pub(super) const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
 pub(super) const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize =
     offset_of!(VariableDeclarator, definite);
 
@@ -3350,13 +3350,13 @@ impl<'a> VariableDeclaratorWithoutId<'a> {
     }
 
     #[inline]
-    pub fn init(&self) -> &Option<Expression<'a>> {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_INIT) as *const Option<Expression<'a>>) }
+    pub fn kind(&self) -> &VariableDeclarationKind {
+        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
     }
 
     #[inline]
-    pub fn kind(&self) -> &VariableDeclarationKind {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
+    pub fn init(&self) -> &Option<Expression<'a>> {
+        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_INIT) as *const Option<Expression<'a>>) }
     }
 
     #[inline]
@@ -3376,13 +3376,13 @@ impl<'a> VariableDeclaratorWithoutInit<'a> {
     }
 
     #[inline]
-    pub fn id(&self) -> &BindingPattern<'a> {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_ID) as *const BindingPattern<'a>) }
+    pub fn kind(&self) -> &VariableDeclarationKind {
+        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
     }
 
     #[inline]
-    pub fn kind(&self) -> &VariableDeclarationKind {
-        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_KIND) as *const VariableDeclarationKind) }
+    pub fn id(&self) -> &BindingPattern<'a> {
+        unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_ID) as *const BindingPattern<'a>) }
     }
 
     #[inline]
@@ -4372,9 +4372,9 @@ impl BindingRestElementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_BINDING_REST_ELEMENT_SPAN) as *const Span) }
     }
 }
+pub(super) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
 pub(super) const OFFSET_FUNCTION_SPAN: usize = offset_of!(Function, span);
 pub(super) const OFFSET_FUNCTION_ID: usize = offset_of!(Function, id);
-pub(super) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
 pub(super) const OFFSET_FUNCTION_GENERATOR: usize = offset_of!(Function, generator);
 pub(super) const OFFSET_FUNCTION_ASYNC: usize = offset_of!(Function, r#async);
 pub(super) const OFFSET_FUNCTION_THIS_PARAM: usize = offset_of!(Function, this_param);
@@ -4390,13 +4390,13 @@ pub struct FunctionWithoutId<'a>(pub(super) *const u8, pub(super) PhantomData<&'
 
 impl<'a> FunctionWithoutId<'a> {
     #[inline]
-    pub fn span(&self) -> &Span {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    pub fn span(&self) -> &Span {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
 
     #[inline]
@@ -4452,6 +4452,11 @@ pub struct FunctionWithoutThisParam<'a>(pub(super) *const u8, pub(super) Phantom
 
 impl<'a> FunctionWithoutThisParam<'a> {
     #[inline]
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
@@ -4459,11 +4464,6 @@ impl<'a> FunctionWithoutThisParam<'a> {
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
@@ -4514,6 +4514,11 @@ pub struct FunctionWithoutParams<'a>(pub(super) *const u8, pub(super) PhantomDat
 
 impl<'a> FunctionWithoutParams<'a> {
     #[inline]
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
@@ -4521,11 +4526,6 @@ impl<'a> FunctionWithoutParams<'a> {
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
@@ -4576,6 +4576,11 @@ pub struct FunctionWithoutBody<'a>(pub(super) *const u8, pub(super) PhantomData<
 
 impl<'a> FunctionWithoutBody<'a> {
     #[inline]
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
@@ -4583,11 +4588,6 @@ impl<'a> FunctionWithoutBody<'a> {
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
@@ -4638,6 +4638,11 @@ pub struct FunctionWithoutTypeParameters<'a>(pub(super) *const u8, pub(super) Ph
 
 impl<'a> FunctionWithoutTypeParameters<'a> {
     #[inline]
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
@@ -4645,11 +4650,6 @@ impl<'a> FunctionWithoutTypeParameters<'a> {
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
@@ -4697,6 +4697,11 @@ pub struct FunctionWithoutReturnType<'a>(pub(super) *const u8, pub(super) Phanto
 
 impl<'a> FunctionWithoutReturnType<'a> {
     #[inline]
+    pub fn r#type(&self) -> &FunctionType {
+        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_SPAN) as *const Span) }
     }
@@ -4704,11 +4709,6 @@ impl<'a> FunctionWithoutReturnType<'a> {
     #[inline]
     pub fn id(&self) -> &Option<BindingIdentifier<'a>> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_ID) as *const Option<BindingIdentifier<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &FunctionType {
-        unsafe { &*(self.0.add(OFFSET_FUNCTION_TYPE) as *const FunctionType) }
     }
 
     #[inline]
@@ -5571,10 +5571,10 @@ impl ClassBodyWithoutBody {
         unsafe { &*(self.0.add(OFFSET_CLASS_BODY_SPAN) as *const Span) }
     }
 }
+pub(super) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
 pub(super) const OFFSET_METHOD_DEFINITION_SPAN: usize = offset_of!(MethodDefinition, span);
 pub(super) const OFFSET_METHOD_DEFINITION_KEY: usize = offset_of!(MethodDefinition, key);
 pub(super) const OFFSET_METHOD_DEFINITION_VALUE: usize = offset_of!(MethodDefinition, value);
-pub(super) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
 pub(super) const OFFSET_METHOD_DEFINITION_KIND: usize = offset_of!(MethodDefinition, kind);
 pub(super) const OFFSET_METHOD_DEFINITION_COMPUTED: usize = offset_of!(MethodDefinition, computed);
 pub(super) const OFFSET_METHOD_DEFINITION_STATIC: usize = offset_of!(MethodDefinition, r#static);
@@ -5592,6 +5592,11 @@ pub struct MethodDefinitionWithoutKey<'a>(pub(super) *const u8, pub(super) Phant
 
 impl<'a> MethodDefinitionWithoutKey<'a> {
     #[inline]
+    pub fn r#type(&self) -> &MethodDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
@@ -5599,11 +5604,6 @@ impl<'a> MethodDefinitionWithoutKey<'a> {
     #[inline]
     pub fn value(&self) -> &Box<'a, Function<'a>> {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_VALUE) as *const Box<'a, Function<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
     }
 
     #[inline]
@@ -5652,6 +5652,11 @@ pub struct MethodDefinitionWithoutValue<'a>(pub(super) *const u8, pub(super) Pha
 
 impl<'a> MethodDefinitionWithoutValue<'a> {
     #[inline]
+    pub fn r#type(&self) -> &MethodDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
@@ -5659,11 +5664,6 @@ impl<'a> MethodDefinitionWithoutValue<'a> {
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_KEY) as *const PropertyKey<'a>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
     }
 
     #[inline]
@@ -5715,6 +5715,11 @@ pub struct MethodDefinitionWithoutDecorators<'a>(
 
 impl<'a> MethodDefinitionWithoutDecorators<'a> {
     #[inline]
+    pub fn r#type(&self) -> &MethodDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_SPAN) as *const Span) }
     }
@@ -5727,11 +5732,6 @@ impl<'a> MethodDefinitionWithoutDecorators<'a> {
     #[inline]
     pub fn value(&self) -> &Box<'a, Function<'a>> {
         unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_VALUE) as *const Box<'a, Function<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &MethodDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_METHOD_DEFINITION_TYPE) as *const MethodDefinitionType) }
     }
 
     #[inline]
@@ -5766,10 +5766,10 @@ impl<'a> MethodDefinitionWithoutDecorators<'a> {
         }
     }
 }
+pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
 pub(super) const OFFSET_PROPERTY_DEFINITION_SPAN: usize = offset_of!(PropertyDefinition, span);
 pub(super) const OFFSET_PROPERTY_DEFINITION_KEY: usize = offset_of!(PropertyDefinition, key);
 pub(super) const OFFSET_PROPERTY_DEFINITION_VALUE: usize = offset_of!(PropertyDefinition, value);
-pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
 pub(super) const OFFSET_PROPERTY_DEFINITION_COMPUTED: usize =
     offset_of!(PropertyDefinition, computed);
 pub(super) const OFFSET_PROPERTY_DEFINITION_STATIC: usize =
@@ -5797,6 +5797,11 @@ pub struct PropertyDefinitionWithoutKey<'a>(pub(super) *const u8, pub(super) Pha
 
 impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
+    pub fn r#type(&self) -> &PropertyDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
@@ -5804,11 +5809,6 @@ impl<'a> PropertyDefinitionWithoutKey<'a> {
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
     }
 
     #[inline]
@@ -5876,6 +5876,11 @@ pub struct PropertyDefinitionWithoutValue<'a>(pub(super) *const u8, pub(super) P
 
 impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
+    pub fn r#type(&self) -> &PropertyDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
@@ -5883,11 +5888,6 @@ impl<'a> PropertyDefinitionWithoutValue<'a> {
     #[inline]
     pub fn key(&self) -> &PropertyKey<'a> {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_KEY) as *const PropertyKey<'a>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
     }
 
     #[inline]
@@ -5958,6 +5958,11 @@ pub struct PropertyDefinitionWithoutTypeAnnotation<'a>(
 
 impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
     #[inline]
+    pub fn r#type(&self) -> &PropertyDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
@@ -5970,11 +5975,6 @@ impl<'a> PropertyDefinitionWithoutTypeAnnotation<'a> {
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
     }
 
     #[inline]
@@ -6037,6 +6037,11 @@ pub struct PropertyDefinitionWithoutDecorators<'a>(
 
 impl<'a> PropertyDefinitionWithoutDecorators<'a> {
     #[inline]
+    pub fn r#type(&self) -> &PropertyDefinitionType {
+        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
+    }
+
+    #[inline]
     pub fn span(&self) -> &Span {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_SPAN) as *const Span) }
     }
@@ -6049,11 +6054,6 @@ impl<'a> PropertyDefinitionWithoutDecorators<'a> {
     #[inline]
     pub fn value(&self) -> &Option<Expression<'a>> {
         unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_VALUE) as *const Option<Expression<'a>>) }
-    }
-
-    #[inline]
-    pub fn r#type(&self) -> &PropertyDefinitionType {
-        unsafe { &*(self.0.add(OFFSET_PROPERTY_DEFINITION_TYPE) as *const PropertyDefinitionType) }
     }
 
     #[inline]

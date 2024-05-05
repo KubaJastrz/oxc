@@ -568,10 +568,10 @@ pub enum ObjectPropertyKind<'a> {
 pub struct ObjectProperty<'a> {
     #[cfg_attr(feature = "serialize", serde(flatten))]
     pub span: Span,
+    pub kind: PropertyKind,
     pub key: PropertyKey<'a>,
     pub value: Expression<'a>,
     pub init: Option<Expression<'a>>, // for `CoverInitializedName`
-    pub kind: PropertyKind,
     pub method: bool,
     pub shorthand: bool,
     pub computed: bool,
@@ -1624,9 +1624,9 @@ pub struct VariableDeclarator<'a> {
     #[cfg_attr(feature = "serialize", serde(flatten))]
     pub span: Span,
     #[cfg_attr(feature = "serialize", serde(skip))]
+    pub kind: VariableDeclarationKind,
     pub id: BindingPattern<'a>,
     pub init: Option<Expression<'a>>,
-    pub kind: VariableDeclarationKind,
     pub definite: bool,
 }
 
@@ -2093,10 +2093,10 @@ pub struct BindingRestElement<'a> {
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(rename_all = "camelCase"))]
 pub struct Function<'a> {
+    pub r#type: FunctionType,
     #[cfg_attr(feature = "serialize", serde(flatten))]
     pub span: Span,
     pub id: Option<BindingIdentifier<'a>>,
-    pub r#type: FunctionType,
     pub generator: bool,
     pub r#async: bool,
     /// Declaring `this` in a Function <https://www.typescriptlang.org/docs/handbook/2/functions.html#declaring-this-in-a-function>
@@ -2458,11 +2458,11 @@ impl<'a> ClassElement<'a> {
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(rename_all = "camelCase"))]
 pub struct MethodDefinition<'a> {
+    pub r#type: MethodDefinitionType,
     #[cfg_attr(feature = "serialize", serde(flatten))]
     pub span: Span,
     pub key: PropertyKey<'a>,
     pub value: Box<'a, Function<'a>>, // FunctionExpression
-    pub r#type: MethodDefinitionType,
     pub kind: MethodDefinitionKind,
     pub computed: bool,
     pub r#static: bool,
@@ -2484,11 +2484,11 @@ pub enum MethodDefinitionType {
 #[cfg_attr(feature = "serialize", derive(Serialize, Tsify))]
 #[cfg_attr(feature = "serialize", serde(rename_all = "camelCase"))]
 pub struct PropertyDefinition<'a> {
+    pub r#type: PropertyDefinitionType,
     #[cfg_attr(feature = "serialize", serde(flatten))]
     pub span: Span,
     pub key: PropertyKey<'a>,
     pub value: Option<Expression<'a>>,
-    pub r#type: PropertyDefinitionType,
     pub computed: bool,
     pub r#static: bool,
     pub declare: bool,
