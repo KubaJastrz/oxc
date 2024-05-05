@@ -20,5 +20,5 @@ pub fn traverse_mut<'a, Tr: Traverse<'a>>(
     let mut ctx = TraverseCtx::new(allocator);
     // SAFETY: Walk functions are constructed to avoid unsoundness
     unsafe { walk::walk_program(traverser, program as *mut Program, &mut ctx) };
-    debug_assert!(ctx.stack_is_empty());
+    debug_assert!(ctx.ancestors_depth() == 1);
 }

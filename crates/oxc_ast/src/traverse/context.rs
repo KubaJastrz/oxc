@@ -3,6 +3,8 @@ use oxc_allocator::Allocator;
 use super::Ancestor;
 use crate::AstBuilder;
 
+const INITIAL_STACK_CAPACITY: usize = 64;
+
 /// Traverse context.
 ///
 /// Passed to all AST visitor functions.
@@ -19,7 +21,9 @@ pub struct TraverseCtx<'a> {
 impl<'a> TraverseCtx<'a> {
     /// Create new traversal context.
     pub fn new(allocator: &'a Allocator) -> Self {
-        Self { stack: Vec::new(), ast: AstBuilder::new(allocator) }
+        let mut stack = Vec::with_capacity(INITIAL_STACK_CAPACITY);
+        stack.push(Ancestor::None);
+        Self { stack, ast: AstBuilder::new(allocator) }
     }
 
     /// Allocate a node in the arena.
@@ -30,15 +34,12 @@ impl<'a> TraverseCtx<'a> {
     }
 
     /// Get parent of current node.
-    /// # Panics
-    /// Panics if no parent (i.e. called when visiting `Program`).
     #[inline]
+    #[allow(unsafe_code)]
     pub fn parent(&self) -> &Ancestor<'a> {
-        // TODO: Would be better to make `Ancestor` `Copy` and return an owned `Ancestor`
-        // for this function and also `ancestor` and `find_ancestor`, but Miri doesn't like it
-        // TODO: Put `Ancestor::None` on stack at start, so there's always a parent,
-        // then make this `.unwrap_unchecked()`
-        self.stack.last().unwrap()
+        // SAFETY: Stack contains 1 entry initially. Entries are pushed as traverse down the AST,
+        // and popped as go back up. So even when visiting `Program`, the initial entry is in the stack.
+        unsafe { self.stack.last().unwrap_unchecked() }
     }
 
     /// Get ancestor of current node.
@@ -69,6 +70,13 @@ impl<'a> TraverseCtx<'a> {
         None
     }
 
+    /// Get depth of ancestry stack.
+    /// i.e. How many nodes above this one in the tree.
+    #[inline]
+    pub fn ancestors_depth(&self) -> usize {
+        self.stack.len()
+    }
+
     /// Push item onto stack.
     #[inline]
     pub(super) fn push_stack(&mut self, ancestor: Ancestor<'a>) {
@@ -93,11 +101,6 @@ impl<'a> TraverseCtx<'a> {
     #[allow(unsafe_code, clippy::ptr_as_ptr, clippy::ref_as_ptr)]
     pub(super) unsafe fn retag_stack(&mut self, discriminant: u16) {
         *(self.stack.last_mut().unwrap_unchecked() as *mut _ as *mut u16) = discriminant;
-    }
-
-    /// Return if stack and stack arena are empty
-    pub(super) fn stack_is_empty(&self) -> bool {
-        self.stack.is_empty()
     }
 }
 

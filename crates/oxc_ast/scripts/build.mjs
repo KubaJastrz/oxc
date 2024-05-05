@@ -67,7 +67,7 @@ function generateAncestorsCode(types) {
         ancestorTypes = '';
     const variantNamesForStructs = Object.create(null),
         enumTypes = [];
-    let discriminant = 0;
+    let discriminant = 1;
     for (const type of Object.values(types)) {
         if (type.kind === 'enum') {
             enumTypes.push(type);
@@ -185,6 +185,7 @@ function generateAncestorsCode(types) {
         #[repr(C, u16)]
         #[derive(Debug)]
         pub enum Ancestor<'a> {
+            None = 0,
             ${enumVariants}
         }
 
