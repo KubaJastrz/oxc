@@ -332,12 +332,32 @@ function generateWalkFunctionsCode(types) {
                 return `${type.name}::${variant.name}(node) => ${walkCode},`;
             });
 
+            const missingVariants = [];
             for (const inheritedTypeName of type.inherits) {
-                const inheritedSnakeName = camelToSnake(inheritedTypeName);
+                // Recurse into nested inherited types
+                const variantMatches = [],
+                    inheritedFrom = [inheritedTypeName];
+                for (let i = 0; i < inheritedFrom.length; i++) {
+                    const inheritedTypeName = inheritedFrom[i],
+                        inheritedType = types[inheritedTypeName];
+                    if (!inheritedType || inheritedType.kind !== 'enum') {
+                        missingVariants.push(inheritedTypeName);
+                    } else {
+                        variantMatches.push(...inheritedType.variants.map(
+                            variant => `${type.name}::${variant.name}(_)`
+                        ));
+                        inheritedFrom.push(...inheritedType.inherits);
+                    }
+                }
+
                 variantCodes.push(
-                    `node @ match_${inheritedSnakeName}!(${type.name}) => `
-                    + `walk_${inheritedSnakeName}(traverser, node.to_${inheritedSnakeName}_mut() as *mut _, ctx),`
+                    `${variantMatches.join(' | ')} => `
+                    + `walk_${camelToSnake(inheritedTypeName)}(traverser, node as *mut _, ctx),`
                 );
+            }
+
+            if (missingVariants.length > 0) {
+                variantCodes.push(`_ => todo!("TODO: Missing ${missingVariants.join(', ')}"),`);
             }
 
             walkMethods += `

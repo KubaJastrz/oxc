@@ -164,8 +164,10 @@ pub(super) unsafe fn walk_expression<'a, Tr: Traverse<'a>>(
         Expression::TSInstantiationExpression(node) => {
             walk_ts_instantiation_expression(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_member_expression!(Expression) => {
-            walk_member_expression(traverser, node.to_member_expression_mut() as *mut _, ctx)
+        Expression::ComputedMemberExpression(_)
+        | Expression::StaticMemberExpression(_)
+        | Expression::PrivateFieldExpression(_) => {
+            walk_member_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_expression(&mut *node, ctx);
@@ -246,8 +248,49 @@ pub(super) unsafe fn walk_array_expression_element<'a, Tr: Traverse<'a>>(
             walk_spread_element(traverser, (&mut **node) as *mut _, ctx)
         }
         ArrayExpressionElement::Elision(node) => walk_elision(traverser, node as *mut _, ctx),
-        node @ match_expression!(ArrayExpressionElement) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
+        ArrayExpressionElement::BooleanLiteral(_)
+        | ArrayExpressionElement::NullLiteral(_)
+        | ArrayExpressionElement::NumericLiteral(_)
+        | ArrayExpressionElement::BigintLiteral(_)
+        | ArrayExpressionElement::RegExpLiteral(_)
+        | ArrayExpressionElement::StringLiteral(_)
+        | ArrayExpressionElement::TemplateLiteral(_)
+        | ArrayExpressionElement::Identifier(_)
+        | ArrayExpressionElement::MetaProperty(_)
+        | ArrayExpressionElement::Super(_)
+        | ArrayExpressionElement::ArrayExpression(_)
+        | ArrayExpressionElement::ArrowFunctionExpression(_)
+        | ArrayExpressionElement::AssignmentExpression(_)
+        | ArrayExpressionElement::AwaitExpression(_)
+        | ArrayExpressionElement::BinaryExpression(_)
+        | ArrayExpressionElement::CallExpression(_)
+        | ArrayExpressionElement::ChainExpression(_)
+        | ArrayExpressionElement::ClassExpression(_)
+        | ArrayExpressionElement::ConditionalExpression(_)
+        | ArrayExpressionElement::FunctionExpression(_)
+        | ArrayExpressionElement::ImportExpression(_)
+        | ArrayExpressionElement::LogicalExpression(_)
+        | ArrayExpressionElement::NewExpression(_)
+        | ArrayExpressionElement::ObjectExpression(_)
+        | ArrayExpressionElement::ParenthesizedExpression(_)
+        | ArrayExpressionElement::SequenceExpression(_)
+        | ArrayExpressionElement::TaggedTemplateExpression(_)
+        | ArrayExpressionElement::ThisExpression(_)
+        | ArrayExpressionElement::UnaryExpression(_)
+        | ArrayExpressionElement::UpdateExpression(_)
+        | ArrayExpressionElement::YieldExpression(_)
+        | ArrayExpressionElement::PrivateInExpression(_)
+        | ArrayExpressionElement::JSXElement(_)
+        | ArrayExpressionElement::JSXFragment(_)
+        | ArrayExpressionElement::TSAsExpression(_)
+        | ArrayExpressionElement::TSSatisfiesExpression(_)
+        | ArrayExpressionElement::TSTypeAssertion(_)
+        | ArrayExpressionElement::TSNonNullExpression(_)
+        | ArrayExpressionElement::TSInstantiationExpression(_)
+        | ArrayExpressionElement::ComputedMemberExpression(_)
+        | ArrayExpressionElement::StaticMemberExpression(_)
+        | ArrayExpressionElement::PrivateFieldExpression(_) => {
+            walk_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_array_expression_element(&mut *node, ctx);
@@ -342,9 +385,48 @@ pub(super) unsafe fn walk_property_key<'a, Tr: Traverse<'a>>(
         PropertyKey::PrivateIdentifier(node) => {
             walk_private_identifier(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_expression!(PropertyKey) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
-        }
+        PropertyKey::BooleanLiteral(_)
+        | PropertyKey::NullLiteral(_)
+        | PropertyKey::NumericLiteral(_)
+        | PropertyKey::BigintLiteral(_)
+        | PropertyKey::RegExpLiteral(_)
+        | PropertyKey::StringLiteral(_)
+        | PropertyKey::TemplateLiteral(_)
+        | PropertyKey::Identifier(_)
+        | PropertyKey::MetaProperty(_)
+        | PropertyKey::Super(_)
+        | PropertyKey::ArrayExpression(_)
+        | PropertyKey::ArrowFunctionExpression(_)
+        | PropertyKey::AssignmentExpression(_)
+        | PropertyKey::AwaitExpression(_)
+        | PropertyKey::BinaryExpression(_)
+        | PropertyKey::CallExpression(_)
+        | PropertyKey::ChainExpression(_)
+        | PropertyKey::ClassExpression(_)
+        | PropertyKey::ConditionalExpression(_)
+        | PropertyKey::FunctionExpression(_)
+        | PropertyKey::ImportExpression(_)
+        | PropertyKey::LogicalExpression(_)
+        | PropertyKey::NewExpression(_)
+        | PropertyKey::ObjectExpression(_)
+        | PropertyKey::ParenthesizedExpression(_)
+        | PropertyKey::SequenceExpression(_)
+        | PropertyKey::TaggedTemplateExpression(_)
+        | PropertyKey::ThisExpression(_)
+        | PropertyKey::UnaryExpression(_)
+        | PropertyKey::UpdateExpression(_)
+        | PropertyKey::YieldExpression(_)
+        | PropertyKey::PrivateInExpression(_)
+        | PropertyKey::JSXElement(_)
+        | PropertyKey::JSXFragment(_)
+        | PropertyKey::TSAsExpression(_)
+        | PropertyKey::TSSatisfiesExpression(_)
+        | PropertyKey::TSTypeAssertion(_)
+        | PropertyKey::TSNonNullExpression(_)
+        | PropertyKey::TSInstantiationExpression(_)
+        | PropertyKey::ComputedMemberExpression(_)
+        | PropertyKey::StaticMemberExpression(_)
+        | PropertyKey::PrivateFieldExpression(_) => walk_expression(traverser, node as *mut _, ctx),
     }
     traverser.exit_property_key(&mut *node, ctx);
 }
@@ -623,9 +705,48 @@ pub(super) unsafe fn walk_argument<'a, Tr: Traverse<'a>>(
         Argument::SpreadElement(node) => {
             walk_spread_element(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_expression!(Argument) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
-        }
+        Argument::BooleanLiteral(_)
+        | Argument::NullLiteral(_)
+        | Argument::NumericLiteral(_)
+        | Argument::BigintLiteral(_)
+        | Argument::RegExpLiteral(_)
+        | Argument::StringLiteral(_)
+        | Argument::TemplateLiteral(_)
+        | Argument::Identifier(_)
+        | Argument::MetaProperty(_)
+        | Argument::Super(_)
+        | Argument::ArrayExpression(_)
+        | Argument::ArrowFunctionExpression(_)
+        | Argument::AssignmentExpression(_)
+        | Argument::AwaitExpression(_)
+        | Argument::BinaryExpression(_)
+        | Argument::CallExpression(_)
+        | Argument::ChainExpression(_)
+        | Argument::ClassExpression(_)
+        | Argument::ConditionalExpression(_)
+        | Argument::FunctionExpression(_)
+        | Argument::ImportExpression(_)
+        | Argument::LogicalExpression(_)
+        | Argument::NewExpression(_)
+        | Argument::ObjectExpression(_)
+        | Argument::ParenthesizedExpression(_)
+        | Argument::SequenceExpression(_)
+        | Argument::TaggedTemplateExpression(_)
+        | Argument::ThisExpression(_)
+        | Argument::UnaryExpression(_)
+        | Argument::UpdateExpression(_)
+        | Argument::YieldExpression(_)
+        | Argument::PrivateInExpression(_)
+        | Argument::JSXElement(_)
+        | Argument::JSXFragment(_)
+        | Argument::TSAsExpression(_)
+        | Argument::TSSatisfiesExpression(_)
+        | Argument::TSTypeAssertion(_)
+        | Argument::TSNonNullExpression(_)
+        | Argument::TSInstantiationExpression(_)
+        | Argument::ComputedMemberExpression(_)
+        | Argument::StaticMemberExpression(_)
+        | Argument::PrivateFieldExpression(_) => walk_expression(traverser, node as *mut _, ctx),
     }
     traverser.exit_argument(&mut *node, ctx);
 }
@@ -803,17 +924,19 @@ pub(super) unsafe fn walk_assignment_target<'a, Tr: Traverse<'a>>(
 ) {
     traverser.enter_assignment_target(&mut *node, ctx);
     match &mut *node {
-        node @ match_simple_assignment_target!(AssignmentTarget) => walk_simple_assignment_target(
-            traverser,
-            node.to_simple_assignment_target_mut() as *mut _,
-            ctx,
-        ),
-        node @ match_assignment_target_pattern!(AssignmentTarget) => {
-            walk_assignment_target_pattern(
-                traverser,
-                node.to_assignment_target_pattern_mut() as *mut _,
-                ctx,
-            )
+        AssignmentTarget::AssignmentTargetIdentifier(_)
+        | AssignmentTarget::TSAsExpression(_)
+        | AssignmentTarget::TSSatisfiesExpression(_)
+        | AssignmentTarget::TSNonNullExpression(_)
+        | AssignmentTarget::TSTypeAssertion(_)
+        | AssignmentTarget::ComputedMemberExpression(_)
+        | AssignmentTarget::StaticMemberExpression(_)
+        | AssignmentTarget::PrivateFieldExpression(_) => {
+            walk_simple_assignment_target(traverser, node as *mut _, ctx)
+        }
+        AssignmentTarget::ArrayAssignmentTarget(_)
+        | AssignmentTarget::ObjectAssignmentTarget(_) => {
+            walk_assignment_target_pattern(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_assignment_target(&mut *node, ctx);
@@ -841,8 +964,10 @@ pub(super) unsafe fn walk_simple_assignment_target<'a, Tr: Traverse<'a>>(
         SimpleAssignmentTarget::TSTypeAssertion(node) => {
             walk_ts_type_assertion(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_member_expression!(SimpleAssignmentTarget) => {
-            walk_member_expression(traverser, node.to_member_expression_mut() as *mut _, ctx)
+        SimpleAssignmentTarget::ComputedMemberExpression(_)
+        | SimpleAssignmentTarget::StaticMemberExpression(_)
+        | SimpleAssignmentTarget::PrivateFieldExpression(_) => {
+            walk_member_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_simple_assignment_target(&mut *node, ctx);
@@ -944,8 +1069,17 @@ pub(super) unsafe fn walk_assignment_target_maybe_default<'a, Tr: Traverse<'a>>(
         AssignmentTargetMaybeDefault::AssignmentTargetWithDefault(node) => {
             walk_assignment_target_with_default(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_assignment_target!(AssignmentTargetMaybeDefault) => {
-            walk_assignment_target(traverser, node.to_assignment_target_mut() as *mut _, ctx)
+        AssignmentTargetMaybeDefault::AssignmentTargetIdentifier(_)
+        | AssignmentTargetMaybeDefault::TSAsExpression(_)
+        | AssignmentTargetMaybeDefault::TSSatisfiesExpression(_)
+        | AssignmentTargetMaybeDefault::TSNonNullExpression(_)
+        | AssignmentTargetMaybeDefault::TSTypeAssertion(_)
+        | AssignmentTargetMaybeDefault::ArrayAssignmentTarget(_)
+        | AssignmentTargetMaybeDefault::ObjectAssignmentTarget(_)
+        | AssignmentTargetMaybeDefault::ComputedMemberExpression(_)
+        | AssignmentTargetMaybeDefault::StaticMemberExpression(_)
+        | AssignmentTargetMaybeDefault::PrivateFieldExpression(_) => {
+            walk_assignment_target(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_assignment_target_maybe_default(&mut *node, ctx);
@@ -1119,8 +1253,10 @@ pub(super) unsafe fn walk_chain_element<'a, Tr: Traverse<'a>>(
         ChainElement::CallExpression(node) => {
             walk_call_expression(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_member_expression!(ChainElement) => {
-            walk_member_expression(traverser, node.to_member_expression_mut() as *mut _, ctx)
+        ChainElement::ComputedMemberExpression(_)
+        | ChainElement::StaticMemberExpression(_)
+        | ChainElement::PrivateFieldExpression(_) => {
+            walk_member_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_chain_element(&mut *node, ctx);
@@ -1203,11 +1339,24 @@ pub(super) unsafe fn walk_statement<'a, Tr: Traverse<'a>>(
         Statement::WithStatement(node) => {
             walk_with_statement(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_declaration!(Statement) => {
-            walk_declaration(traverser, node.to_declaration_mut() as *mut _, ctx)
+        Statement::VariableDeclaration(_)
+        | Statement::FunctionDeclaration(_)
+        | Statement::ClassDeclaration(_)
+        | Statement::UsingDeclaration(_)
+        | Statement::TSTypeAliasDeclaration(_)
+        | Statement::TSInterfaceDeclaration(_)
+        | Statement::TSEnumDeclaration(_)
+        | Statement::TSModuleDeclaration(_)
+        | Statement::TSImportEqualsDeclaration(_) => {
+            walk_declaration(traverser, node as *mut _, ctx)
         }
-        node @ match_module_declaration!(Statement) => {
-            walk_module_declaration(traverser, node.to_module_declaration_mut() as *mut _, ctx)
+        Statement::ImportDeclaration(_)
+        | Statement::ExportAllDeclaration(_)
+        | Statement::ExportDefaultDeclaration(_)
+        | Statement::ExportNamedDeclaration(_)
+        | Statement::TSExportAssignment(_)
+        | Statement::TSNamespaceExportDeclaration(_) => {
+            walk_module_declaration(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_statement(&mut *node, ctx);
@@ -1516,8 +1665,49 @@ pub(super) unsafe fn walk_for_statement_init<'a, Tr: Traverse<'a>>(
         ForStatementInit::UsingDeclaration(node) => {
             walk_using_declaration(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_expression!(ForStatementInit) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
+        ForStatementInit::BooleanLiteral(_)
+        | ForStatementInit::NullLiteral(_)
+        | ForStatementInit::NumericLiteral(_)
+        | ForStatementInit::BigintLiteral(_)
+        | ForStatementInit::RegExpLiteral(_)
+        | ForStatementInit::StringLiteral(_)
+        | ForStatementInit::TemplateLiteral(_)
+        | ForStatementInit::Identifier(_)
+        | ForStatementInit::MetaProperty(_)
+        | ForStatementInit::Super(_)
+        | ForStatementInit::ArrayExpression(_)
+        | ForStatementInit::ArrowFunctionExpression(_)
+        | ForStatementInit::AssignmentExpression(_)
+        | ForStatementInit::AwaitExpression(_)
+        | ForStatementInit::BinaryExpression(_)
+        | ForStatementInit::CallExpression(_)
+        | ForStatementInit::ChainExpression(_)
+        | ForStatementInit::ClassExpression(_)
+        | ForStatementInit::ConditionalExpression(_)
+        | ForStatementInit::FunctionExpression(_)
+        | ForStatementInit::ImportExpression(_)
+        | ForStatementInit::LogicalExpression(_)
+        | ForStatementInit::NewExpression(_)
+        | ForStatementInit::ObjectExpression(_)
+        | ForStatementInit::ParenthesizedExpression(_)
+        | ForStatementInit::SequenceExpression(_)
+        | ForStatementInit::TaggedTemplateExpression(_)
+        | ForStatementInit::ThisExpression(_)
+        | ForStatementInit::UnaryExpression(_)
+        | ForStatementInit::UpdateExpression(_)
+        | ForStatementInit::YieldExpression(_)
+        | ForStatementInit::PrivateInExpression(_)
+        | ForStatementInit::JSXElement(_)
+        | ForStatementInit::JSXFragment(_)
+        | ForStatementInit::TSAsExpression(_)
+        | ForStatementInit::TSSatisfiesExpression(_)
+        | ForStatementInit::TSTypeAssertion(_)
+        | ForStatementInit::TSNonNullExpression(_)
+        | ForStatementInit::TSInstantiationExpression(_)
+        | ForStatementInit::ComputedMemberExpression(_)
+        | ForStatementInit::StaticMemberExpression(_)
+        | ForStatementInit::PrivateFieldExpression(_) => {
+            walk_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_for_statement_init(&mut *node, ctx);
@@ -1598,8 +1788,17 @@ pub(super) unsafe fn walk_for_statement_left<'a, Tr: Traverse<'a>>(
         ForStatementLeft::UsingDeclaration(node) => {
             walk_using_declaration(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_assignment_target!(ForStatementLeft) => {
-            walk_assignment_target(traverser, node.to_assignment_target_mut() as *mut _, ctx)
+        ForStatementLeft::AssignmentTargetIdentifier(_)
+        | ForStatementLeft::TSAsExpression(_)
+        | ForStatementLeft::TSSatisfiesExpression(_)
+        | ForStatementLeft::TSNonNullExpression(_)
+        | ForStatementLeft::TSTypeAssertion(_)
+        | ForStatementLeft::ArrayAssignmentTarget(_)
+        | ForStatementLeft::ObjectAssignmentTarget(_)
+        | ForStatementLeft::ComputedMemberExpression(_)
+        | ForStatementLeft::StaticMemberExpression(_)
+        | ForStatementLeft::PrivateFieldExpression(_) => {
+            walk_assignment_target(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_for_statement_left(&mut *node, ctx);
@@ -2811,8 +3010,49 @@ pub(super) unsafe fn walk_export_default_declaration_kind<'a, Tr: Traverse<'a>>(
         ExportDefaultDeclarationKind::TSEnumDeclaration(node) => {
             walk_ts_enum_declaration(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_expression!(ExportDefaultDeclarationKind) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
+        ExportDefaultDeclarationKind::BooleanLiteral(_)
+        | ExportDefaultDeclarationKind::NullLiteral(_)
+        | ExportDefaultDeclarationKind::NumericLiteral(_)
+        | ExportDefaultDeclarationKind::BigintLiteral(_)
+        | ExportDefaultDeclarationKind::RegExpLiteral(_)
+        | ExportDefaultDeclarationKind::StringLiteral(_)
+        | ExportDefaultDeclarationKind::TemplateLiteral(_)
+        | ExportDefaultDeclarationKind::Identifier(_)
+        | ExportDefaultDeclarationKind::MetaProperty(_)
+        | ExportDefaultDeclarationKind::Super(_)
+        | ExportDefaultDeclarationKind::ArrayExpression(_)
+        | ExportDefaultDeclarationKind::ArrowFunctionExpression(_)
+        | ExportDefaultDeclarationKind::AssignmentExpression(_)
+        | ExportDefaultDeclarationKind::AwaitExpression(_)
+        | ExportDefaultDeclarationKind::BinaryExpression(_)
+        | ExportDefaultDeclarationKind::CallExpression(_)
+        | ExportDefaultDeclarationKind::ChainExpression(_)
+        | ExportDefaultDeclarationKind::ClassExpression(_)
+        | ExportDefaultDeclarationKind::ConditionalExpression(_)
+        | ExportDefaultDeclarationKind::FunctionExpression(_)
+        | ExportDefaultDeclarationKind::ImportExpression(_)
+        | ExportDefaultDeclarationKind::LogicalExpression(_)
+        | ExportDefaultDeclarationKind::NewExpression(_)
+        | ExportDefaultDeclarationKind::ObjectExpression(_)
+        | ExportDefaultDeclarationKind::ParenthesizedExpression(_)
+        | ExportDefaultDeclarationKind::SequenceExpression(_)
+        | ExportDefaultDeclarationKind::TaggedTemplateExpression(_)
+        | ExportDefaultDeclarationKind::ThisExpression(_)
+        | ExportDefaultDeclarationKind::UnaryExpression(_)
+        | ExportDefaultDeclarationKind::UpdateExpression(_)
+        | ExportDefaultDeclarationKind::YieldExpression(_)
+        | ExportDefaultDeclarationKind::PrivateInExpression(_)
+        | ExportDefaultDeclarationKind::JSXElement(_)
+        | ExportDefaultDeclarationKind::JSXFragment(_)
+        | ExportDefaultDeclarationKind::TSAsExpression(_)
+        | ExportDefaultDeclarationKind::TSSatisfiesExpression(_)
+        | ExportDefaultDeclarationKind::TSTypeAssertion(_)
+        | ExportDefaultDeclarationKind::TSNonNullExpression(_)
+        | ExportDefaultDeclarationKind::TSInstantiationExpression(_)
+        | ExportDefaultDeclarationKind::ComputedMemberExpression(_)
+        | ExportDefaultDeclarationKind::StaticMemberExpression(_)
+        | ExportDefaultDeclarationKind::PrivateFieldExpression(_) => {
+            walk_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_export_default_declaration_kind(&mut *node, ctx);
@@ -3047,8 +3287,49 @@ pub(super) unsafe fn walk_jsx_expression<'a, Tr: Traverse<'a>>(
         JSXExpression::EmptyExpression(node) => {
             walk_jsx_empty_expression(traverser, node as *mut _, ctx)
         }
-        node @ match_expression!(JSXExpression) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
+        JSXExpression::BooleanLiteral(_)
+        | JSXExpression::NullLiteral(_)
+        | JSXExpression::NumericLiteral(_)
+        | JSXExpression::BigintLiteral(_)
+        | JSXExpression::RegExpLiteral(_)
+        | JSXExpression::StringLiteral(_)
+        | JSXExpression::TemplateLiteral(_)
+        | JSXExpression::Identifier(_)
+        | JSXExpression::MetaProperty(_)
+        | JSXExpression::Super(_)
+        | JSXExpression::ArrayExpression(_)
+        | JSXExpression::ArrowFunctionExpression(_)
+        | JSXExpression::AssignmentExpression(_)
+        | JSXExpression::AwaitExpression(_)
+        | JSXExpression::BinaryExpression(_)
+        | JSXExpression::CallExpression(_)
+        | JSXExpression::ChainExpression(_)
+        | JSXExpression::ClassExpression(_)
+        | JSXExpression::ConditionalExpression(_)
+        | JSXExpression::FunctionExpression(_)
+        | JSXExpression::ImportExpression(_)
+        | JSXExpression::LogicalExpression(_)
+        | JSXExpression::NewExpression(_)
+        | JSXExpression::ObjectExpression(_)
+        | JSXExpression::ParenthesizedExpression(_)
+        | JSXExpression::SequenceExpression(_)
+        | JSXExpression::TaggedTemplateExpression(_)
+        | JSXExpression::ThisExpression(_)
+        | JSXExpression::UnaryExpression(_)
+        | JSXExpression::UpdateExpression(_)
+        | JSXExpression::YieldExpression(_)
+        | JSXExpression::PrivateInExpression(_)
+        | JSXExpression::JSXElement(_)
+        | JSXExpression::JSXFragment(_)
+        | JSXExpression::TSAsExpression(_)
+        | JSXExpression::TSSatisfiesExpression(_)
+        | JSXExpression::TSTypeAssertion(_)
+        | JSXExpression::TSNonNullExpression(_)
+        | JSXExpression::TSInstantiationExpression(_)
+        | JSXExpression::ComputedMemberExpression(_)
+        | JSXExpression::StaticMemberExpression(_)
+        | JSXExpression::PrivateFieldExpression(_) => {
+            walk_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_jsx_expression(&mut *node, ctx);
@@ -3363,8 +3644,49 @@ pub(super) unsafe fn walk_ts_enum_member_name<'a, Tr: Traverse<'a>>(
         TSEnumMemberName::StaticNumericLiteral(node) => {
             walk_numeric_literal(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_expression!(TSEnumMemberName) => {
-            walk_expression(traverser, node.to_expression_mut() as *mut _, ctx)
+        TSEnumMemberName::BooleanLiteral(_)
+        | TSEnumMemberName::NullLiteral(_)
+        | TSEnumMemberName::NumericLiteral(_)
+        | TSEnumMemberName::BigintLiteral(_)
+        | TSEnumMemberName::RegExpLiteral(_)
+        | TSEnumMemberName::StringLiteral(_)
+        | TSEnumMemberName::TemplateLiteral(_)
+        | TSEnumMemberName::Identifier(_)
+        | TSEnumMemberName::MetaProperty(_)
+        | TSEnumMemberName::Super(_)
+        | TSEnumMemberName::ArrayExpression(_)
+        | TSEnumMemberName::ArrowFunctionExpression(_)
+        | TSEnumMemberName::AssignmentExpression(_)
+        | TSEnumMemberName::AwaitExpression(_)
+        | TSEnumMemberName::BinaryExpression(_)
+        | TSEnumMemberName::CallExpression(_)
+        | TSEnumMemberName::ChainExpression(_)
+        | TSEnumMemberName::ClassExpression(_)
+        | TSEnumMemberName::ConditionalExpression(_)
+        | TSEnumMemberName::FunctionExpression(_)
+        | TSEnumMemberName::ImportExpression(_)
+        | TSEnumMemberName::LogicalExpression(_)
+        | TSEnumMemberName::NewExpression(_)
+        | TSEnumMemberName::ObjectExpression(_)
+        | TSEnumMemberName::ParenthesizedExpression(_)
+        | TSEnumMemberName::SequenceExpression(_)
+        | TSEnumMemberName::TaggedTemplateExpression(_)
+        | TSEnumMemberName::ThisExpression(_)
+        | TSEnumMemberName::UnaryExpression(_)
+        | TSEnumMemberName::UpdateExpression(_)
+        | TSEnumMemberName::YieldExpression(_)
+        | TSEnumMemberName::PrivateInExpression(_)
+        | TSEnumMemberName::JSXElement(_)
+        | TSEnumMemberName::JSXFragment(_)
+        | TSEnumMemberName::TSAsExpression(_)
+        | TSEnumMemberName::TSSatisfiesExpression(_)
+        | TSEnumMemberName::TSTypeAssertion(_)
+        | TSEnumMemberName::TSNonNullExpression(_)
+        | TSEnumMemberName::TSInstantiationExpression(_)
+        | TSEnumMemberName::ComputedMemberExpression(_)
+        | TSEnumMemberName::StaticMemberExpression(_)
+        | TSEnumMemberName::PrivateFieldExpression(_) => {
+            walk_expression(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_ts_enum_member_name(&mut *node, ctx);
@@ -3761,9 +4083,41 @@ pub(super) unsafe fn walk_ts_tuple_element<'a, Tr: Traverse<'a>>(
         TSTupleElement::TSRestType(node) => {
             walk_ts_rest_type(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_ts_type!(TSTupleElement) => {
-            walk_ts_type(traverser, node.to_ts_type_mut() as *mut _, ctx)
-        }
+        TSTupleElement::TSAnyKeyword(_)
+        | TSTupleElement::TSBigIntKeyword(_)
+        | TSTupleElement::TSBooleanKeyword(_)
+        | TSTupleElement::TSNeverKeyword(_)
+        | TSTupleElement::TSNullKeyword(_)
+        | TSTupleElement::TSNumberKeyword(_)
+        | TSTupleElement::TSObjectKeyword(_)
+        | TSTupleElement::TSStringKeyword(_)
+        | TSTupleElement::TSSymbolKeyword(_)
+        | TSTupleElement::TSThisType(_)
+        | TSTupleElement::TSUndefinedKeyword(_)
+        | TSTupleElement::TSUnknownKeyword(_)
+        | TSTupleElement::TSVoidKeyword(_)
+        | TSTupleElement::TSArrayType(_)
+        | TSTupleElement::TSConditionalType(_)
+        | TSTupleElement::TSConstructorType(_)
+        | TSTupleElement::TSFunctionType(_)
+        | TSTupleElement::TSImportType(_)
+        | TSTupleElement::TSIndexedAccessType(_)
+        | TSTupleElement::TSInferType(_)
+        | TSTupleElement::TSIntersectionType(_)
+        | TSTupleElement::TSLiteralType(_)
+        | TSTupleElement::TSMappedType(_)
+        | TSTupleElement::TSNamedTupleMember(_)
+        | TSTupleElement::TSQualifiedName(_)
+        | TSTupleElement::TSTemplateLiteralType(_)
+        | TSTupleElement::TSTupleType(_)
+        | TSTupleElement::TSTypeLiteral(_)
+        | TSTupleElement::TSTypeOperatorType(_)
+        | TSTupleElement::TSTypePredicate(_)
+        | TSTupleElement::TSTypeQuery(_)
+        | TSTupleElement::TSTypeReference(_)
+        | TSTupleElement::TSUnionType(_)
+        | TSTupleElement::JSDocNullableType(_)
+        | TSTupleElement::JSDocUnknownType(_) => walk_ts_type(traverser, node as *mut _, ctx),
     }
     traverser.exit_ts_tuple_element(&mut *node, ctx);
 }
@@ -4565,8 +4919,8 @@ pub(super) unsafe fn walk_ts_type_query_expr_name<'a, Tr: Traverse<'a>>(
         TSTypeQueryExprName::TSImportType(node) => {
             walk_ts_import_type(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_ts_type_name!(TSTypeQueryExprName) => {
-            walk_ts_type_name(traverser, node.to_ts_type_name_mut() as *mut _, ctx)
+        TSTypeQueryExprName::IdentifierReference(_) | TSTypeQueryExprName::QualifiedName(_) => {
+            walk_ts_type_name(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_ts_type_query_expr_name(&mut *node, ctx);
@@ -4907,8 +5261,8 @@ pub(super) unsafe fn walk_ts_module_reference<'a, Tr: Traverse<'a>>(
         TSModuleReference::ExternalModuleReference(node) => {
             walk_ts_external_module_reference(traverser, (&mut **node) as *mut _, ctx)
         }
-        node @ match_ts_type_name!(TSModuleReference) => {
-            walk_ts_type_name(traverser, node.to_ts_type_name_mut() as *mut _, ctx)
+        TSModuleReference::IdentifierReference(_) | TSModuleReference::QualifiedName(_) => {
+            walk_ts_type_name(traverser, node as *mut _, ctx)
         }
     }
     traverser.exit_ts_module_reference(&mut *node, ctx);
