@@ -1,9 +1,8 @@
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, Item};
+use syn::parse_macro_input;
 
 mod declare_all_lint_rules;
 mod declare_oxc_lint;
-mod visited_node;
 
 /// Macro used to declare an oxc lint rule
 ///
@@ -58,8 +57,9 @@ pub fn declare_all_lint_rules(input: TokenStream) -> TokenStream {
     declare_all_lint_rules::declare_all_lint_rules(metadata)
 }
 
+/// Attach to AST node type (struct or enum), to signal to codegen to create visitor for this type.
+/// Macro itself does nothing - just passes through the token stream unchanged.
 #[proc_macro_attribute]
 pub fn visited_node(_args: TokenStream, input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as Item);
-    visited_node::visited_node(input).into()
+    input
 }
