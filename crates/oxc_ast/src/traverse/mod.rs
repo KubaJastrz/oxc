@@ -11,12 +11,14 @@ mod traverse;
 pub use traverse::Traverse;
 mod walk;
 
+#[allow(unsafe_code)]
 pub fn traverse_mut<'a, Tr: Traverse<'a>>(
     traverser: &mut Tr,
     program: &mut Program<'a>,
     allocator: &'a Allocator,
 ) {
     let mut ctx = TraverseCtx::new(allocator);
-    walk::walk_program(traverser, program, &mut ctx);
+    // SAFETY: Walk functions are constructed to avoid unsoundness
+    unsafe { walk::walk_program(traverser, program as *mut Program, &mut ctx) };
     debug_assert!(ctx.stack_is_empty());
 }

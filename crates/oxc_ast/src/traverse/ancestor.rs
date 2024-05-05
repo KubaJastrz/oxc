@@ -7,6 +7,8 @@
     clippy::undocumented_unsafe_blocks,
     clippy::cast_ptr_alignment
 )]
+// TODO: Remove unneeded offset consts, then remove next line
+#![allow(dead_code)]
 
 use std::{marker::PhantomData, mem::offset_of};
 
@@ -1803,11 +1805,11 @@ impl<'a> Ancestor<'a> {
     }
 }
 
-const OFFSET_PROGRAM_SPAN: usize = offset_of!(Program, span);
-const OFFSET_PROGRAM_SOURCE_TYPE: usize = offset_of!(Program, source_type);
-const OFFSET_PROGRAM_HASHBANG: usize = offset_of!(Program, hashbang);
-const OFFSET_PROGRAM_BODY: usize = offset_of!(Program, body);
-const OFFSET_PROGRAM_DIRECTIVES: usize = offset_of!(Program, directives);
+pub(super) const OFFSET_PROGRAM_SPAN: usize = offset_of!(Program, span);
+pub(super) const OFFSET_PROGRAM_SOURCE_TYPE: usize = offset_of!(Program, source_type);
+pub(super) const OFFSET_PROGRAM_DIRECTIVES: usize = offset_of!(Program, directives);
+pub(super) const OFFSET_PROGRAM_HASHBANG: usize = offset_of!(Program, hashbang);
+pub(super) const OFFSET_PROGRAM_BODY: usize = offset_of!(Program, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -1886,9 +1888,25 @@ impl<'a> ProgramWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_PROGRAM_HASHBANG) as *const Option<Hashbang<'a>>) }
     }
 }
-
-const OFFSET_ARRAY_EXPRESSION_SPAN: usize = offset_of!(ArrayExpression, span);
-const OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA: usize = offset_of!(ArrayExpression, trailing_comma);
+pub(super) const OFFSET_IDENTIFIER_NAME_SPAN: usize = offset_of!(IdentifierName, span);
+pub(super) const OFFSET_IDENTIFIER_NAME_NAME: usize = offset_of!(IdentifierName, name);
+pub(super) const OFFSET_IDENTIFIER_REFERENCE_SPAN: usize = offset_of!(IdentifierReference, span);
+pub(super) const OFFSET_IDENTIFIER_REFERENCE_NAME: usize = offset_of!(IdentifierReference, name);
+pub(super) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_ID: usize =
+    offset_of!(IdentifierReference, reference_id);
+pub(super) const OFFSET_IDENTIFIER_REFERENCE_REFERENCE_FLAG: usize =
+    offset_of!(IdentifierReference, reference_flag);
+pub(super) const OFFSET_BINDING_IDENTIFIER_SPAN: usize = offset_of!(BindingIdentifier, span);
+pub(super) const OFFSET_BINDING_IDENTIFIER_NAME: usize = offset_of!(BindingIdentifier, name);
+pub(super) const OFFSET_BINDING_IDENTIFIER_SYMBOL_ID: usize =
+    offset_of!(BindingIdentifier, symbol_id);
+pub(super) const OFFSET_LABEL_IDENTIFIER_SPAN: usize = offset_of!(LabelIdentifier, span);
+pub(super) const OFFSET_LABEL_IDENTIFIER_NAME: usize = offset_of!(LabelIdentifier, name);
+pub(super) const OFFSET_THIS_EXPRESSION_SPAN: usize = offset_of!(ThisExpression, span);
+pub(super) const OFFSET_ARRAY_EXPRESSION_SPAN: usize = offset_of!(ArrayExpression, span);
+pub(super) const OFFSET_ARRAY_EXPRESSION_ELEMENTS: usize = offset_of!(ArrayExpression, elements);
+pub(super) const OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA: usize =
+    offset_of!(ArrayExpression, trailing_comma);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -1905,9 +1923,12 @@ impl ArrayExpressionWithoutElements {
         unsafe { &*(self.0.add(OFFSET_ARRAY_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
     }
 }
-
-const OFFSET_OBJECT_EXPRESSION_SPAN: usize = offset_of!(ObjectExpression, span);
-const OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA: usize = offset_of!(ObjectExpression, trailing_comma);
+pub(super) const OFFSET_ELISION_SPAN: usize = offset_of!(Elision, span);
+pub(super) const OFFSET_OBJECT_EXPRESSION_SPAN: usize = offset_of!(ObjectExpression, span);
+pub(super) const OFFSET_OBJECT_EXPRESSION_PROPERTIES: usize =
+    offset_of!(ObjectExpression, properties);
+pub(super) const OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA: usize =
+    offset_of!(ObjectExpression, trailing_comma);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -1924,15 +1945,14 @@ impl ObjectExpressionWithoutProperties {
         unsafe { &*(self.0.add(OFFSET_OBJECT_EXPRESSION_TRAILING_COMMA) as *const Option<Span>) }
     }
 }
-
-const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
-const OFFSET_OBJECT_PROPERTY_VALUE: usize = offset_of!(ObjectProperty, value);
-const OFFSET_OBJECT_PROPERTY_INIT: usize = offset_of!(ObjectProperty, init);
-const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
-const OFFSET_OBJECT_PROPERTY_METHOD: usize = offset_of!(ObjectProperty, method);
-const OFFSET_OBJECT_PROPERTY_SHORTHAND: usize = offset_of!(ObjectProperty, shorthand);
-const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectProperty, computed);
-const OFFSET_OBJECT_PROPERTY_KEY: usize = offset_of!(ObjectProperty, key);
+pub(super) const OFFSET_OBJECT_PROPERTY_SPAN: usize = offset_of!(ObjectProperty, span);
+pub(super) const OFFSET_OBJECT_PROPERTY_KEY: usize = offset_of!(ObjectProperty, key);
+pub(super) const OFFSET_OBJECT_PROPERTY_VALUE: usize = offset_of!(ObjectProperty, value);
+pub(super) const OFFSET_OBJECT_PROPERTY_INIT: usize = offset_of!(ObjectProperty, init);
+pub(super) const OFFSET_OBJECT_PROPERTY_KIND: usize = offset_of!(ObjectProperty, kind);
+pub(super) const OFFSET_OBJECT_PROPERTY_METHOD: usize = offset_of!(ObjectProperty, method);
+pub(super) const OFFSET_OBJECT_PROPERTY_SHORTHAND: usize = offset_of!(ObjectProperty, shorthand);
+pub(super) const OFFSET_OBJECT_PROPERTY_COMPUTED: usize = offset_of!(ObjectProperty, computed);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2056,10 +2076,10 @@ impl<'a> ObjectPropertyWithoutInit<'a> {
         unsafe { &*(self.0.add(OFFSET_OBJECT_PROPERTY_COMPUTED) as *const bool) }
     }
 }
-
-const OFFSET_TEMPLATE_LITERAL_SPAN: usize = offset_of!(TemplateLiteral, span);
-const OFFSET_TEMPLATE_LITERAL_EXPRESSIONS: usize = offset_of!(TemplateLiteral, expressions);
-const OFFSET_TEMPLATE_LITERAL_QUASIS: usize = offset_of!(TemplateLiteral, quasis);
+pub(super) const OFFSET_TEMPLATE_LITERAL_SPAN: usize = offset_of!(TemplateLiteral, span);
+pub(super) const OFFSET_TEMPLATE_LITERAL_QUASIS: usize = offset_of!(TemplateLiteral, quasis);
+pub(super) const OFFSET_TEMPLATE_LITERAL_EXPRESSIONS: usize =
+    offset_of!(TemplateLiteral, expressions);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2099,12 +2119,14 @@ impl<'a> TemplateLiteralWithoutExpressions<'a> {
         }
     }
 }
-
-const OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN: usize = offset_of!(TaggedTemplateExpression, span);
-const OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI: usize = offset_of!(TaggedTemplateExpression, quasi);
-const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_SPAN: usize =
+    offset_of!(TaggedTemplateExpression, span);
+pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG: usize =
+    offset_of!(TaggedTemplateExpression, tag);
+pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_QUASI: usize =
+    offset_of!(TaggedTemplateExpression, quasi);
+pub(super) const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(TaggedTemplateExpression, type_parameters);
-const OFFSET_TAGGED_TEMPLATE_EXPRESSION_TAG: usize = offset_of!(TaggedTemplateExpression, tag);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2187,14 +2209,17 @@ impl<'a> TaggedTemplateExpressionWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN: usize = offset_of!(ComputedMemberExpression, span);
-const OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION: usize =
-    offset_of!(ComputedMemberExpression, expression);
-const OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL: usize =
-    offset_of!(ComputedMemberExpression, optional);
-const OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT: usize =
+pub(super) const OFFSET_TEMPLATE_ELEMENT_SPAN: usize = offset_of!(TemplateElement, span);
+pub(super) const OFFSET_TEMPLATE_ELEMENT_TAIL: usize = offset_of!(TemplateElement, tail);
+pub(super) const OFFSET_TEMPLATE_ELEMENT_VALUE: usize = offset_of!(TemplateElement, value);
+pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_SPAN: usize =
+    offset_of!(ComputedMemberExpression, span);
+pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OBJECT: usize =
     offset_of!(ComputedMemberExpression, object);
+pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_EXPRESSION: usize =
+    offset_of!(ComputedMemberExpression, expression);
+pub(super) const OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL: usize =
+    offset_of!(ComputedMemberExpression, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2245,13 +2270,14 @@ impl<'a> ComputedMemberExpressionWithoutExpression<'a> {
         unsafe { &*(self.0.add(OFFSET_COMPUTED_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_STATIC_MEMBER_EXPRESSION_SPAN: usize = offset_of!(StaticMemberExpression, span);
-const OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY: usize =
+pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_SPAN: usize =
+    offset_of!(StaticMemberExpression, span);
+pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT: usize =
+    offset_of!(StaticMemberExpression, object);
+pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_PROPERTY: usize =
     offset_of!(StaticMemberExpression, property);
-const OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL: usize =
+pub(super) const OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL: usize =
     offset_of!(StaticMemberExpression, optional);
-const OFFSET_STATIC_MEMBER_EXPRESSION_OBJECT: usize = offset_of!(StaticMemberExpression, object);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2302,12 +2328,14 @@ impl<'a> StaticMemberExpressionWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_STATIC_MEMBER_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN: usize = offset_of!(PrivateFieldExpression, span);
-const OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD: usize = offset_of!(PrivateFieldExpression, field);
-const OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL: usize =
+pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_SPAN: usize =
+    offset_of!(PrivateFieldExpression, span);
+pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT: usize =
+    offset_of!(PrivateFieldExpression, object);
+pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_FIELD: usize =
+    offset_of!(PrivateFieldExpression, field);
+pub(super) const OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL: usize =
     offset_of!(PrivateFieldExpression, optional);
-const OFFSET_PRIVATE_FIELD_EXPRESSION_OBJECT: usize = offset_of!(PrivateFieldExpression, object);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2358,12 +2386,12 @@ impl<'a> PrivateFieldExpressionWithoutField<'a> {
         unsafe { &*(self.0.add(OFFSET_PRIVATE_FIELD_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_CALL_EXPRESSION_SPAN: usize = offset_of!(CallExpression, span);
-const OFFSET_CALL_EXPRESSION_ARGUMENTS: usize = offset_of!(CallExpression, arguments);
-const OFFSET_CALL_EXPRESSION_OPTIONAL: usize = offset_of!(CallExpression, optional);
-const OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS: usize = offset_of!(CallExpression, type_parameters);
-const OFFSET_CALL_EXPRESSION_CALLEE: usize = offset_of!(CallExpression, callee);
+pub(super) const OFFSET_CALL_EXPRESSION_SPAN: usize = offset_of!(CallExpression, span);
+pub(super) const OFFSET_CALL_EXPRESSION_CALLEE: usize = offset_of!(CallExpression, callee);
+pub(super) const OFFSET_CALL_EXPRESSION_ARGUMENTS: usize = offset_of!(CallExpression, arguments);
+pub(super) const OFFSET_CALL_EXPRESSION_OPTIONAL: usize = offset_of!(CallExpression, optional);
+pub(super) const OFFSET_CALL_EXPRESSION_TYPE_PARAMETERS: usize =
+    offset_of!(CallExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2451,11 +2479,11 @@ impl<'a> CallExpressionWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_CALL_EXPRESSION_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_NEW_EXPRESSION_SPAN: usize = offset_of!(NewExpression, span);
-const OFFSET_NEW_EXPRESSION_ARGUMENTS: usize = offset_of!(NewExpression, arguments);
-const OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS: usize = offset_of!(NewExpression, type_parameters);
-const OFFSET_NEW_EXPRESSION_CALLEE: usize = offset_of!(NewExpression, callee);
+pub(super) const OFFSET_NEW_EXPRESSION_SPAN: usize = offset_of!(NewExpression, span);
+pub(super) const OFFSET_NEW_EXPRESSION_CALLEE: usize = offset_of!(NewExpression, callee);
+pub(super) const OFFSET_NEW_EXPRESSION_ARGUMENTS: usize = offset_of!(NewExpression, arguments);
+pub(super) const OFFSET_NEW_EXPRESSION_TYPE_PARAMETERS: usize =
+    offset_of!(NewExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2528,10 +2556,9 @@ impl<'a> NewExpressionWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_NEW_EXPRESSION_ARGUMENTS) as *const Vec<'a, Argument<'a>>) }
     }
 }
-
-const OFFSET_META_PROPERTY_SPAN: usize = offset_of!(MetaProperty, span);
-const OFFSET_META_PROPERTY_PROPERTY: usize = offset_of!(MetaProperty, property);
-const OFFSET_META_PROPERTY_META: usize = offset_of!(MetaProperty, meta);
+pub(super) const OFFSET_META_PROPERTY_SPAN: usize = offset_of!(MetaProperty, span);
+pub(super) const OFFSET_META_PROPERTY_META: usize = offset_of!(MetaProperty, meta);
+pub(super) const OFFSET_META_PROPERTY_PROPERTY: usize = offset_of!(MetaProperty, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2564,8 +2591,8 @@ impl<'a> MetaPropertyWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_META_PROPERTY_META) as *const IdentifierName<'a>) }
     }
 }
-
-const OFFSET_SPREAD_ELEMENT_SPAN: usize = offset_of!(SpreadElement, span);
+pub(super) const OFFSET_SPREAD_ELEMENT_SPAN: usize = offset_of!(SpreadElement, span);
+pub(super) const OFFSET_SPREAD_ELEMENT_ARGUMENT: usize = offset_of!(SpreadElement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2577,10 +2604,10 @@ impl SpreadElementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_SPREAD_ELEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_UPDATE_EXPRESSION_SPAN: usize = offset_of!(UpdateExpression, span);
-const OFFSET_UPDATE_EXPRESSION_OPERATOR: usize = offset_of!(UpdateExpression, operator);
-const OFFSET_UPDATE_EXPRESSION_PREFIX: usize = offset_of!(UpdateExpression, prefix);
+pub(super) const OFFSET_UPDATE_EXPRESSION_SPAN: usize = offset_of!(UpdateExpression, span);
+pub(super) const OFFSET_UPDATE_EXPRESSION_OPERATOR: usize = offset_of!(UpdateExpression, operator);
+pub(super) const OFFSET_UPDATE_EXPRESSION_PREFIX: usize = offset_of!(UpdateExpression, prefix);
+pub(super) const OFFSET_UPDATE_EXPRESSION_ARGUMENT: usize = offset_of!(UpdateExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2602,9 +2629,9 @@ impl UpdateExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_UPDATE_EXPRESSION_PREFIX) as *const bool) }
     }
 }
-
-const OFFSET_UNARY_EXPRESSION_SPAN: usize = offset_of!(UnaryExpression, span);
-const OFFSET_UNARY_EXPRESSION_OPERATOR: usize = offset_of!(UnaryExpression, operator);
+pub(super) const OFFSET_UNARY_EXPRESSION_SPAN: usize = offset_of!(UnaryExpression, span);
+pub(super) const OFFSET_UNARY_EXPRESSION_OPERATOR: usize = offset_of!(UnaryExpression, operator);
+pub(super) const OFFSET_UNARY_EXPRESSION_ARGUMENT: usize = offset_of!(UnaryExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2621,11 +2648,10 @@ impl UnaryExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_UNARY_EXPRESSION_OPERATOR) as *const UnaryOperator) }
     }
 }
-
-const OFFSET_BINARY_EXPRESSION_SPAN: usize = offset_of!(BinaryExpression, span);
-const OFFSET_BINARY_EXPRESSION_OPERATOR: usize = offset_of!(BinaryExpression, operator);
-const OFFSET_BINARY_EXPRESSION_RIGHT: usize = offset_of!(BinaryExpression, right);
-const OFFSET_BINARY_EXPRESSION_LEFT: usize = offset_of!(BinaryExpression, left);
+pub(super) const OFFSET_BINARY_EXPRESSION_SPAN: usize = offset_of!(BinaryExpression, span);
+pub(super) const OFFSET_BINARY_EXPRESSION_LEFT: usize = offset_of!(BinaryExpression, left);
+pub(super) const OFFSET_BINARY_EXPRESSION_OPERATOR: usize = offset_of!(BinaryExpression, operator);
+pub(super) const OFFSET_BINARY_EXPRESSION_RIGHT: usize = offset_of!(BinaryExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2668,11 +2694,11 @@ impl<'a> BinaryExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_BINARY_EXPRESSION_OPERATOR) as *const BinaryOperator) }
     }
 }
-
-const OFFSET_PRIVATE_IN_EXPRESSION_SPAN: usize = offset_of!(PrivateInExpression, span);
-const OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR: usize = offset_of!(PrivateInExpression, operator);
-const OFFSET_PRIVATE_IN_EXPRESSION_RIGHT: usize = offset_of!(PrivateInExpression, right);
-const OFFSET_PRIVATE_IN_EXPRESSION_LEFT: usize = offset_of!(PrivateInExpression, left);
+pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_SPAN: usize = offset_of!(PrivateInExpression, span);
+pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_LEFT: usize = offset_of!(PrivateInExpression, left);
+pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR: usize =
+    offset_of!(PrivateInExpression, operator);
+pub(super) const OFFSET_PRIVATE_IN_EXPRESSION_RIGHT: usize = offset_of!(PrivateInExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2718,11 +2744,11 @@ impl<'a> PrivateInExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_PRIVATE_IN_EXPRESSION_OPERATOR) as *const BinaryOperator) }
     }
 }
-
-const OFFSET_LOGICAL_EXPRESSION_SPAN: usize = offset_of!(LogicalExpression, span);
-const OFFSET_LOGICAL_EXPRESSION_OPERATOR: usize = offset_of!(LogicalExpression, operator);
-const OFFSET_LOGICAL_EXPRESSION_RIGHT: usize = offset_of!(LogicalExpression, right);
-const OFFSET_LOGICAL_EXPRESSION_LEFT: usize = offset_of!(LogicalExpression, left);
+pub(super) const OFFSET_LOGICAL_EXPRESSION_SPAN: usize = offset_of!(LogicalExpression, span);
+pub(super) const OFFSET_LOGICAL_EXPRESSION_LEFT: usize = offset_of!(LogicalExpression, left);
+pub(super) const OFFSET_LOGICAL_EXPRESSION_OPERATOR: usize =
+    offset_of!(LogicalExpression, operator);
+pub(super) const OFFSET_LOGICAL_EXPRESSION_RIGHT: usize = offset_of!(LogicalExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2765,12 +2791,14 @@ impl<'a> LogicalExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_LOGICAL_EXPRESSION_OPERATOR) as *const LogicalOperator) }
     }
 }
-
-const OFFSET_CONDITIONAL_EXPRESSION_SPAN: usize = offset_of!(ConditionalExpression, span);
-const OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT: usize =
+pub(super) const OFFSET_CONDITIONAL_EXPRESSION_SPAN: usize =
+    offset_of!(ConditionalExpression, span);
+pub(super) const OFFSET_CONDITIONAL_EXPRESSION_TEST: usize =
+    offset_of!(ConditionalExpression, test);
+pub(super) const OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT: usize =
     offset_of!(ConditionalExpression, consequent);
-const OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE: usize = offset_of!(ConditionalExpression, alternate);
-const OFFSET_CONDITIONAL_EXPRESSION_TEST: usize = offset_of!(ConditionalExpression, test);
+pub(super) const OFFSET_CONDITIONAL_EXPRESSION_ALTERNATE: usize =
+    offset_of!(ConditionalExpression, alternate);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2843,11 +2871,12 @@ impl<'a> ConditionalExpressionWithoutAlternate<'a> {
         unsafe { &*(self.0.add(OFFSET_CONDITIONAL_EXPRESSION_CONSEQUENT) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_ASSIGNMENT_EXPRESSION_SPAN: usize = offset_of!(AssignmentExpression, span);
-const OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR: usize = offset_of!(AssignmentExpression, operator);
-const OFFSET_ASSIGNMENT_EXPRESSION_RIGHT: usize = offset_of!(AssignmentExpression, right);
-const OFFSET_ASSIGNMENT_EXPRESSION_LEFT: usize = offset_of!(AssignmentExpression, left);
+pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_SPAN: usize = offset_of!(AssignmentExpression, span);
+pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_OPERATOR: usize =
+    offset_of!(AssignmentExpression, operator);
+pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_LEFT: usize = offset_of!(AssignmentExpression, left);
+pub(super) const OFFSET_ASSIGNMENT_EXPRESSION_RIGHT: usize =
+    offset_of!(AssignmentExpression, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2900,12 +2929,14 @@ impl<'a> AssignmentExpressionWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_EXPRESSION_LEFT) as *const AssignmentTarget<'a>) }
     }
 }
-
-const OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN: usize = offset_of!(ArrayAssignmentTarget, span);
-const OFFSET_ARRAY_ASSIGNMENT_TARGET_REST: usize = offset_of!(ArrayAssignmentTarget, rest);
-const OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA: usize =
+pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_SPAN: usize =
+    offset_of!(ArrayAssignmentTarget, span);
+pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS: usize =
+    offset_of!(ArrayAssignmentTarget, elements);
+pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_REST: usize =
+    offset_of!(ArrayAssignmentTarget, rest);
+pub(super) const OFFSET_ARRAY_ASSIGNMENT_TARGET_TRAILING_COMMA: usize =
     offset_of!(ArrayAssignmentTarget, trailing_comma);
-const OFFSET_ARRAY_ASSIGNMENT_TARGET_ELEMENTS: usize = offset_of!(ArrayAssignmentTarget, elements);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -2964,11 +2995,12 @@ impl<'a> ArrayAssignmentTargetWithoutRest<'a> {
         }
     }
 }
-
-const OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN: usize = offset_of!(ObjectAssignmentTarget, span);
-const OFFSET_OBJECT_ASSIGNMENT_TARGET_REST: usize = offset_of!(ObjectAssignmentTarget, rest);
-const OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES: usize =
+pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_SPAN: usize =
+    offset_of!(ObjectAssignmentTarget, span);
+pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_PROPERTIES: usize =
     offset_of!(ObjectAssignmentTarget, properties);
+pub(super) const OFFSET_OBJECT_ASSIGNMENT_TARGET_REST: usize =
+    offset_of!(ObjectAssignmentTarget, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3013,8 +3045,9 @@ impl<'a> ObjectAssignmentTargetWithoutRest<'a> {
         }
     }
 }
-
-const OFFSET_ASSIGNMENT_TARGET_REST_SPAN: usize = offset_of!(AssignmentTargetRest, span);
+pub(super) const OFFSET_ASSIGNMENT_TARGET_REST_SPAN: usize = offset_of!(AssignmentTargetRest, span);
+pub(super) const OFFSET_ASSIGNMENT_TARGET_REST_TARGET: usize =
+    offset_of!(AssignmentTargetRest, target);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3026,13 +3059,12 @@ impl AssignmentTargetRestWithoutTarget {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_TARGET_REST_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_SPAN: usize =
     offset_of!(AssignmentTargetWithDefault, span);
-const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT: usize =
-    offset_of!(AssignmentTargetWithDefault, init);
-const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_BINDING: usize =
     offset_of!(AssignmentTargetWithDefault, binding);
+pub(super) const OFFSET_ASSIGNMENT_TARGET_WITH_DEFAULT_INIT: usize =
+    offset_of!(AssignmentTargetWithDefault, init);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3076,13 +3108,12 @@ impl<'a> AssignmentTargetWithDefaultWithoutInit<'a> {
         }
     }
 }
-
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_SPAN: usize =
     offset_of!(AssignmentTargetPropertyIdentifier, span);
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT: usize =
-    offset_of!(AssignmentTargetPropertyIdentifier, init);
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_BINDING: usize =
     offset_of!(AssignmentTargetPropertyIdentifier, binding);
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_IDENTIFIER_INIT: usize =
+    offset_of!(AssignmentTargetPropertyIdentifier, init);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3127,13 +3158,12 @@ impl<'a> AssignmentTargetPropertyIdentifierWithoutInit<'a> {
         }
     }
 }
-
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_SPAN: usize =
     offset_of!(AssignmentTargetPropertyProperty, span);
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING: usize =
-    offset_of!(AssignmentTargetPropertyProperty, binding);
-const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME: usize =
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_NAME: usize =
     offset_of!(AssignmentTargetPropertyProperty, name);
+pub(super) const OFFSET_ASSIGNMENT_TARGET_PROPERTY_PROPERTY_BINDING: usize =
+    offset_of!(AssignmentTargetPropertyProperty, binding);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3178,8 +3208,9 @@ impl<'a> AssignmentTargetPropertyPropertyWithoutBinding<'a> {
         }
     }
 }
-
-const OFFSET_SEQUENCE_EXPRESSION_SPAN: usize = offset_of!(SequenceExpression, span);
+pub(super) const OFFSET_SEQUENCE_EXPRESSION_SPAN: usize = offset_of!(SequenceExpression, span);
+pub(super) const OFFSET_SEQUENCE_EXPRESSION_EXPRESSIONS: usize =
+    offset_of!(SequenceExpression, expressions);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3191,8 +3222,9 @@ impl SequenceExpressionWithoutExpressions {
         unsafe { &*(self.0.add(OFFSET_SEQUENCE_EXPRESSION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_AWAIT_EXPRESSION_SPAN: usize = offset_of!(AwaitExpression, span);
+pub(super) const OFFSET_SUPER_SPAN: usize = offset_of!(Super, span);
+pub(super) const OFFSET_AWAIT_EXPRESSION_SPAN: usize = offset_of!(AwaitExpression, span);
+pub(super) const OFFSET_AWAIT_EXPRESSION_ARGUMENT: usize = offset_of!(AwaitExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3204,8 +3236,9 @@ impl AwaitExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_AWAIT_EXPRESSION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_CHAIN_EXPRESSION_SPAN: usize = offset_of!(ChainExpression, span);
+pub(super) const OFFSET_CHAIN_EXPRESSION_SPAN: usize = offset_of!(ChainExpression, span);
+pub(super) const OFFSET_CHAIN_EXPRESSION_EXPRESSION: usize =
+    offset_of!(ChainExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3217,8 +3250,10 @@ impl ChainExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_CHAIN_EXPRESSION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_PARENTHESIZED_EXPRESSION_SPAN: usize = offset_of!(ParenthesizedExpression, span);
+pub(super) const OFFSET_PARENTHESIZED_EXPRESSION_SPAN: usize =
+    offset_of!(ParenthesizedExpression, span);
+pub(super) const OFFSET_PARENTHESIZED_EXPRESSION_EXPRESSION: usize =
+    offset_of!(ParenthesizedExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3230,9 +3265,9 @@ impl ParenthesizedExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_PARENTHESIZED_EXPRESSION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_DIRECTIVE_SPAN: usize = offset_of!(Directive, span);
-const OFFSET_DIRECTIVE_DIRECTIVE: usize = offset_of!(Directive, directive);
+pub(super) const OFFSET_DIRECTIVE_SPAN: usize = offset_of!(Directive, span);
+pub(super) const OFFSET_DIRECTIVE_EXPRESSION: usize = offset_of!(Directive, expression);
+pub(super) const OFFSET_DIRECTIVE_DIRECTIVE: usize = offset_of!(Directive, directive);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3249,8 +3284,10 @@ impl<'a> DirectiveWithoutExpression<'a> {
         unsafe { &*(self.0.add(OFFSET_DIRECTIVE_DIRECTIVE) as *const Atom<'a>) }
     }
 }
-
-const OFFSET_BLOCK_STATEMENT_SPAN: usize = offset_of!(BlockStatement, span);
+pub(super) const OFFSET_HASHBANG_SPAN: usize = offset_of!(Hashbang, span);
+pub(super) const OFFSET_HASHBANG_VALUE: usize = offset_of!(Hashbang, value);
+pub(super) const OFFSET_BLOCK_STATEMENT_SPAN: usize = offset_of!(BlockStatement, span);
+pub(super) const OFFSET_BLOCK_STATEMENT_BODY: usize = offset_of!(BlockStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3262,10 +3299,12 @@ impl BlockStatementWithoutBody {
         unsafe { &*(self.0.add(OFFSET_BLOCK_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_VARIABLE_DECLARATION_SPAN: usize = offset_of!(VariableDeclaration, span);
-const OFFSET_VARIABLE_DECLARATION_KIND: usize = offset_of!(VariableDeclaration, kind);
-const OFFSET_VARIABLE_DECLARATION_MODIFIERS: usize = offset_of!(VariableDeclaration, modifiers);
+pub(super) const OFFSET_VARIABLE_DECLARATION_SPAN: usize = offset_of!(VariableDeclaration, span);
+pub(super) const OFFSET_VARIABLE_DECLARATION_KIND: usize = offset_of!(VariableDeclaration, kind);
+pub(super) const OFFSET_VARIABLE_DECLARATION_DECLARATIONS: usize =
+    offset_of!(VariableDeclaration, declarations);
+pub(super) const OFFSET_VARIABLE_DECLARATION_MODIFIERS: usize =
+    offset_of!(VariableDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3292,12 +3331,12 @@ impl<'a> VariableDeclarationWithoutDeclarations<'a> {
         unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
-const OFFSET_VARIABLE_DECLARATOR_INIT: usize = offset_of!(VariableDeclarator, init);
-const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
-const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize = offset_of!(VariableDeclarator, definite);
-const OFFSET_VARIABLE_DECLARATOR_ID: usize = offset_of!(VariableDeclarator, id);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_SPAN: usize = offset_of!(VariableDeclarator, span);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_ID: usize = offset_of!(VariableDeclarator, id);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_INIT: usize = offset_of!(VariableDeclarator, init);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_KIND: usize = offset_of!(VariableDeclarator, kind);
+pub(super) const OFFSET_VARIABLE_DECLARATOR_DEFINITE: usize =
+    offset_of!(VariableDeclarator, definite);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3350,9 +3389,10 @@ impl<'a> VariableDeclaratorWithoutInit<'a> {
         unsafe { &*(self.0.add(OFFSET_VARIABLE_DECLARATOR_DEFINITE) as *const bool) }
     }
 }
-
-const OFFSET_USING_DECLARATION_SPAN: usize = offset_of!(UsingDeclaration, span);
-const OFFSET_USING_DECLARATION_IS_AWAIT: usize = offset_of!(UsingDeclaration, is_await);
+pub(super) const OFFSET_USING_DECLARATION_SPAN: usize = offset_of!(UsingDeclaration, span);
+pub(super) const OFFSET_USING_DECLARATION_IS_AWAIT: usize = offset_of!(UsingDeclaration, is_await);
+pub(super) const OFFSET_USING_DECLARATION_DECLARATIONS: usize =
+    offset_of!(UsingDeclaration, declarations);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3369,8 +3409,10 @@ impl UsingDeclarationWithoutDeclarations {
         unsafe { &*(self.0.add(OFFSET_USING_DECLARATION_IS_AWAIT) as *const bool) }
     }
 }
-
-const OFFSET_EXPRESSION_STATEMENT_SPAN: usize = offset_of!(ExpressionStatement, span);
+pub(super) const OFFSET_EMPTY_STATEMENT_SPAN: usize = offset_of!(EmptyStatement, span);
+pub(super) const OFFSET_EXPRESSION_STATEMENT_SPAN: usize = offset_of!(ExpressionStatement, span);
+pub(super) const OFFSET_EXPRESSION_STATEMENT_EXPRESSION: usize =
+    offset_of!(ExpressionStatement, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3382,11 +3424,10 @@ impl ExpressionStatementWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_EXPRESSION_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_IF_STATEMENT_SPAN: usize = offset_of!(IfStatement, span);
-const OFFSET_IF_STATEMENT_CONSEQUENT: usize = offset_of!(IfStatement, consequent);
-const OFFSET_IF_STATEMENT_ALTERNATE: usize = offset_of!(IfStatement, alternate);
-const OFFSET_IF_STATEMENT_TEST: usize = offset_of!(IfStatement, test);
+pub(super) const OFFSET_IF_STATEMENT_SPAN: usize = offset_of!(IfStatement, span);
+pub(super) const OFFSET_IF_STATEMENT_TEST: usize = offset_of!(IfStatement, test);
+pub(super) const OFFSET_IF_STATEMENT_CONSEQUENT: usize = offset_of!(IfStatement, consequent);
+pub(super) const OFFSET_IF_STATEMENT_ALTERNATE: usize = offset_of!(IfStatement, alternate);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3450,10 +3491,9 @@ impl<'a> IfStatementWithoutAlternate<'a> {
         unsafe { &*(self.0.add(OFFSET_IF_STATEMENT_CONSEQUENT) as *const Statement<'a>) }
     }
 }
-
-const OFFSET_DO_WHILE_STATEMENT_SPAN: usize = offset_of!(DoWhileStatement, span);
-const OFFSET_DO_WHILE_STATEMENT_TEST: usize = offset_of!(DoWhileStatement, test);
-const OFFSET_DO_WHILE_STATEMENT_BODY: usize = offset_of!(DoWhileStatement, body);
+pub(super) const OFFSET_DO_WHILE_STATEMENT_SPAN: usize = offset_of!(DoWhileStatement, span);
+pub(super) const OFFSET_DO_WHILE_STATEMENT_BODY: usize = offset_of!(DoWhileStatement, body);
+pub(super) const OFFSET_DO_WHILE_STATEMENT_TEST: usize = offset_of!(DoWhileStatement, test);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3486,10 +3526,9 @@ impl<'a> DoWhileStatementWithoutTest<'a> {
         unsafe { &*(self.0.add(OFFSET_DO_WHILE_STATEMENT_BODY) as *const Statement<'a>) }
     }
 }
-
-const OFFSET_WHILE_STATEMENT_SPAN: usize = offset_of!(WhileStatement, span);
-const OFFSET_WHILE_STATEMENT_BODY: usize = offset_of!(WhileStatement, body);
-const OFFSET_WHILE_STATEMENT_TEST: usize = offset_of!(WhileStatement, test);
+pub(super) const OFFSET_WHILE_STATEMENT_SPAN: usize = offset_of!(WhileStatement, span);
+pub(super) const OFFSET_WHILE_STATEMENT_TEST: usize = offset_of!(WhileStatement, test);
+pub(super) const OFFSET_WHILE_STATEMENT_BODY: usize = offset_of!(WhileStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3522,12 +3561,11 @@ impl<'a> WhileStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_WHILE_STATEMENT_TEST) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_FOR_STATEMENT_SPAN: usize = offset_of!(ForStatement, span);
-const OFFSET_FOR_STATEMENT_TEST: usize = offset_of!(ForStatement, test);
-const OFFSET_FOR_STATEMENT_UPDATE: usize = offset_of!(ForStatement, update);
-const OFFSET_FOR_STATEMENT_BODY: usize = offset_of!(ForStatement, body);
-const OFFSET_FOR_STATEMENT_INIT: usize = offset_of!(ForStatement, init);
+pub(super) const OFFSET_FOR_STATEMENT_SPAN: usize = offset_of!(ForStatement, span);
+pub(super) const OFFSET_FOR_STATEMENT_INIT: usize = offset_of!(ForStatement, init);
+pub(super) const OFFSET_FOR_STATEMENT_TEST: usize = offset_of!(ForStatement, test);
+pub(super) const OFFSET_FOR_STATEMENT_UPDATE: usize = offset_of!(ForStatement, update);
+pub(super) const OFFSET_FOR_STATEMENT_BODY: usize = offset_of!(ForStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3632,11 +3670,10 @@ impl<'a> ForStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_STATEMENT_UPDATE) as *const Option<Expression<'a>>) }
     }
 }
-
-const OFFSET_FOR_IN_STATEMENT_SPAN: usize = offset_of!(ForInStatement, span);
-const OFFSET_FOR_IN_STATEMENT_RIGHT: usize = offset_of!(ForInStatement, right);
-const OFFSET_FOR_IN_STATEMENT_BODY: usize = offset_of!(ForInStatement, body);
-const OFFSET_FOR_IN_STATEMENT_LEFT: usize = offset_of!(ForInStatement, left);
+pub(super) const OFFSET_FOR_IN_STATEMENT_SPAN: usize = offset_of!(ForInStatement, span);
+pub(super) const OFFSET_FOR_IN_STATEMENT_LEFT: usize = offset_of!(ForInStatement, left);
+pub(super) const OFFSET_FOR_IN_STATEMENT_RIGHT: usize = offset_of!(ForInStatement, right);
+pub(super) const OFFSET_FOR_IN_STATEMENT_BODY: usize = offset_of!(ForInStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3700,12 +3737,11 @@ impl<'a> ForInStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_IN_STATEMENT_RIGHT) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_FOR_OF_STATEMENT_SPAN: usize = offset_of!(ForOfStatement, span);
-const OFFSET_FOR_OF_STATEMENT_AWAIT: usize = offset_of!(ForOfStatement, r#await);
-const OFFSET_FOR_OF_STATEMENT_RIGHT: usize = offset_of!(ForOfStatement, right);
-const OFFSET_FOR_OF_STATEMENT_BODY: usize = offset_of!(ForOfStatement, body);
-const OFFSET_FOR_OF_STATEMENT_LEFT: usize = offset_of!(ForOfStatement, left);
+pub(super) const OFFSET_FOR_OF_STATEMENT_SPAN: usize = offset_of!(ForOfStatement, span);
+pub(super) const OFFSET_FOR_OF_STATEMENT_AWAIT: usize = offset_of!(ForOfStatement, r#await);
+pub(super) const OFFSET_FOR_OF_STATEMENT_LEFT: usize = offset_of!(ForOfStatement, left);
+pub(super) const OFFSET_FOR_OF_STATEMENT_RIGHT: usize = offset_of!(ForOfStatement, right);
+pub(super) const OFFSET_FOR_OF_STATEMENT_BODY: usize = offset_of!(ForOfStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3784,8 +3820,8 @@ impl<'a> ForOfStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_FOR_OF_STATEMENT_RIGHT) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_CONTINUE_STATEMENT_SPAN: usize = offset_of!(ContinueStatement, span);
+pub(super) const OFFSET_CONTINUE_STATEMENT_SPAN: usize = offset_of!(ContinueStatement, span);
+pub(super) const OFFSET_CONTINUE_STATEMENT_LABEL: usize = offset_of!(ContinueStatement, label);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3797,8 +3833,8 @@ impl ContinueStatementWithoutLabel {
         unsafe { &*(self.0.add(OFFSET_CONTINUE_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_BREAK_STATEMENT_SPAN: usize = offset_of!(BreakStatement, span);
+pub(super) const OFFSET_BREAK_STATEMENT_SPAN: usize = offset_of!(BreakStatement, span);
+pub(super) const OFFSET_BREAK_STATEMENT_LABEL: usize = offset_of!(BreakStatement, label);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3810,8 +3846,8 @@ impl BreakStatementWithoutLabel {
         unsafe { &*(self.0.add(OFFSET_BREAK_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_RETURN_STATEMENT_SPAN: usize = offset_of!(ReturnStatement, span);
+pub(super) const OFFSET_RETURN_STATEMENT_SPAN: usize = offset_of!(ReturnStatement, span);
+pub(super) const OFFSET_RETURN_STATEMENT_ARGUMENT: usize = offset_of!(ReturnStatement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3823,10 +3859,9 @@ impl ReturnStatementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_RETURN_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_WITH_STATEMENT_SPAN: usize = offset_of!(WithStatement, span);
-const OFFSET_WITH_STATEMENT_BODY: usize = offset_of!(WithStatement, body);
-const OFFSET_WITH_STATEMENT_OBJECT: usize = offset_of!(WithStatement, object);
+pub(super) const OFFSET_WITH_STATEMENT_SPAN: usize = offset_of!(WithStatement, span);
+pub(super) const OFFSET_WITH_STATEMENT_OBJECT: usize = offset_of!(WithStatement, object);
+pub(super) const OFFSET_WITH_STATEMENT_BODY: usize = offset_of!(WithStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3859,10 +3894,10 @@ impl<'a> WithStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_WITH_STATEMENT_OBJECT) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_SWITCH_STATEMENT_SPAN: usize = offset_of!(SwitchStatement, span);
-const OFFSET_SWITCH_STATEMENT_CASES: usize = offset_of!(SwitchStatement, cases);
-const OFFSET_SWITCH_STATEMENT_DISCRIMINANT: usize = offset_of!(SwitchStatement, discriminant);
+pub(super) const OFFSET_SWITCH_STATEMENT_SPAN: usize = offset_of!(SwitchStatement, span);
+pub(super) const OFFSET_SWITCH_STATEMENT_DISCRIMINANT: usize =
+    offset_of!(SwitchStatement, discriminant);
+pub(super) const OFFSET_SWITCH_STATEMENT_CASES: usize = offset_of!(SwitchStatement, cases);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3898,10 +3933,9 @@ impl<'a> SwitchStatementWithoutCases<'a> {
         unsafe { &*(self.0.add(OFFSET_SWITCH_STATEMENT_DISCRIMINANT) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_SWITCH_CASE_SPAN: usize = offset_of!(SwitchCase, span);
-const OFFSET_SWITCH_CASE_CONSEQUENT: usize = offset_of!(SwitchCase, consequent);
-const OFFSET_SWITCH_CASE_TEST: usize = offset_of!(SwitchCase, test);
+pub(super) const OFFSET_SWITCH_CASE_SPAN: usize = offset_of!(SwitchCase, span);
+pub(super) const OFFSET_SWITCH_CASE_TEST: usize = offset_of!(SwitchCase, test);
+pub(super) const OFFSET_SWITCH_CASE_CONSEQUENT: usize = offset_of!(SwitchCase, consequent);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3934,10 +3968,9 @@ impl<'a> SwitchCaseWithoutConsequent<'a> {
         unsafe { &*(self.0.add(OFFSET_SWITCH_CASE_TEST) as *const Option<Expression<'a>>) }
     }
 }
-
-const OFFSET_LABELED_STATEMENT_SPAN: usize = offset_of!(LabeledStatement, span);
-const OFFSET_LABELED_STATEMENT_BODY: usize = offset_of!(LabeledStatement, body);
-const OFFSET_LABELED_STATEMENT_LABEL: usize = offset_of!(LabeledStatement, label);
+pub(super) const OFFSET_LABELED_STATEMENT_SPAN: usize = offset_of!(LabeledStatement, span);
+pub(super) const OFFSET_LABELED_STATEMENT_LABEL: usize = offset_of!(LabeledStatement, label);
+pub(super) const OFFSET_LABELED_STATEMENT_BODY: usize = offset_of!(LabeledStatement, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3970,8 +4003,8 @@ impl<'a> LabeledStatementWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_LABELED_STATEMENT_LABEL) as *const LabelIdentifier<'a>) }
     }
 }
-
-const OFFSET_THROW_STATEMENT_SPAN: usize = offset_of!(ThrowStatement, span);
+pub(super) const OFFSET_THROW_STATEMENT_SPAN: usize = offset_of!(ThrowStatement, span);
+pub(super) const OFFSET_THROW_STATEMENT_ARGUMENT: usize = offset_of!(ThrowStatement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -3983,11 +4016,10 @@ impl ThrowStatementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_THROW_STATEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TRY_STATEMENT_SPAN: usize = offset_of!(TryStatement, span);
-const OFFSET_TRY_STATEMENT_HANDLER: usize = offset_of!(TryStatement, handler);
-const OFFSET_TRY_STATEMENT_FINALIZER: usize = offset_of!(TryStatement, finalizer);
-const OFFSET_TRY_STATEMENT_BLOCK: usize = offset_of!(TryStatement, block);
+pub(super) const OFFSET_TRY_STATEMENT_SPAN: usize = offset_of!(TryStatement, span);
+pub(super) const OFFSET_TRY_STATEMENT_BLOCK: usize = offset_of!(TryStatement, block);
+pub(super) const OFFSET_TRY_STATEMENT_HANDLER: usize = offset_of!(TryStatement, handler);
+pub(super) const OFFSET_TRY_STATEMENT_FINALIZER: usize = offset_of!(TryStatement, finalizer);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4061,10 +4093,9 @@ impl<'a> TryStatementWithoutFinalizer<'a> {
         }
     }
 }
-
-const OFFSET_CATCH_CLAUSE_SPAN: usize = offset_of!(CatchClause, span);
-const OFFSET_CATCH_CLAUSE_BODY: usize = offset_of!(CatchClause, body);
-const OFFSET_CATCH_CLAUSE_PARAM: usize = offset_of!(CatchClause, param);
+pub(super) const OFFSET_CATCH_CLAUSE_SPAN: usize = offset_of!(CatchClause, span);
+pub(super) const OFFSET_CATCH_CLAUSE_PARAM: usize = offset_of!(CatchClause, param);
+pub(super) const OFFSET_CATCH_CLAUSE_BODY: usize = offset_of!(CatchClause, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4097,8 +4128,8 @@ impl<'a> CatchClauseWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_CATCH_CLAUSE_PARAM) as *const Option<CatchParameter<'a>>) }
     }
 }
-
-const OFFSET_CATCH_PARAMETER_SPAN: usize = offset_of!(CatchParameter, span);
+pub(super) const OFFSET_CATCH_PARAMETER_SPAN: usize = offset_of!(CatchParameter, span);
+pub(super) const OFFSET_CATCH_PARAMETER_PATTERN: usize = offset_of!(CatchParameter, pattern);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4110,10 +4141,11 @@ impl CatchParameterWithoutPattern {
         unsafe { &*(self.0.add(OFFSET_CATCH_PARAMETER_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_BINDING_PATTERN_TYPE_ANNOTATION: usize = offset_of!(BindingPattern, type_annotation);
-const OFFSET_BINDING_PATTERN_OPTIONAL: usize = offset_of!(BindingPattern, optional);
-const OFFSET_BINDING_PATTERN_KIND: usize = offset_of!(BindingPattern, kind);
+pub(super) const OFFSET_DEBUGGER_STATEMENT_SPAN: usize = offset_of!(DebuggerStatement, span);
+pub(super) const OFFSET_BINDING_PATTERN_KIND: usize = offset_of!(BindingPattern, kind);
+pub(super) const OFFSET_BINDING_PATTERN_TYPE_ANNOTATION: usize =
+    offset_of!(BindingPattern, type_annotation);
+pub(super) const OFFSET_BINDING_PATTERN_OPTIONAL: usize = offset_of!(BindingPattern, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4152,10 +4184,9 @@ impl<'a> BindingPatternWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_BINDING_PATTERN_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_ASSIGNMENT_PATTERN_SPAN: usize = offset_of!(AssignmentPattern, span);
-const OFFSET_ASSIGNMENT_PATTERN_RIGHT: usize = offset_of!(AssignmentPattern, right);
-const OFFSET_ASSIGNMENT_PATTERN_LEFT: usize = offset_of!(AssignmentPattern, left);
+pub(super) const OFFSET_ASSIGNMENT_PATTERN_SPAN: usize = offset_of!(AssignmentPattern, span);
+pub(super) const OFFSET_ASSIGNMENT_PATTERN_LEFT: usize = offset_of!(AssignmentPattern, left);
+pub(super) const OFFSET_ASSIGNMENT_PATTERN_RIGHT: usize = offset_of!(AssignmentPattern, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4188,10 +4219,9 @@ impl<'a> AssignmentPatternWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_ASSIGNMENT_PATTERN_LEFT) as *const BindingPattern<'a>) }
     }
 }
-
-const OFFSET_OBJECT_PATTERN_SPAN: usize = offset_of!(ObjectPattern, span);
-const OFFSET_OBJECT_PATTERN_REST: usize = offset_of!(ObjectPattern, rest);
-const OFFSET_OBJECT_PATTERN_PROPERTIES: usize = offset_of!(ObjectPattern, properties);
+pub(super) const OFFSET_OBJECT_PATTERN_SPAN: usize = offset_of!(ObjectPattern, span);
+pub(super) const OFFSET_OBJECT_PATTERN_PROPERTIES: usize = offset_of!(ObjectPattern, properties);
+pub(super) const OFFSET_OBJECT_PATTERN_REST: usize = offset_of!(ObjectPattern, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4229,12 +4259,11 @@ impl<'a> ObjectPatternWithoutRest<'a> {
         }
     }
 }
-
-const OFFSET_BINDING_PROPERTY_SPAN: usize = offset_of!(BindingProperty, span);
-const OFFSET_BINDING_PROPERTY_VALUE: usize = offset_of!(BindingProperty, value);
-const OFFSET_BINDING_PROPERTY_SHORTHAND: usize = offset_of!(BindingProperty, shorthand);
-const OFFSET_BINDING_PROPERTY_COMPUTED: usize = offset_of!(BindingProperty, computed);
-const OFFSET_BINDING_PROPERTY_KEY: usize = offset_of!(BindingProperty, key);
+pub(super) const OFFSET_BINDING_PROPERTY_SPAN: usize = offset_of!(BindingProperty, span);
+pub(super) const OFFSET_BINDING_PROPERTY_KEY: usize = offset_of!(BindingProperty, key);
+pub(super) const OFFSET_BINDING_PROPERTY_VALUE: usize = offset_of!(BindingProperty, value);
+pub(super) const OFFSET_BINDING_PROPERTY_SHORTHAND: usize = offset_of!(BindingProperty, shorthand);
+pub(super) const OFFSET_BINDING_PROPERTY_COMPUTED: usize = offset_of!(BindingProperty, computed);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4287,10 +4316,9 @@ impl<'a> BindingPropertyWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_BINDING_PROPERTY_COMPUTED) as *const bool) }
     }
 }
-
-const OFFSET_ARRAY_PATTERN_SPAN: usize = offset_of!(ArrayPattern, span);
-const OFFSET_ARRAY_PATTERN_REST: usize = offset_of!(ArrayPattern, rest);
-const OFFSET_ARRAY_PATTERN_ELEMENTS: usize = offset_of!(ArrayPattern, elements);
+pub(super) const OFFSET_ARRAY_PATTERN_SPAN: usize = offset_of!(ArrayPattern, span);
+pub(super) const OFFSET_ARRAY_PATTERN_ELEMENTS: usize = offset_of!(ArrayPattern, elements);
+pub(super) const OFFSET_ARRAY_PATTERN_REST: usize = offset_of!(ArrayPattern, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4329,8 +4357,9 @@ impl<'a> ArrayPatternWithoutRest<'a> {
         }
     }
 }
-
-const OFFSET_BINDING_REST_ELEMENT_SPAN: usize = offset_of!(BindingRestElement, span);
+pub(super) const OFFSET_BINDING_REST_ELEMENT_SPAN: usize = offset_of!(BindingRestElement, span);
+pub(super) const OFFSET_BINDING_REST_ELEMENT_ARGUMENT: usize =
+    offset_of!(BindingRestElement, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4342,18 +4371,17 @@ impl BindingRestElementWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_BINDING_REST_ELEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_FUNCTION_SPAN: usize = offset_of!(Function, span);
-const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
-const OFFSET_FUNCTION_GENERATOR: usize = offset_of!(Function, generator);
-const OFFSET_FUNCTION_ASYNC: usize = offset_of!(Function, r#async);
-const OFFSET_FUNCTION_THIS_PARAM: usize = offset_of!(Function, this_param);
-const OFFSET_FUNCTION_PARAMS: usize = offset_of!(Function, params);
-const OFFSET_FUNCTION_BODY: usize = offset_of!(Function, body);
-const OFFSET_FUNCTION_TYPE_PARAMETERS: usize = offset_of!(Function, type_parameters);
-const OFFSET_FUNCTION_RETURN_TYPE: usize = offset_of!(Function, return_type);
-const OFFSET_FUNCTION_MODIFIERS: usize = offset_of!(Function, modifiers);
-const OFFSET_FUNCTION_ID: usize = offset_of!(Function, id);
+pub(super) const OFFSET_FUNCTION_SPAN: usize = offset_of!(Function, span);
+pub(super) const OFFSET_FUNCTION_ID: usize = offset_of!(Function, id);
+pub(super) const OFFSET_FUNCTION_TYPE: usize = offset_of!(Function, r#type);
+pub(super) const OFFSET_FUNCTION_GENERATOR: usize = offset_of!(Function, generator);
+pub(super) const OFFSET_FUNCTION_ASYNC: usize = offset_of!(Function, r#async);
+pub(super) const OFFSET_FUNCTION_THIS_PARAM: usize = offset_of!(Function, this_param);
+pub(super) const OFFSET_FUNCTION_PARAMS: usize = offset_of!(Function, params);
+pub(super) const OFFSET_FUNCTION_BODY: usize = offset_of!(Function, body);
+pub(super) const OFFSET_FUNCTION_TYPE_PARAMETERS: usize = offset_of!(Function, type_parameters);
+pub(super) const OFFSET_FUNCTION_RETURN_TYPE: usize = offset_of!(Function, return_type);
+pub(super) const OFFSET_FUNCTION_MODIFIERS: usize = offset_of!(Function, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4720,11 +4748,10 @@ impl<'a> FunctionWithoutReturnType<'a> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_FORMAL_PARAMETERS_SPAN: usize = offset_of!(FormalParameters, span);
-const OFFSET_FORMAL_PARAMETERS_KIND: usize = offset_of!(FormalParameters, kind);
-const OFFSET_FORMAL_PARAMETERS_REST: usize = offset_of!(FormalParameters, rest);
-const OFFSET_FORMAL_PARAMETERS_ITEMS: usize = offset_of!(FormalParameters, items);
+pub(super) const OFFSET_FORMAL_PARAMETERS_SPAN: usize = offset_of!(FormalParameters, span);
+pub(super) const OFFSET_FORMAL_PARAMETERS_KIND: usize = offset_of!(FormalParameters, kind);
+pub(super) const OFFSET_FORMAL_PARAMETERS_ITEMS: usize = offset_of!(FormalParameters, items);
+pub(super) const OFFSET_FORMAL_PARAMETERS_REST: usize = offset_of!(FormalParameters, rest);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4772,13 +4799,14 @@ impl<'a> FormalParametersWithoutRest<'a> {
         }
     }
 }
-
-const OFFSET_FORMAL_PARAMETER_SPAN: usize = offset_of!(FormalParameter, span);
-const OFFSET_FORMAL_PARAMETER_ACCESSIBILITY: usize = offset_of!(FormalParameter, accessibility);
-const OFFSET_FORMAL_PARAMETER_READONLY: usize = offset_of!(FormalParameter, readonly);
-const OFFSET_FORMAL_PARAMETER_OVERRIDE: usize = offset_of!(FormalParameter, r#override);
-const OFFSET_FORMAL_PARAMETER_DECORATORS: usize = offset_of!(FormalParameter, decorators);
-const OFFSET_FORMAL_PARAMETER_PATTERN: usize = offset_of!(FormalParameter, pattern);
+pub(super) const OFFSET_FORMAL_PARAMETER_SPAN: usize = offset_of!(FormalParameter, span);
+pub(super) const OFFSET_FORMAL_PARAMETER_PATTERN: usize = offset_of!(FormalParameter, pattern);
+pub(super) const OFFSET_FORMAL_PARAMETER_ACCESSIBILITY: usize =
+    offset_of!(FormalParameter, accessibility);
+pub(super) const OFFSET_FORMAL_PARAMETER_READONLY: usize = offset_of!(FormalParameter, readonly);
+pub(super) const OFFSET_FORMAL_PARAMETER_OVERRIDE: usize = offset_of!(FormalParameter, r#override);
+pub(super) const OFFSET_FORMAL_PARAMETER_DECORATORS: usize =
+    offset_of!(FormalParameter, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4850,10 +4878,9 @@ impl<'a> FormalParameterWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_FORMAL_PARAMETER_OVERRIDE) as *const bool) }
     }
 }
-
-const OFFSET_FUNCTION_BODY_SPAN: usize = offset_of!(FunctionBody, span);
-const OFFSET_FUNCTION_BODY_STATEMENTS: usize = offset_of!(FunctionBody, statements);
-const OFFSET_FUNCTION_BODY_DIRECTIVES: usize = offset_of!(FunctionBody, directives);
+pub(super) const OFFSET_FUNCTION_BODY_SPAN: usize = offset_of!(FunctionBody, span);
+pub(super) const OFFSET_FUNCTION_BODY_DIRECTIVES: usize = offset_of!(FunctionBody, directives);
+pub(super) const OFFSET_FUNCTION_BODY_STATEMENTS: usize = offset_of!(FunctionBody, statements);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -4886,17 +4913,20 @@ impl<'a> FunctionBodyWithoutStatements<'a> {
         unsafe { &*(self.0.add(OFFSET_FUNCTION_BODY_DIRECTIVES) as *const Vec<'a, Directive<'a>>) }
     }
 }
-
-const OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN: usize = offset_of!(ArrowFunctionExpression, span);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION: usize =
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_SPAN: usize =
+    offset_of!(ArrowFunctionExpression, span);
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_EXPRESSION: usize =
     offset_of!(ArrowFunctionExpression, expression);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC: usize = offset_of!(ArrowFunctionExpression, r#async);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_BODY: usize = offset_of!(ArrowFunctionExpression, body);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_ASYNC: usize =
+    offset_of!(ArrowFunctionExpression, r#async);
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS: usize =
+    offset_of!(ArrowFunctionExpression, params);
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_BODY: usize =
+    offset_of!(ArrowFunctionExpression, body);
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_TYPE_PARAMETERS: usize =
     offset_of!(ArrowFunctionExpression, type_parameters);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE: usize =
+pub(super) const OFFSET_ARROW_FUNCTION_EXPRESSION_RETURN_TYPE: usize =
     offset_of!(ArrowFunctionExpression, return_type);
-const OFFSET_ARROW_FUNCTION_EXPRESSION_PARAMS: usize = offset_of!(ArrowFunctionExpression, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -5089,9 +5119,9 @@ impl<'a> ArrowFunctionExpressionWithoutReturnType<'a> {
         }
     }
 }
-
-const OFFSET_YIELD_EXPRESSION_SPAN: usize = offset_of!(YieldExpression, span);
-const OFFSET_YIELD_EXPRESSION_DELEGATE: usize = offset_of!(YieldExpression, delegate);
+pub(super) const OFFSET_YIELD_EXPRESSION_SPAN: usize = offset_of!(YieldExpression, span);
+pub(super) const OFFSET_YIELD_EXPRESSION_DELEGATE: usize = offset_of!(YieldExpression, delegate);
+pub(super) const OFFSET_YIELD_EXPRESSION_ARGUMENT: usize = offset_of!(YieldExpression, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -5108,17 +5138,17 @@ impl YieldExpressionWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_YIELD_EXPRESSION_DELEGATE) as *const bool) }
     }
 }
-
-const OFFSET_CLASS_TYPE: usize = offset_of!(Class, r#type);
-const OFFSET_CLASS_SPAN: usize = offset_of!(Class, span);
-const OFFSET_CLASS_SUPER_CLASS: usize = offset_of!(Class, super_class);
-const OFFSET_CLASS_BODY: usize = offset_of!(Class, body);
-const OFFSET_CLASS_TYPE_PARAMETERS: usize = offset_of!(Class, type_parameters);
-const OFFSET_CLASS_SUPER_TYPE_PARAMETERS: usize = offset_of!(Class, super_type_parameters);
-const OFFSET_CLASS_IMPLEMENTS: usize = offset_of!(Class, implements);
-const OFFSET_CLASS_DECORATORS: usize = offset_of!(Class, decorators);
-const OFFSET_CLASS_MODIFIERS: usize = offset_of!(Class, modifiers);
-const OFFSET_CLASS_ID: usize = offset_of!(Class, id);
+pub(super) const OFFSET_CLASS_TYPE: usize = offset_of!(Class, r#type);
+pub(super) const OFFSET_CLASS_SPAN: usize = offset_of!(Class, span);
+pub(super) const OFFSET_CLASS_ID: usize = offset_of!(Class, id);
+pub(super) const OFFSET_CLASS_SUPER_CLASS: usize = offset_of!(Class, super_class);
+pub(super) const OFFSET_CLASS_BODY: usize = offset_of!(Class, body);
+pub(super) const OFFSET_CLASS_TYPE_PARAMETERS: usize = offset_of!(Class, type_parameters);
+pub(super) const OFFSET_CLASS_SUPER_TYPE_PARAMETERS: usize =
+    offset_of!(Class, super_type_parameters);
+pub(super) const OFFSET_CLASS_IMPLEMENTS: usize = offset_of!(Class, implements);
+pub(super) const OFFSET_CLASS_DECORATORS: usize = offset_of!(Class, decorators);
+pub(super) const OFFSET_CLASS_MODIFIERS: usize = offset_of!(Class, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -5527,8 +5557,8 @@ impl<'a> ClassWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_CLASS_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_CLASS_BODY_SPAN: usize = offset_of!(ClassBody, span);
+pub(super) const OFFSET_CLASS_BODY_SPAN: usize = offset_of!(ClassBody, span);
+pub(super) const OFFSET_CLASS_BODY_BODY: usize = offset_of!(ClassBody, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -5540,18 +5570,20 @@ impl ClassBodyWithoutBody {
         unsafe { &*(self.0.add(OFFSET_CLASS_BODY_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_METHOD_DEFINITION_SPAN: usize = offset_of!(MethodDefinition, span);
-const OFFSET_METHOD_DEFINITION_VALUE: usize = offset_of!(MethodDefinition, value);
-const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
-const OFFSET_METHOD_DEFINITION_KIND: usize = offset_of!(MethodDefinition, kind);
-const OFFSET_METHOD_DEFINITION_COMPUTED: usize = offset_of!(MethodDefinition, computed);
-const OFFSET_METHOD_DEFINITION_STATIC: usize = offset_of!(MethodDefinition, r#static);
-const OFFSET_METHOD_DEFINITION_OVERRIDE: usize = offset_of!(MethodDefinition, r#override);
-const OFFSET_METHOD_DEFINITION_OPTIONAL: usize = offset_of!(MethodDefinition, optional);
-const OFFSET_METHOD_DEFINITION_ACCESSIBILITY: usize = offset_of!(MethodDefinition, accessibility);
-const OFFSET_METHOD_DEFINITION_DECORATORS: usize = offset_of!(MethodDefinition, decorators);
-const OFFSET_METHOD_DEFINITION_KEY: usize = offset_of!(MethodDefinition, key);
+pub(super) const OFFSET_METHOD_DEFINITION_SPAN: usize = offset_of!(MethodDefinition, span);
+pub(super) const OFFSET_METHOD_DEFINITION_KEY: usize = offset_of!(MethodDefinition, key);
+pub(super) const OFFSET_METHOD_DEFINITION_VALUE: usize = offset_of!(MethodDefinition, value);
+pub(super) const OFFSET_METHOD_DEFINITION_TYPE: usize = offset_of!(MethodDefinition, r#type);
+pub(super) const OFFSET_METHOD_DEFINITION_KIND: usize = offset_of!(MethodDefinition, kind);
+pub(super) const OFFSET_METHOD_DEFINITION_COMPUTED: usize = offset_of!(MethodDefinition, computed);
+pub(super) const OFFSET_METHOD_DEFINITION_STATIC: usize = offset_of!(MethodDefinition, r#static);
+pub(super) const OFFSET_METHOD_DEFINITION_OVERRIDE: usize =
+    offset_of!(MethodDefinition, r#override);
+pub(super) const OFFSET_METHOD_DEFINITION_OPTIONAL: usize = offset_of!(MethodDefinition, optional);
+pub(super) const OFFSET_METHOD_DEFINITION_ACCESSIBILITY: usize =
+    offset_of!(MethodDefinition, accessibility);
+pub(super) const OFFSET_METHOD_DEFINITION_DECORATORS: usize =
+    offset_of!(MethodDefinition, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -5733,23 +5765,30 @@ impl<'a> MethodDefinitionWithoutDecorators<'a> {
         }
     }
 }
-
-const OFFSET_PROPERTY_DEFINITION_SPAN: usize = offset_of!(PropertyDefinition, span);
-const OFFSET_PROPERTY_DEFINITION_VALUE: usize = offset_of!(PropertyDefinition, value);
-const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
-const OFFSET_PROPERTY_DEFINITION_COMPUTED: usize = offset_of!(PropertyDefinition, computed);
-const OFFSET_PROPERTY_DEFINITION_STATIC: usize = offset_of!(PropertyDefinition, r#static);
-const OFFSET_PROPERTY_DEFINITION_DECLARE: usize = offset_of!(PropertyDefinition, declare);
-const OFFSET_PROPERTY_DEFINITION_OVERRIDE: usize = offset_of!(PropertyDefinition, r#override);
-const OFFSET_PROPERTY_DEFINITION_OPTIONAL: usize = offset_of!(PropertyDefinition, optional);
-const OFFSET_PROPERTY_DEFINITION_DEFINITE: usize = offset_of!(PropertyDefinition, definite);
-const OFFSET_PROPERTY_DEFINITION_READONLY: usize = offset_of!(PropertyDefinition, readonly);
-const OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_PROPERTY_DEFINITION_SPAN: usize = offset_of!(PropertyDefinition, span);
+pub(super) const OFFSET_PROPERTY_DEFINITION_KEY: usize = offset_of!(PropertyDefinition, key);
+pub(super) const OFFSET_PROPERTY_DEFINITION_VALUE: usize = offset_of!(PropertyDefinition, value);
+pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE: usize = offset_of!(PropertyDefinition, r#type);
+pub(super) const OFFSET_PROPERTY_DEFINITION_COMPUTED: usize =
+    offset_of!(PropertyDefinition, computed);
+pub(super) const OFFSET_PROPERTY_DEFINITION_STATIC: usize =
+    offset_of!(PropertyDefinition, r#static);
+pub(super) const OFFSET_PROPERTY_DEFINITION_DECLARE: usize =
+    offset_of!(PropertyDefinition, declare);
+pub(super) const OFFSET_PROPERTY_DEFINITION_OVERRIDE: usize =
+    offset_of!(PropertyDefinition, r#override);
+pub(super) const OFFSET_PROPERTY_DEFINITION_OPTIONAL: usize =
+    offset_of!(PropertyDefinition, optional);
+pub(super) const OFFSET_PROPERTY_DEFINITION_DEFINITE: usize =
+    offset_of!(PropertyDefinition, definite);
+pub(super) const OFFSET_PROPERTY_DEFINITION_READONLY: usize =
+    offset_of!(PropertyDefinition, readonly);
+pub(super) const OFFSET_PROPERTY_DEFINITION_TYPE_ANNOTATION: usize =
     offset_of!(PropertyDefinition, type_annotation);
-const OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY: usize =
+pub(super) const OFFSET_PROPERTY_DEFINITION_ACCESSIBILITY: usize =
     offset_of!(PropertyDefinition, accessibility);
-const OFFSET_PROPERTY_DEFINITION_DECORATORS: usize = offset_of!(PropertyDefinition, decorators);
-const OFFSET_PROPERTY_DEFINITION_KEY: usize = offset_of!(PropertyDefinition, key);
+pub(super) const OFFSET_PROPERTY_DEFINITION_DECORATORS: usize =
+    offset_of!(PropertyDefinition, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6067,8 +6106,10 @@ impl<'a> PropertyDefinitionWithoutDecorators<'a> {
         }
     }
 }
-
-const OFFSET_STATIC_BLOCK_SPAN: usize = offset_of!(StaticBlock, span);
+pub(super) const OFFSET_PRIVATE_IDENTIFIER_SPAN: usize = offset_of!(PrivateIdentifier, span);
+pub(super) const OFFSET_PRIVATE_IDENTIFIER_NAME: usize = offset_of!(PrivateIdentifier, name);
+pub(super) const OFFSET_STATIC_BLOCK_SPAN: usize = offset_of!(StaticBlock, span);
+pub(super) const OFFSET_STATIC_BLOCK_BODY: usize = offset_of!(StaticBlock, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6080,13 +6121,13 @@ impl StaticBlockWithoutBody {
         unsafe { &*(self.0.add(OFFSET_STATIC_BLOCK_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_ACCESSOR_PROPERTY_SPAN: usize = offset_of!(AccessorProperty, span);
-const OFFSET_ACCESSOR_PROPERTY_VALUE: usize = offset_of!(AccessorProperty, value);
-const OFFSET_ACCESSOR_PROPERTY_COMPUTED: usize = offset_of!(AccessorProperty, computed);
-const OFFSET_ACCESSOR_PROPERTY_STATIC: usize = offset_of!(AccessorProperty, r#static);
-const OFFSET_ACCESSOR_PROPERTY_DECORATORS: usize = offset_of!(AccessorProperty, decorators);
-const OFFSET_ACCESSOR_PROPERTY_KEY: usize = offset_of!(AccessorProperty, key);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_SPAN: usize = offset_of!(AccessorProperty, span);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_KEY: usize = offset_of!(AccessorProperty, key);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_VALUE: usize = offset_of!(AccessorProperty, value);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_COMPUTED: usize = offset_of!(AccessorProperty, computed);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_STATIC: usize = offset_of!(AccessorProperty, r#static);
+pub(super) const OFFSET_ACCESSOR_PROPERTY_DECORATORS: usize =
+    offset_of!(AccessorProperty, decorators);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6187,10 +6228,10 @@ impl<'a> AccessorPropertyWithoutDecorators<'a> {
         unsafe { &*(self.0.add(OFFSET_ACCESSOR_PROPERTY_STATIC) as *const bool) }
     }
 }
-
-const OFFSET_IMPORT_EXPRESSION_SPAN: usize = offset_of!(ImportExpression, span);
-const OFFSET_IMPORT_EXPRESSION_ARGUMENTS: usize = offset_of!(ImportExpression, arguments);
-const OFFSET_IMPORT_EXPRESSION_SOURCE: usize = offset_of!(ImportExpression, source);
+pub(super) const OFFSET_IMPORT_EXPRESSION_SPAN: usize = offset_of!(ImportExpression, span);
+pub(super) const OFFSET_IMPORT_EXPRESSION_SOURCE: usize = offset_of!(ImportExpression, source);
+pub(super) const OFFSET_IMPORT_EXPRESSION_ARGUMENTS: usize =
+    offset_of!(ImportExpression, arguments);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6228,12 +6269,14 @@ impl<'a> ImportExpressionWithoutArguments<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_EXPRESSION_SOURCE) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_IMPORT_DECLARATION_SPAN: usize = offset_of!(ImportDeclaration, span);
-const OFFSET_IMPORT_DECLARATION_SOURCE: usize = offset_of!(ImportDeclaration, source);
-const OFFSET_IMPORT_DECLARATION_WITH_CLAUSE: usize = offset_of!(ImportDeclaration, with_clause);
-const OFFSET_IMPORT_DECLARATION_IMPORT_KIND: usize = offset_of!(ImportDeclaration, import_kind);
-const OFFSET_IMPORT_DECLARATION_SPECIFIERS: usize = offset_of!(ImportDeclaration, specifiers);
+pub(super) const OFFSET_IMPORT_DECLARATION_SPAN: usize = offset_of!(ImportDeclaration, span);
+pub(super) const OFFSET_IMPORT_DECLARATION_SPECIFIERS: usize =
+    offset_of!(ImportDeclaration, specifiers);
+pub(super) const OFFSET_IMPORT_DECLARATION_SOURCE: usize = offset_of!(ImportDeclaration, source);
+pub(super) const OFFSET_IMPORT_DECLARATION_WITH_CLAUSE: usize =
+    offset_of!(ImportDeclaration, with_clause);
+pub(super) const OFFSET_IMPORT_DECLARATION_IMPORT_KIND: usize =
+    offset_of!(ImportDeclaration, import_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6334,11 +6377,11 @@ impl<'a> ImportDeclarationWithoutWithClause<'a> {
         }
     }
 }
-
-const OFFSET_IMPORT_SPECIFIER_SPAN: usize = offset_of!(ImportSpecifier, span);
-const OFFSET_IMPORT_SPECIFIER_LOCAL: usize = offset_of!(ImportSpecifier, local);
-const OFFSET_IMPORT_SPECIFIER_IMPORT_KIND: usize = offset_of!(ImportSpecifier, import_kind);
-const OFFSET_IMPORT_SPECIFIER_IMPORTED: usize = offset_of!(ImportSpecifier, imported);
+pub(super) const OFFSET_IMPORT_SPECIFIER_SPAN: usize = offset_of!(ImportSpecifier, span);
+pub(super) const OFFSET_IMPORT_SPECIFIER_IMPORTED: usize = offset_of!(ImportSpecifier, imported);
+pub(super) const OFFSET_IMPORT_SPECIFIER_LOCAL: usize = offset_of!(ImportSpecifier, local);
+pub(super) const OFFSET_IMPORT_SPECIFIER_IMPORT_KIND: usize =
+    offset_of!(ImportSpecifier, import_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6381,8 +6424,10 @@ impl<'a> ImportSpecifierWithoutLocal<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_SPECIFIER_IMPORT_KIND) as *const ImportOrExportKind) }
     }
 }
-
-const OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN: usize = offset_of!(ImportDefaultSpecifier, span);
+pub(super) const OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN: usize =
+    offset_of!(ImportDefaultSpecifier, span);
+pub(super) const OFFSET_IMPORT_DEFAULT_SPECIFIER_LOCAL: usize =
+    offset_of!(ImportDefaultSpecifier, local);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6394,8 +6439,10 @@ impl ImportDefaultSpecifierWithoutLocal {
         unsafe { &*(self.0.add(OFFSET_IMPORT_DEFAULT_SPECIFIER_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN: usize = offset_of!(ImportNamespaceSpecifier, span);
+pub(super) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN: usize =
+    offset_of!(ImportNamespaceSpecifier, span);
+pub(super) const OFFSET_IMPORT_NAMESPACE_SPECIFIER_LOCAL: usize =
+    offset_of!(ImportNamespaceSpecifier, local);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6407,10 +6454,10 @@ impl ImportNamespaceSpecifierWithoutLocal {
         unsafe { &*(self.0.add(OFFSET_IMPORT_NAMESPACE_SPECIFIER_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_WITH_CLAUSE_SPAN: usize = offset_of!(WithClause, span);
-const OFFSET_WITH_CLAUSE_WITH_ENTRIES: usize = offset_of!(WithClause, with_entries);
-const OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD: usize = offset_of!(WithClause, attributes_keyword);
+pub(super) const OFFSET_WITH_CLAUSE_SPAN: usize = offset_of!(WithClause, span);
+pub(super) const OFFSET_WITH_CLAUSE_ATTRIBUTES_KEYWORD: usize =
+    offset_of!(WithClause, attributes_keyword);
+pub(super) const OFFSET_WITH_CLAUSE_WITH_ENTRIES: usize = offset_of!(WithClause, with_entries);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6450,10 +6497,9 @@ impl<'a> WithClauseWithoutWithEntries<'a> {
         }
     }
 }
-
-const OFFSET_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(ImportAttribute, span);
-const OFFSET_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(ImportAttribute, value);
-const OFFSET_IMPORT_ATTRIBUTE_KEY: usize = offset_of!(ImportAttribute, key);
+pub(super) const OFFSET_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(ImportAttribute, span);
+pub(super) const OFFSET_IMPORT_ATTRIBUTE_KEY: usize = offset_of!(ImportAttribute, key);
+pub(super) const OFFSET_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(ImportAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6486,17 +6532,18 @@ impl<'a> ImportAttributeWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_IMPORT_ATTRIBUTE_KEY) as *const ImportAttributeKey<'a>) }
     }
 }
-
-const OFFSET_EXPORT_NAMED_DECLARATION_SPAN: usize = offset_of!(ExportNamedDeclaration, span);
-const OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS: usize =
-    offset_of!(ExportNamedDeclaration, specifiers);
-const OFFSET_EXPORT_NAMED_DECLARATION_SOURCE: usize = offset_of!(ExportNamedDeclaration, source);
-const OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND: usize =
-    offset_of!(ExportNamedDeclaration, export_kind);
-const OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE: usize =
-    offset_of!(ExportNamedDeclaration, with_clause);
-const OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION: usize =
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SPAN: usize =
+    offset_of!(ExportNamedDeclaration, span);
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_DECLARATION: usize =
     offset_of!(ExportNamedDeclaration, declaration);
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SPECIFIERS: usize =
+    offset_of!(ExportNamedDeclaration, specifiers);
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_SOURCE: usize =
+    offset_of!(ExportNamedDeclaration, source);
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_EXPORT_KIND: usize =
+    offset_of!(ExportNamedDeclaration, export_kind);
+pub(super) const OFFSET_EXPORT_NAMED_DECLARATION_WITH_CLAUSE: usize =
+    offset_of!(ExportNamedDeclaration, with_clause);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6677,12 +6724,12 @@ impl<'a> ExportNamedDeclarationWithoutWithClause<'a> {
         }
     }
 }
-
-const OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN: usize = offset_of!(ExportDefaultDeclaration, span);
-const OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED: usize =
-    offset_of!(ExportDefaultDeclaration, exported);
-const OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION: usize =
+pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_SPAN: usize =
+    offset_of!(ExportDefaultDeclaration, span);
+pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_DECLARATION: usize =
     offset_of!(ExportDefaultDeclaration, declaration);
+pub(super) const OFFSET_EXPORT_DEFAULT_DECLARATION_EXPORTED: usize =
+    offset_of!(ExportDefaultDeclaration, exported);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6727,14 +6774,15 @@ impl<'a> ExportDefaultDeclarationWithoutExported<'a> {
         }
     }
 }
-
-const OFFSET_EXPORT_ALL_DECLARATION_SPAN: usize = offset_of!(ExportAllDeclaration, span);
-const OFFSET_EXPORT_ALL_DECLARATION_SOURCE: usize = offset_of!(ExportAllDeclaration, source);
-const OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE: usize =
+pub(super) const OFFSET_EXPORT_ALL_DECLARATION_SPAN: usize = offset_of!(ExportAllDeclaration, span);
+pub(super) const OFFSET_EXPORT_ALL_DECLARATION_EXPORTED: usize =
+    offset_of!(ExportAllDeclaration, exported);
+pub(super) const OFFSET_EXPORT_ALL_DECLARATION_SOURCE: usize =
+    offset_of!(ExportAllDeclaration, source);
+pub(super) const OFFSET_EXPORT_ALL_DECLARATION_WITH_CLAUSE: usize =
     offset_of!(ExportAllDeclaration, with_clause);
-const OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND: usize =
+pub(super) const OFFSET_EXPORT_ALL_DECLARATION_EXPORT_KIND: usize =
     offset_of!(ExportAllDeclaration, export_kind);
-const OFFSET_EXPORT_ALL_DECLARATION_EXPORTED: usize = offset_of!(ExportAllDeclaration, exported);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6840,11 +6888,11 @@ impl<'a> ExportAllDeclarationWithoutWithClause<'a> {
         }
     }
 }
-
-const OFFSET_EXPORT_SPECIFIER_SPAN: usize = offset_of!(ExportSpecifier, span);
-const OFFSET_EXPORT_SPECIFIER_EXPORTED: usize = offset_of!(ExportSpecifier, exported);
-const OFFSET_EXPORT_SPECIFIER_EXPORT_KIND: usize = offset_of!(ExportSpecifier, export_kind);
-const OFFSET_EXPORT_SPECIFIER_LOCAL: usize = offset_of!(ExportSpecifier, local);
+pub(super) const OFFSET_EXPORT_SPECIFIER_SPAN: usize = offset_of!(ExportSpecifier, span);
+pub(super) const OFFSET_EXPORT_SPECIFIER_LOCAL: usize = offset_of!(ExportSpecifier, local);
+pub(super) const OFFSET_EXPORT_SPECIFIER_EXPORTED: usize = offset_of!(ExportSpecifier, exported);
+pub(super) const OFFSET_EXPORT_SPECIFIER_EXPORT_KIND: usize =
+    offset_of!(ExportSpecifier, export_kind);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6887,11 +6935,12 @@ impl<'a> ExportSpecifierWithoutExported<'a> {
         unsafe { &*(self.0.add(OFFSET_EXPORT_SPECIFIER_EXPORT_KIND) as *const ImportOrExportKind) }
     }
 }
-
-const OFFSET_JSX_ELEMENT_SPAN: usize = offset_of!(JSXElement, span);
-const OFFSET_JSX_ELEMENT_CLOSING_ELEMENT: usize = offset_of!(JSXElement, closing_element);
-const OFFSET_JSX_ELEMENT_CHILDREN: usize = offset_of!(JSXElement, children);
-const OFFSET_JSX_ELEMENT_OPENING_ELEMENT: usize = offset_of!(JSXElement, opening_element);
+pub(super) const OFFSET_JSX_ELEMENT_SPAN: usize = offset_of!(JSXElement, span);
+pub(super) const OFFSET_JSX_ELEMENT_OPENING_ELEMENT: usize =
+    offset_of!(JSXElement, opening_element);
+pub(super) const OFFSET_JSX_ELEMENT_CLOSING_ELEMENT: usize =
+    offset_of!(JSXElement, closing_element);
+pub(super) const OFFSET_JSX_ELEMENT_CHILDREN: usize = offset_of!(JSXElement, children);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -6973,13 +7022,14 @@ impl<'a> JSXElementWithoutChildren<'a> {
         }
     }
 }
-
-const OFFSET_JSX_OPENING_ELEMENT_SPAN: usize = offset_of!(JSXOpeningElement, span);
-const OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING: usize = offset_of!(JSXOpeningElement, self_closing);
-const OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES: usize = offset_of!(JSXOpeningElement, attributes);
-const OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_JSX_OPENING_ELEMENT_SPAN: usize = offset_of!(JSXOpeningElement, span);
+pub(super) const OFFSET_JSX_OPENING_ELEMENT_SELF_CLOSING: usize =
+    offset_of!(JSXOpeningElement, self_closing);
+pub(super) const OFFSET_JSX_OPENING_ELEMENT_NAME: usize = offset_of!(JSXOpeningElement, name);
+pub(super) const OFFSET_JSX_OPENING_ELEMENT_ATTRIBUTES: usize =
+    offset_of!(JSXOpeningElement, attributes);
+pub(super) const OFFSET_JSX_OPENING_ELEMENT_TYPE_PARAMETERS: usize =
     offset_of!(JSXOpeningElement, type_parameters);
-const OFFSET_JSX_OPENING_ELEMENT_NAME: usize = offset_of!(JSXOpeningElement, name);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7076,8 +7126,8 @@ impl<'a> JSXOpeningElementWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_JSX_CLOSING_ELEMENT_SPAN: usize = offset_of!(JSXClosingElement, span);
+pub(super) const OFFSET_JSX_CLOSING_ELEMENT_SPAN: usize = offset_of!(JSXClosingElement, span);
+pub(super) const OFFSET_JSX_CLOSING_ELEMENT_NAME: usize = offset_of!(JSXClosingElement, name);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7089,10 +7139,12 @@ impl JSXClosingElementWithoutName {
         unsafe { &*(self.0.add(OFFSET_JSX_CLOSING_ELEMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_JSX_FRAGMENT_SPAN: usize = offset_of!(JSXFragment, span);
-const OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT: usize = offset_of!(JSXFragment, opening_fragment);
-const OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT: usize = offset_of!(JSXFragment, closing_fragment);
+pub(super) const OFFSET_JSX_FRAGMENT_SPAN: usize = offset_of!(JSXFragment, span);
+pub(super) const OFFSET_JSX_FRAGMENT_OPENING_FRAGMENT: usize =
+    offset_of!(JSXFragment, opening_fragment);
+pub(super) const OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT: usize =
+    offset_of!(JSXFragment, closing_fragment);
+pub(super) const OFFSET_JSX_FRAGMENT_CHILDREN: usize = offset_of!(JSXFragment, children);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7114,10 +7166,11 @@ impl JSXFragmentWithoutChildren {
         unsafe { &*(self.0.add(OFFSET_JSX_FRAGMENT_CLOSING_FRAGMENT) as *const JSXClosingFragment) }
     }
 }
-
-const OFFSET_JSX_NAMESPACED_NAME_SPAN: usize = offset_of!(JSXNamespacedName, span);
-const OFFSET_JSX_NAMESPACED_NAME_PROPERTY: usize = offset_of!(JSXNamespacedName, property);
-const OFFSET_JSX_NAMESPACED_NAME_NAMESPACE: usize = offset_of!(JSXNamespacedName, namespace);
+pub(super) const OFFSET_JSX_NAMESPACED_NAME_SPAN: usize = offset_of!(JSXNamespacedName, span);
+pub(super) const OFFSET_JSX_NAMESPACED_NAME_NAMESPACE: usize =
+    offset_of!(JSXNamespacedName, namespace);
+pub(super) const OFFSET_JSX_NAMESPACED_NAME_PROPERTY: usize =
+    offset_of!(JSXNamespacedName, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7156,10 +7209,11 @@ impl<'a> JSXNamespacedNameWithoutProperty<'a> {
         unsafe { &*(self.0.add(OFFSET_JSX_NAMESPACED_NAME_NAMESPACE) as *const JSXIdentifier<'a>) }
     }
 }
-
-const OFFSET_JSX_MEMBER_EXPRESSION_SPAN: usize = offset_of!(JSXMemberExpression, span);
-const OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY: usize = offset_of!(JSXMemberExpression, property);
-const OFFSET_JSX_MEMBER_EXPRESSION_OBJECT: usize = offset_of!(JSXMemberExpression, object);
+pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_SPAN: usize = offset_of!(JSXMemberExpression, span);
+pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_OBJECT: usize =
+    offset_of!(JSXMemberExpression, object);
+pub(super) const OFFSET_JSX_MEMBER_EXPRESSION_PROPERTY: usize =
+    offset_of!(JSXMemberExpression, property);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7201,8 +7255,10 @@ impl<'a> JSXMemberExpressionWithoutProperty<'a> {
         }
     }
 }
-
-const OFFSET_JSX_EXPRESSION_CONTAINER_SPAN: usize = offset_of!(JSXExpressionContainer, span);
+pub(super) const OFFSET_JSX_EXPRESSION_CONTAINER_SPAN: usize =
+    offset_of!(JSXExpressionContainer, span);
+pub(super) const OFFSET_JSX_EXPRESSION_CONTAINER_EXPRESSION: usize =
+    offset_of!(JSXExpressionContainer, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7214,10 +7270,10 @@ impl JSXExpressionContainerWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_JSX_EXPRESSION_CONTAINER_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_JSX_ATTRIBUTE_SPAN: usize = offset_of!(JSXAttribute, span);
-const OFFSET_JSX_ATTRIBUTE_VALUE: usize = offset_of!(JSXAttribute, value);
-const OFFSET_JSX_ATTRIBUTE_NAME: usize = offset_of!(JSXAttribute, name);
+pub(super) const OFFSET_JSX_EMPTY_EXPRESSION_SPAN: usize = offset_of!(JSXEmptyExpression, span);
+pub(super) const OFFSET_JSX_ATTRIBUTE_SPAN: usize = offset_of!(JSXAttribute, span);
+pub(super) const OFFSET_JSX_ATTRIBUTE_NAME: usize = offset_of!(JSXAttribute, name);
+pub(super) const OFFSET_JSX_ATTRIBUTE_VALUE: usize = offset_of!(JSXAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7252,8 +7308,9 @@ impl<'a> JSXAttributeWithoutValue<'a> {
         unsafe { &*(self.0.add(OFFSET_JSX_ATTRIBUTE_NAME) as *const JSXAttributeName<'a>) }
     }
 }
-
-const OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN: usize = offset_of!(JSXSpreadAttribute, span);
+pub(super) const OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN: usize = offset_of!(JSXSpreadAttribute, span);
+pub(super) const OFFSET_JSX_SPREAD_ATTRIBUTE_ARGUMENT: usize =
+    offset_of!(JSXSpreadAttribute, argument);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7265,8 +7322,10 @@ impl JSXSpreadAttributeWithoutArgument {
         unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_ATTRIBUTE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_JSX_SPREAD_CHILD_SPAN: usize = offset_of!(JSXSpreadChild, span);
+pub(super) const OFFSET_JSX_IDENTIFIER_SPAN: usize = offset_of!(JSXIdentifier, span);
+pub(super) const OFFSET_JSX_IDENTIFIER_NAME: usize = offset_of!(JSXIdentifier, name);
+pub(super) const OFFSET_JSX_SPREAD_CHILD_SPAN: usize = offset_of!(JSXSpreadChild, span);
+pub(super) const OFFSET_JSX_SPREAD_CHILD_EXPRESSION: usize = offset_of!(JSXSpreadChild, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7278,11 +7337,27 @@ impl JSXSpreadChildWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_JSX_SPREAD_CHILD_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_THIS_PARAMETER_SPAN: usize = offset_of!(TSThisParameter, span);
-const OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_JSX_TEXT_SPAN: usize = offset_of!(JSXText, span);
+pub(super) const OFFSET_JSX_TEXT_VALUE: usize = offset_of!(JSXText, value);
+pub(super) const OFFSET_BOOLEAN_LITERAL_SPAN: usize = offset_of!(BooleanLiteral, span);
+pub(super) const OFFSET_BOOLEAN_LITERAL_VALUE: usize = offset_of!(BooleanLiteral, value);
+pub(super) const OFFSET_NULL_LITERAL_SPAN: usize = offset_of!(NullLiteral, span);
+pub(super) const OFFSET_NUMERIC_LITERAL_SPAN: usize = offset_of!(NumericLiteral, span);
+pub(super) const OFFSET_NUMERIC_LITERAL_VALUE: usize = offset_of!(NumericLiteral, value);
+pub(super) const OFFSET_NUMERIC_LITERAL_RAW: usize = offset_of!(NumericLiteral, raw);
+pub(super) const OFFSET_NUMERIC_LITERAL_BASE: usize = offset_of!(NumericLiteral, base);
+pub(super) const OFFSET_BIG_INT_LITERAL_SPAN: usize = offset_of!(BigIntLiteral, span);
+pub(super) const OFFSET_BIG_INT_LITERAL_RAW: usize = offset_of!(BigIntLiteral, raw);
+pub(super) const OFFSET_BIG_INT_LITERAL_BASE: usize = offset_of!(BigIntLiteral, base);
+pub(super) const OFFSET_REG_EXP_LITERAL_SPAN: usize = offset_of!(RegExpLiteral, span);
+pub(super) const OFFSET_REG_EXP_LITERAL_VALUE: usize = offset_of!(RegExpLiteral, value);
+pub(super) const OFFSET_REG_EXP_LITERAL_REGEX: usize = offset_of!(RegExpLiteral, regex);
+pub(super) const OFFSET_STRING_LITERAL_SPAN: usize = offset_of!(StringLiteral, span);
+pub(super) const OFFSET_STRING_LITERAL_VALUE: usize = offset_of!(StringLiteral, value);
+pub(super) const OFFSET_TS_THIS_PARAMETER_SPAN: usize = offset_of!(TSThisParameter, span);
+pub(super) const OFFSET_TS_THIS_PARAMETER_THIS: usize = offset_of!(TSThisParameter, this);
+pub(super) const OFFSET_TS_THIS_PARAMETER_TYPE_ANNOTATION: usize =
     offset_of!(TSThisParameter, type_annotation);
-const OFFSET_TS_THIS_PARAMETER_THIS: usize = offset_of!(TSThisParameter, this);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7321,11 +7396,11 @@ impl<'a> TSThisParameterWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_THIS_PARAMETER_THIS) as *const IdentifierName<'a>) }
     }
 }
-
-const OFFSET_TS_ENUM_DECLARATION_SPAN: usize = offset_of!(TSEnumDeclaration, span);
-const OFFSET_TS_ENUM_DECLARATION_MEMBERS: usize = offset_of!(TSEnumDeclaration, members);
-const OFFSET_TS_ENUM_DECLARATION_MODIFIERS: usize = offset_of!(TSEnumDeclaration, modifiers);
-const OFFSET_TS_ENUM_DECLARATION_ID: usize = offset_of!(TSEnumDeclaration, id);
+pub(super) const OFFSET_TS_ENUM_DECLARATION_SPAN: usize = offset_of!(TSEnumDeclaration, span);
+pub(super) const OFFSET_TS_ENUM_DECLARATION_ID: usize = offset_of!(TSEnumDeclaration, id);
+pub(super) const OFFSET_TS_ENUM_DECLARATION_MEMBERS: usize = offset_of!(TSEnumDeclaration, members);
+pub(super) const OFFSET_TS_ENUM_DECLARATION_MODIFIERS: usize =
+    offset_of!(TSEnumDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7373,10 +7448,9 @@ impl<'a> TSEnumDeclarationWithoutMembers<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_ENUM_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_TS_ENUM_MEMBER_SPAN: usize = offset_of!(TSEnumMember, span);
-const OFFSET_TS_ENUM_MEMBER_INITIALIZER: usize = offset_of!(TSEnumMember, initializer);
-const OFFSET_TS_ENUM_MEMBER_ID: usize = offset_of!(TSEnumMember, id);
+pub(super) const OFFSET_TS_ENUM_MEMBER_SPAN: usize = offset_of!(TSEnumMember, span);
+pub(super) const OFFSET_TS_ENUM_MEMBER_ID: usize = offset_of!(TSEnumMember, id);
+pub(super) const OFFSET_TS_ENUM_MEMBER_INITIALIZER: usize = offset_of!(TSEnumMember, initializer);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7411,8 +7485,9 @@ impl<'a> TSEnumMemberWithoutInitializer<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_ENUM_MEMBER_ID) as *const TSEnumMemberName<'a>) }
     }
 }
-
-const OFFSET_TS_TYPE_ANNOTATION_SPAN: usize = offset_of!(TSTypeAnnotation, span);
+pub(super) const OFFSET_TS_TYPE_ANNOTATION_SPAN: usize = offset_of!(TSTypeAnnotation, span);
+pub(super) const OFFSET_TS_TYPE_ANNOTATION_TYPE_ANNOTATION: usize =
+    offset_of!(TSTypeAnnotation, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7424,8 +7499,8 @@ impl TSTypeAnnotationWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_ANNOTATION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_LITERAL_TYPE_SPAN: usize = offset_of!(TSLiteralType, span);
+pub(super) const OFFSET_TS_LITERAL_TYPE_SPAN: usize = offset_of!(TSLiteralType, span);
+pub(super) const OFFSET_TS_LITERAL_TYPE_LITERAL: usize = offset_of!(TSLiteralType, literal);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7437,12 +7512,15 @@ impl TSLiteralTypeWithoutLiteral {
         unsafe { &*(self.0.add(OFFSET_TS_LITERAL_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_CONDITIONAL_TYPE_SPAN: usize = offset_of!(TSConditionalType, span);
-const OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE: usize = offset_of!(TSConditionalType, extends_type);
-const OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE: usize = offset_of!(TSConditionalType, true_type);
-const OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE: usize = offset_of!(TSConditionalType, false_type);
-const OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE: usize = offset_of!(TSConditionalType, check_type);
+pub(super) const OFFSET_TS_CONDITIONAL_TYPE_SPAN: usize = offset_of!(TSConditionalType, span);
+pub(super) const OFFSET_TS_CONDITIONAL_TYPE_CHECK_TYPE: usize =
+    offset_of!(TSConditionalType, check_type);
+pub(super) const OFFSET_TS_CONDITIONAL_TYPE_EXTENDS_TYPE: usize =
+    offset_of!(TSConditionalType, extends_type);
+pub(super) const OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE: usize =
+    offset_of!(TSConditionalType, true_type);
+pub(super) const OFFSET_TS_CONDITIONAL_TYPE_FALSE_TYPE: usize =
+    offset_of!(TSConditionalType, false_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7559,8 +7637,8 @@ impl<'a> TSConditionalTypeWithoutFalseType<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_CONDITIONAL_TYPE_TRUE_TYPE) as *const TSType<'a>) }
     }
 }
-
-const OFFSET_TS_UNION_TYPE_SPAN: usize = offset_of!(TSUnionType, span);
+pub(super) const OFFSET_TS_UNION_TYPE_SPAN: usize = offset_of!(TSUnionType, span);
+pub(super) const OFFSET_TS_UNION_TYPE_TYPES: usize = offset_of!(TSUnionType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7572,8 +7650,8 @@ impl TSUnionTypeWithoutTypes {
         unsafe { &*(self.0.add(OFFSET_TS_UNION_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_INTERSECTION_TYPE_SPAN: usize = offset_of!(TSIntersectionType, span);
+pub(super) const OFFSET_TS_INTERSECTION_TYPE_SPAN: usize = offset_of!(TSIntersectionType, span);
+pub(super) const OFFSET_TS_INTERSECTION_TYPE_TYPES: usize = offset_of!(TSIntersectionType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7585,9 +7663,10 @@ impl TSIntersectionTypeWithoutTypes {
         unsafe { &*(self.0.add(OFFSET_TS_INTERSECTION_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_OPERATOR_SPAN: usize = offset_of!(TSTypeOperator, span);
-const OFFSET_TS_TYPE_OPERATOR_OPERATOR: usize = offset_of!(TSTypeOperator, operator);
+pub(super) const OFFSET_TS_TYPE_OPERATOR_SPAN: usize = offset_of!(TSTypeOperator, span);
+pub(super) const OFFSET_TS_TYPE_OPERATOR_OPERATOR: usize = offset_of!(TSTypeOperator, operator);
+pub(super) const OFFSET_TS_TYPE_OPERATOR_TYPE_ANNOTATION: usize =
+    offset_of!(TSTypeOperator, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7604,8 +7683,8 @@ impl TSTypeOperatorWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_OPERATOR_OPERATOR) as *const TSTypeOperatorOperator) }
     }
 }
-
-const OFFSET_TS_ARRAY_TYPE_SPAN: usize = offset_of!(TSArrayType, span);
+pub(super) const OFFSET_TS_ARRAY_TYPE_SPAN: usize = offset_of!(TSArrayType, span);
+pub(super) const OFFSET_TS_ARRAY_TYPE_ELEMENT_TYPE: usize = offset_of!(TSArrayType, element_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7617,11 +7696,11 @@ impl TSArrayTypeWithoutElementType {
         unsafe { &*(self.0.add(OFFSET_TS_ARRAY_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN: usize = offset_of!(TSIndexedAccessType, span);
-const OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE: usize = offset_of!(TSIndexedAccessType, index_type);
-const OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE: usize =
+pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_SPAN: usize = offset_of!(TSIndexedAccessType, span);
+pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE: usize =
     offset_of!(TSIndexedAccessType, object_type);
+pub(super) const OFFSET_TS_INDEXED_ACCESS_TYPE_INDEX_TYPE: usize =
+    offset_of!(TSIndexedAccessType, index_type);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7660,8 +7739,8 @@ impl<'a> TSIndexedAccessTypeWithoutIndexType<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEXED_ACCESS_TYPE_OBJECT_TYPE) as *const TSType<'a>) }
     }
 }
-
-const OFFSET_TS_TUPLE_TYPE_SPAN: usize = offset_of!(TSTupleType, span);
+pub(super) const OFFSET_TS_TUPLE_TYPE_SPAN: usize = offset_of!(TSTupleType, span);
+pub(super) const OFFSET_TS_TUPLE_TYPE_ELEMENT_TYPES: usize = offset_of!(TSTupleType, element_types);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7673,12 +7752,12 @@ impl TSTupleTypeWithoutElementTypes {
         unsafe { &*(self.0.add(OFFSET_TS_TUPLE_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN: usize = offset_of!(TSNamedTupleMember, span);
-const OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL: usize = offset_of!(TSNamedTupleMember, label);
-const OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL: usize = offset_of!(TSNamedTupleMember, optional);
-const OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE: usize =
+pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_SPAN: usize = offset_of!(TSNamedTupleMember, span);
+pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_ELEMENT_TYPE: usize =
     offset_of!(TSNamedTupleMember, element_type);
+pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_LABEL: usize = offset_of!(TSNamedTupleMember, label);
+pub(super) const OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL: usize =
+    offset_of!(TSNamedTupleMember, optional);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7724,8 +7803,9 @@ impl<'a> TSNamedTupleMemberWithoutLabel<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_NAMED_TUPLE_MEMBER_OPTIONAL) as *const bool) }
     }
 }
-
-const OFFSET_TS_OPTIONAL_TYPE_SPAN: usize = offset_of!(TSOptionalType, span);
+pub(super) const OFFSET_TS_OPTIONAL_TYPE_SPAN: usize = offset_of!(TSOptionalType, span);
+pub(super) const OFFSET_TS_OPTIONAL_TYPE_TYPE_ANNOTATION: usize =
+    offset_of!(TSOptionalType, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7737,8 +7817,9 @@ impl TSOptionalTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_OPTIONAL_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_REST_TYPE_SPAN: usize = offset_of!(TSRestType, span);
+pub(super) const OFFSET_TS_REST_TYPE_SPAN: usize = offset_of!(TSRestType, span);
+pub(super) const OFFSET_TS_REST_TYPE_TYPE_ANNOTATION: usize =
+    offset_of!(TSRestType, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7750,11 +7831,23 @@ impl TSRestTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_TS_REST_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_REFERENCE_SPAN: usize = offset_of!(TSTypeReference, span);
-const OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_ANY_KEYWORD_SPAN: usize = offset_of!(TSAnyKeyword, span);
+pub(super) const OFFSET_TS_STRING_KEYWORD_SPAN: usize = offset_of!(TSStringKeyword, span);
+pub(super) const OFFSET_TS_BOOLEAN_KEYWORD_SPAN: usize = offset_of!(TSBooleanKeyword, span);
+pub(super) const OFFSET_TS_NUMBER_KEYWORD_SPAN: usize = offset_of!(TSNumberKeyword, span);
+pub(super) const OFFSET_TS_NEVER_KEYWORD_SPAN: usize = offset_of!(TSNeverKeyword, span);
+pub(super) const OFFSET_TS_UNKNOWN_KEYWORD_SPAN: usize = offset_of!(TSUnknownKeyword, span);
+pub(super) const OFFSET_TS_NULL_KEYWORD_SPAN: usize = offset_of!(TSNullKeyword, span);
+pub(super) const OFFSET_TS_UNDEFINED_KEYWORD_SPAN: usize = offset_of!(TSUndefinedKeyword, span);
+pub(super) const OFFSET_TS_VOID_KEYWORD_SPAN: usize = offset_of!(TSVoidKeyword, span);
+pub(super) const OFFSET_TS_SYMBOL_KEYWORD_SPAN: usize = offset_of!(TSSymbolKeyword, span);
+pub(super) const OFFSET_TS_THIS_TYPE_SPAN: usize = offset_of!(TSThisType, span);
+pub(super) const OFFSET_TS_OBJECT_KEYWORD_SPAN: usize = offset_of!(TSObjectKeyword, span);
+pub(super) const OFFSET_TS_BIG_INT_KEYWORD_SPAN: usize = offset_of!(TSBigIntKeyword, span);
+pub(super) const OFFSET_TS_TYPE_REFERENCE_SPAN: usize = offset_of!(TSTypeReference, span);
+pub(super) const OFFSET_TS_TYPE_REFERENCE_TYPE_NAME: usize = offset_of!(TSTypeReference, type_name);
+pub(super) const OFFSET_TS_TYPE_REFERENCE_TYPE_PARAMETERS: usize =
     offset_of!(TSTypeReference, type_parameters);
-const OFFSET_TS_TYPE_REFERENCE_TYPE_NAME: usize = offset_of!(TSTypeReference, type_name);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7793,10 +7886,9 @@ impl<'a> TSTypeReferenceWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_REFERENCE_TYPE_NAME) as *const TSTypeName<'a>) }
     }
 }
-
-const OFFSET_TS_QUALIFIED_NAME_SPAN: usize = offset_of!(TSQualifiedName, span);
-const OFFSET_TS_QUALIFIED_NAME_RIGHT: usize = offset_of!(TSQualifiedName, right);
-const OFFSET_TS_QUALIFIED_NAME_LEFT: usize = offset_of!(TSQualifiedName, left);
+pub(super) const OFFSET_TS_QUALIFIED_NAME_SPAN: usize = offset_of!(TSQualifiedName, span);
+pub(super) const OFFSET_TS_QUALIFIED_NAME_LEFT: usize = offset_of!(TSQualifiedName, left);
+pub(super) const OFFSET_TS_QUALIFIED_NAME_RIGHT: usize = offset_of!(TSQualifiedName, right);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7829,9 +7921,10 @@ impl<'a> TSQualifiedNameWithoutRight<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_QUALIFIED_NAME_LEFT) as *const TSTypeName<'a>) }
     }
 }
-
-const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN: usize =
+pub(super) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN: usize =
     offset_of!(TSTypeParameterInstantiation, span);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_PARAMS: usize =
+    offset_of!(TSTypeParameterInstantiation, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7843,14 +7936,14 @@ impl TSTypeParameterInstantiationWithoutParams {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_INSTANTIATION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_PARAMETER_SPAN: usize = offset_of!(TSTypeParameter, span);
-const OFFSET_TS_TYPE_PARAMETER_CONSTRAINT: usize = offset_of!(TSTypeParameter, constraint);
-const OFFSET_TS_TYPE_PARAMETER_DEFAULT: usize = offset_of!(TSTypeParameter, default);
-const OFFSET_TS_TYPE_PARAMETER_IN: usize = offset_of!(TSTypeParameter, r#in);
-const OFFSET_TS_TYPE_PARAMETER_OUT: usize = offset_of!(TSTypeParameter, out);
-const OFFSET_TS_TYPE_PARAMETER_CONST: usize = offset_of!(TSTypeParameter, r#const);
-const OFFSET_TS_TYPE_PARAMETER_NAME: usize = offset_of!(TSTypeParameter, name);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_SPAN: usize = offset_of!(TSTypeParameter, span);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_NAME: usize = offset_of!(TSTypeParameter, name);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_CONSTRAINT: usize =
+    offset_of!(TSTypeParameter, constraint);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_DEFAULT: usize = offset_of!(TSTypeParameter, default);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_IN: usize = offset_of!(TSTypeParameter, r#in);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_OUT: usize = offset_of!(TSTypeParameter, out);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_CONST: usize = offset_of!(TSTypeParameter, r#const);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7962,9 +8055,10 @@ impl<'a> TSTypeParameterWithoutDefault<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_CONST) as *const bool) }
     }
 }
-
-const OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN: usize =
+pub(super) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN: usize =
     offset_of!(TSTypeParameterDeclaration, span);
+pub(super) const OFFSET_TS_TYPE_PARAMETER_DECLARATION_PARAMS: usize =
+    offset_of!(TSTypeParameterDeclaration, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -7976,15 +8070,16 @@ impl TSTypeParameterDeclarationWithoutParams {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PARAMETER_DECLARATION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN: usize = offset_of!(TSTypeAliasDeclaration, span);
-const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_SPAN: usize =
+    offset_of!(TSTypeAliasDeclaration, span);
+pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_ID: usize =
+    offset_of!(TSTypeAliasDeclaration, id);
+pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeAliasDeclaration, type_annotation);
-const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSTypeAliasDeclaration, type_parameters);
-const OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS: usize =
+pub(super) const OFFSET_TS_TYPE_ALIAS_DECLARATION_MODIFIERS: usize =
     offset_of!(TSTypeAliasDeclaration, modifiers);
-const OFFSET_TS_TYPE_ALIAS_DECLARATION_ID: usize = offset_of!(TSTypeAliasDeclaration, id);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8092,11 +8187,11 @@ impl<'a> TSTypeAliasDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_CLASS_IMPLEMENTS_SPAN: usize = offset_of!(TSClassImplements, span);
-const OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_SPAN: usize = offset_of!(TSClassImplements, span);
+pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION: usize =
+    offset_of!(TSClassImplements, expression);
+pub(super) const OFFSET_TS_CLASS_IMPLEMENTS_TYPE_PARAMETERS: usize =
     offset_of!(TSClassImplements, type_parameters);
-const OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION: usize = offset_of!(TSClassImplements, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8138,15 +8233,17 @@ impl<'a> TSClassImplementsWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_CLASS_IMPLEMENTS_EXPRESSION) as *const TSTypeName<'a>) }
     }
 }
-
-const OFFSET_TS_INTERFACE_DECLARATION_SPAN: usize = offset_of!(TSInterfaceDeclaration, span);
-const OFFSET_TS_INTERFACE_DECLARATION_BODY: usize = offset_of!(TSInterfaceDeclaration, body);
-const OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_SPAN: usize =
+    offset_of!(TSInterfaceDeclaration, span);
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_ID: usize = offset_of!(TSInterfaceDeclaration, id);
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_BODY: usize =
+    offset_of!(TSInterfaceDeclaration, body);
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_TYPE_PARAMETERS: usize =
     offset_of!(TSInterfaceDeclaration, type_parameters);
-const OFFSET_TS_INTERFACE_DECLARATION_EXTENDS: usize = offset_of!(TSInterfaceDeclaration, extends);
-const OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS: usize =
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_EXTENDS: usize =
+    offset_of!(TSInterfaceDeclaration, extends);
+pub(super) const OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS: usize =
     offset_of!(TSInterfaceDeclaration, modifiers);
-const OFFSET_TS_INTERFACE_DECLARATION_ID: usize = offset_of!(TSInterfaceDeclaration, id);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8316,8 +8413,8 @@ impl<'a> TSInterfaceDeclarationWithoutExtends<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_TS_INTERFACE_BODY_SPAN: usize = offset_of!(TSInterfaceBody, span);
+pub(super) const OFFSET_TS_INTERFACE_BODY_SPAN: usize = offset_of!(TSInterfaceBody, span);
+pub(super) const OFFSET_TS_INTERFACE_BODY_BODY: usize = offset_of!(TSInterfaceBody, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8329,14 +8426,16 @@ impl TSInterfaceBodyWithoutBody {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_BODY_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_PROPERTY_SIGNATURE_SPAN: usize = offset_of!(TSPropertySignature, span);
-const OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED: usize = offset_of!(TSPropertySignature, computed);
-const OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL: usize = offset_of!(TSPropertySignature, optional);
-const OFFSET_TS_PROPERTY_SIGNATURE_READONLY: usize = offset_of!(TSPropertySignature, readonly);
-const OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_SPAN: usize = offset_of!(TSPropertySignature, span);
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_COMPUTED: usize =
+    offset_of!(TSPropertySignature, computed);
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_OPTIONAL: usize =
+    offset_of!(TSPropertySignature, optional);
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_READONLY: usize =
+    offset_of!(TSPropertySignature, readonly);
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_KEY: usize = offset_of!(TSPropertySignature, key);
+pub(super) const OFFSET_TS_PROPERTY_SIGNATURE_TYPE_ANNOTATION: usize =
     offset_of!(TSPropertySignature, type_annotation);
-const OFFSET_TS_PROPERTY_SIGNATURE_KEY: usize = offset_of!(TSPropertySignature, key);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8405,12 +8504,12 @@ impl<'a> TSPropertySignatureWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_PROPERTY_SIGNATURE_KEY) as *const PropertyKey<'a>) }
     }
 }
-
-const OFFSET_TS_INDEX_SIGNATURE_SPAN: usize = offset_of!(TSIndexSignature, span);
-const OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_SPAN: usize = offset_of!(TSIndexSignature, span);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_PARAMETERS: usize =
+    offset_of!(TSIndexSignature, parameters);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_TYPE_ANNOTATION: usize =
     offset_of!(TSIndexSignature, type_annotation);
-const OFFSET_TS_INDEX_SIGNATURE_READONLY: usize = offset_of!(TSIndexSignature, readonly);
-const OFFSET_TS_INDEX_SIGNATURE_PARAMETERS: usize = offset_of!(TSIndexSignature, parameters);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_READONLY: usize = offset_of!(TSIndexSignature, readonly);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8465,17 +8564,16 @@ impl<'a> TSIndexSignatureWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_READONLY) as *const bool) }
     }
 }
-
-const OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN: usize =
+pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_SPAN: usize =
     offset_of!(TSCallSignatureDeclaration, span);
-const OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS: usize =
-    offset_of!(TSCallSignatureDeclaration, params);
-const OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
-    offset_of!(TSCallSignatureDeclaration, return_type);
-const OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
-    offset_of!(TSCallSignatureDeclaration, type_parameters);
-const OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM: usize =
+pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_THIS_PARAM: usize =
     offset_of!(TSCallSignatureDeclaration, this_param);
+pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_PARAMS: usize =
+    offset_of!(TSCallSignatureDeclaration, params);
+pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
+    offset_of!(TSCallSignatureDeclaration, return_type);
+pub(super) const OFFSET_TS_CALL_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
+    offset_of!(TSCallSignatureDeclaration, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8628,17 +8726,20 @@ impl<'a> TSCallSignatureDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_METHOD_SIGNATURE_SPAN: usize = offset_of!(TSMethodSignature, span);
-const OFFSET_TS_METHOD_SIGNATURE_COMPUTED: usize = offset_of!(TSMethodSignature, computed);
-const OFFSET_TS_METHOD_SIGNATURE_OPTIONAL: usize = offset_of!(TSMethodSignature, optional);
-const OFFSET_TS_METHOD_SIGNATURE_KIND: usize = offset_of!(TSMethodSignature, kind);
-const OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM: usize = offset_of!(TSMethodSignature, this_param);
-const OFFSET_TS_METHOD_SIGNATURE_PARAMS: usize = offset_of!(TSMethodSignature, params);
-const OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE: usize = offset_of!(TSMethodSignature, return_type);
-const OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_SPAN: usize = offset_of!(TSMethodSignature, span);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_KEY: usize = offset_of!(TSMethodSignature, key);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_COMPUTED: usize =
+    offset_of!(TSMethodSignature, computed);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_OPTIONAL: usize =
+    offset_of!(TSMethodSignature, optional);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_KIND: usize = offset_of!(TSMethodSignature, kind);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_THIS_PARAM: usize =
+    offset_of!(TSMethodSignature, this_param);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_PARAMS: usize = offset_of!(TSMethodSignature, params);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_RETURN_TYPE: usize =
+    offset_of!(TSMethodSignature, return_type);
+pub(super) const OFFSET_TS_METHOD_SIGNATURE_TYPE_PARAMETERS: usize =
     offset_of!(TSMethodSignature, type_parameters);
-const OFFSET_TS_METHOD_SIGNATURE_KEY: usize = offset_of!(TSMethodSignature, key);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -8926,15 +9027,14 @@ impl<'a> TSMethodSignatureWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN: usize =
+pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_SPAN: usize =
     offset_of!(TSConstructSignatureDeclaration, span);
-const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
-    offset_of!(TSConstructSignatureDeclaration, return_type);
-const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
-    offset_of!(TSConstructSignatureDeclaration, type_parameters);
-const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS: usize =
+pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_PARAMS: usize =
     offset_of!(TSConstructSignatureDeclaration, params);
+pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_RETURN_TYPE: usize =
+    offset_of!(TSConstructSignatureDeclaration, return_type);
+pub(super) const OFFSET_TS_CONSTRUCT_SIGNATURE_DECLARATION_TYPE_PARAMETERS: usize =
+    offset_of!(TSConstructSignatureDeclaration, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9025,9 +9125,12 @@ impl<'a> TSConstructSignatureDeclarationWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN: usize = offset_of!(TSIndexSignatureName, span);
-const OFFSET_TS_INDEX_SIGNATURE_NAME_NAME: usize = offset_of!(TSIndexSignatureName, name);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_SPAN: usize =
+    offset_of!(TSIndexSignatureName, span);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_NAME: usize =
+    offset_of!(TSIndexSignatureName, name);
+pub(super) const OFFSET_TS_INDEX_SIGNATURE_NAME_TYPE_ANNOTATION: usize =
+    offset_of!(TSIndexSignatureName, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9047,11 +9150,11 @@ impl<'a> TSIndexSignatureNameWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INDEX_SIGNATURE_NAME_NAME) as *const Atom<'a>) }
     }
 }
-
-const OFFSET_TS_INTERFACE_HERITAGE_SPAN: usize = offset_of!(TSInterfaceHeritage, span);
-const OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_INTERFACE_HERITAGE_SPAN: usize = offset_of!(TSInterfaceHeritage, span);
+pub(super) const OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION: usize =
+    offset_of!(TSInterfaceHeritage, expression);
+pub(super) const OFFSET_TS_INTERFACE_HERITAGE_TYPE_PARAMETERS: usize =
     offset_of!(TSInterfaceHeritage, type_parameters);
-const OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION: usize = offset_of!(TSInterfaceHeritage, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9093,12 +9196,12 @@ impl<'a> TSInterfaceHeritageWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_INTERFACE_HERITAGE_EXPRESSION) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_TS_TYPE_PREDICATE_SPAN: usize = offset_of!(TSTypePredicate, span);
-const OFFSET_TS_TYPE_PREDICATE_ASSERTS: usize = offset_of!(TSTypePredicate, asserts);
-const OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_TS_TYPE_PREDICATE_SPAN: usize = offset_of!(TSTypePredicate, span);
+pub(super) const OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME: usize =
+    offset_of!(TSTypePredicate, parameter_name);
+pub(super) const OFFSET_TS_TYPE_PREDICATE_ASSERTS: usize = offset_of!(TSTypePredicate, asserts);
+pub(super) const OFFSET_TS_TYPE_PREDICATE_TYPE_ANNOTATION: usize =
     offset_of!(TSTypePredicate, type_annotation);
-const OFFSET_TS_TYPE_PREDICATE_PARAMETER_NAME: usize = offset_of!(TSTypePredicate, parameter_name);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9153,12 +9256,12 @@ impl<'a> TSTypePredicateWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_PREDICATE_ASSERTS) as *const bool) }
     }
 }
-
-const OFFSET_TS_MODULE_DECLARATION_SPAN: usize = offset_of!(TSModuleDeclaration, span);
-const OFFSET_TS_MODULE_DECLARATION_BODY: usize = offset_of!(TSModuleDeclaration, body);
-const OFFSET_TS_MODULE_DECLARATION_KIND: usize = offset_of!(TSModuleDeclaration, kind);
-const OFFSET_TS_MODULE_DECLARATION_MODIFIERS: usize = offset_of!(TSModuleDeclaration, modifiers);
-const OFFSET_TS_MODULE_DECLARATION_ID: usize = offset_of!(TSModuleDeclaration, id);
+pub(super) const OFFSET_TS_MODULE_DECLARATION_SPAN: usize = offset_of!(TSModuleDeclaration, span);
+pub(super) const OFFSET_TS_MODULE_DECLARATION_ID: usize = offset_of!(TSModuleDeclaration, id);
+pub(super) const OFFSET_TS_MODULE_DECLARATION_BODY: usize = offset_of!(TSModuleDeclaration, body);
+pub(super) const OFFSET_TS_MODULE_DECLARATION_KIND: usize = offset_of!(TSModuleDeclaration, kind);
+pub(super) const OFFSET_TS_MODULE_DECLARATION_MODIFIERS: usize =
+    offset_of!(TSModuleDeclaration, modifiers);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9220,8 +9323,8 @@ impl<'a> TSModuleDeclarationWithoutBody<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_MODULE_DECLARATION_MODIFIERS) as *const Modifiers<'a>) }
     }
 }
-
-const OFFSET_TS_MODULE_BLOCK_SPAN: usize = offset_of!(TSModuleBlock, span);
+pub(super) const OFFSET_TS_MODULE_BLOCK_SPAN: usize = offset_of!(TSModuleBlock, span);
+pub(super) const OFFSET_TS_MODULE_BLOCK_BODY: usize = offset_of!(TSModuleBlock, body);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9233,8 +9336,8 @@ impl TSModuleBlockWithoutBody {
         unsafe { &*(self.0.add(OFFSET_TS_MODULE_BLOCK_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_LITERAL_SPAN: usize = offset_of!(TSTypeLiteral, span);
+pub(super) const OFFSET_TS_TYPE_LITERAL_SPAN: usize = offset_of!(TSTypeLiteral, span);
+pub(super) const OFFSET_TS_TYPE_LITERAL_MEMBERS: usize = offset_of!(TSTypeLiteral, members);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9246,8 +9349,9 @@ impl TSTypeLiteralWithoutMembers {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_LITERAL_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_INFER_TYPE_SPAN: usize = offset_of!(TSInferType, span);
+pub(super) const OFFSET_TS_INFER_TYPE_SPAN: usize = offset_of!(TSInferType, span);
+pub(super) const OFFSET_TS_INFER_TYPE_TYPE_PARAMETER: usize =
+    offset_of!(TSInferType, type_parameter);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9259,10 +9363,10 @@ impl TSInferTypeWithoutTypeParameter {
         unsafe { &*(self.0.add(OFFSET_TS_INFER_TYPE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_TYPE_QUERY_SPAN: usize = offset_of!(TSTypeQuery, span);
-const OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS: usize = offset_of!(TSTypeQuery, type_parameters);
-const OFFSET_TS_TYPE_QUERY_EXPR_NAME: usize = offset_of!(TSTypeQuery, expr_name);
+pub(super) const OFFSET_TS_TYPE_QUERY_SPAN: usize = offset_of!(TSTypeQuery, span);
+pub(super) const OFFSET_TS_TYPE_QUERY_EXPR_NAME: usize = offset_of!(TSTypeQuery, expr_name);
+pub(super) const OFFSET_TS_TYPE_QUERY_TYPE_PARAMETERS: usize =
+    offset_of!(TSTypeQuery, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9301,12 +9405,12 @@ impl<'a> TSTypeQueryWithoutTypeParameters<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_QUERY_EXPR_NAME) as *const TSTypeQueryExprName<'a>) }
     }
 }
-
-const OFFSET_TS_IMPORT_TYPE_SPAN: usize = offset_of!(TSImportType, span);
-const OFFSET_TS_IMPORT_TYPE_QUALIFIER: usize = offset_of!(TSImportType, qualifier);
-const OFFSET_TS_IMPORT_TYPE_ATTRIBUTES: usize = offset_of!(TSImportType, attributes);
-const OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS: usize = offset_of!(TSImportType, type_parameters);
-const OFFSET_TS_IMPORT_TYPE_ARGUMENT: usize = offset_of!(TSImportType, argument);
+pub(super) const OFFSET_TS_IMPORT_TYPE_SPAN: usize = offset_of!(TSImportType, span);
+pub(super) const OFFSET_TS_IMPORT_TYPE_ARGUMENT: usize = offset_of!(TSImportType, argument);
+pub(super) const OFFSET_TS_IMPORT_TYPE_QUALIFIER: usize = offset_of!(TSImportType, qualifier);
+pub(super) const OFFSET_TS_IMPORT_TYPE_ATTRIBUTES: usize = offset_of!(TSImportType, attributes);
+pub(super) const OFFSET_TS_IMPORT_TYPE_TYPE_PARAMETERS: usize =
+    offset_of!(TSImportType, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9432,8 +9536,9 @@ impl<'a> TSImportTypeWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_IMPORT_ATTRIBUTES_SPAN: usize = offset_of!(TSImportAttributes, span);
+pub(super) const OFFSET_TS_IMPORT_ATTRIBUTES_SPAN: usize = offset_of!(TSImportAttributes, span);
+pub(super) const OFFSET_TS_IMPORT_ATTRIBUTES_ELEMENTS: usize =
+    offset_of!(TSImportAttributes, elements);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9445,10 +9550,9 @@ impl TSImportAttributesWithoutElements {
         unsafe { &*(self.0.add(OFFSET_TS_IMPORT_ATTRIBUTES_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(TSImportAttribute, span);
-const OFFSET_TS_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(TSImportAttribute, value);
-const OFFSET_TS_IMPORT_ATTRIBUTE_NAME: usize = offset_of!(TSImportAttribute, name);
+pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_SPAN: usize = offset_of!(TSImportAttribute, span);
+pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_NAME: usize = offset_of!(TSImportAttribute, name);
+pub(super) const OFFSET_TS_IMPORT_ATTRIBUTE_VALUE: usize = offset_of!(TSImportAttribute, value);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9483,12 +9587,13 @@ impl<'a> TSImportAttributeWithoutValue<'a> {
         }
     }
 }
-
-const OFFSET_TS_FUNCTION_TYPE_SPAN: usize = offset_of!(TSFunctionType, span);
-const OFFSET_TS_FUNCTION_TYPE_PARAMS: usize = offset_of!(TSFunctionType, params);
-const OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE: usize = offset_of!(TSFunctionType, return_type);
-const OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS: usize = offset_of!(TSFunctionType, type_parameters);
-const OFFSET_TS_FUNCTION_TYPE_THIS_PARAM: usize = offset_of!(TSFunctionType, this_param);
+pub(super) const OFFSET_TS_FUNCTION_TYPE_SPAN: usize = offset_of!(TSFunctionType, span);
+pub(super) const OFFSET_TS_FUNCTION_TYPE_THIS_PARAM: usize = offset_of!(TSFunctionType, this_param);
+pub(super) const OFFSET_TS_FUNCTION_TYPE_PARAMS: usize = offset_of!(TSFunctionType, params);
+pub(super) const OFFSET_TS_FUNCTION_TYPE_RETURN_TYPE: usize =
+    offset_of!(TSFunctionType, return_type);
+pub(super) const OFFSET_TS_FUNCTION_TYPE_TYPE_PARAMETERS: usize =
+    offset_of!(TSFunctionType, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9629,13 +9734,14 @@ impl<'a> TSFunctionTypeWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_CONSTRUCTOR_TYPE_SPAN: usize = offset_of!(TSConstructorType, span);
-const OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT: usize = offset_of!(TSConstructorType, r#abstract);
-const OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE: usize = offset_of!(TSConstructorType, return_type);
-const OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS: usize =
+pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_SPAN: usize = offset_of!(TSConstructorType, span);
+pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_ABSTRACT: usize =
+    offset_of!(TSConstructorType, r#abstract);
+pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS: usize = offset_of!(TSConstructorType, params);
+pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_RETURN_TYPE: usize =
+    offset_of!(TSConstructorType, return_type);
+pub(super) const OFFSET_TS_CONSTRUCTOR_TYPE_TYPE_PARAMETERS: usize =
     offset_of!(TSConstructorType, type_parameters);
-const OFFSET_TS_CONSTRUCTOR_TYPE_PARAMS: usize = offset_of!(TSConstructorType, params);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9738,13 +9844,14 @@ impl<'a> TSConstructorTypeWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_TS_MAPPED_TYPE_SPAN: usize = offset_of!(TSMappedType, span);
-const OFFSET_TS_MAPPED_TYPE_NAME_TYPE: usize = offset_of!(TSMappedType, name_type);
-const OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION: usize = offset_of!(TSMappedType, type_annotation);
-const OFFSET_TS_MAPPED_TYPE_OPTIONAL: usize = offset_of!(TSMappedType, optional);
-const OFFSET_TS_MAPPED_TYPE_READONLY: usize = offset_of!(TSMappedType, readonly);
-const OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER: usize = offset_of!(TSMappedType, type_parameter);
+pub(super) const OFFSET_TS_MAPPED_TYPE_SPAN: usize = offset_of!(TSMappedType, span);
+pub(super) const OFFSET_TS_MAPPED_TYPE_TYPE_PARAMETER: usize =
+    offset_of!(TSMappedType, type_parameter);
+pub(super) const OFFSET_TS_MAPPED_TYPE_NAME_TYPE: usize = offset_of!(TSMappedType, name_type);
+pub(super) const OFFSET_TS_MAPPED_TYPE_TYPE_ANNOTATION: usize =
+    offset_of!(TSMappedType, type_annotation);
+pub(super) const OFFSET_TS_MAPPED_TYPE_OPTIONAL: usize = offset_of!(TSMappedType, optional);
+pub(super) const OFFSET_TS_MAPPED_TYPE_READONLY: usize = offset_of!(TSMappedType, readonly);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9866,10 +9973,12 @@ impl<'a> TSMappedTypeWithoutTypeAnnotation<'a> {
         }
     }
 }
-
-const OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN: usize = offset_of!(TSTemplateLiteralType, span);
-const OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES: usize = offset_of!(TSTemplateLiteralType, types);
-const OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS: usize = offset_of!(TSTemplateLiteralType, quasis);
+pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_SPAN: usize =
+    offset_of!(TSTemplateLiteralType, span);
+pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_QUASIS: usize =
+    offset_of!(TSTemplateLiteralType, quasis);
+pub(super) const OFFSET_TS_TEMPLATE_LITERAL_TYPE_TYPES: usize =
+    offset_of!(TSTemplateLiteralType, types);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9913,10 +10022,10 @@ impl<'a> TSTemplateLiteralTypeWithoutTypes<'a> {
         }
     }
 }
-
-const OFFSET_TS_AS_EXPRESSION_SPAN: usize = offset_of!(TSAsExpression, span);
-const OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION: usize = offset_of!(TSAsExpression, type_annotation);
-const OFFSET_TS_AS_EXPRESSION_EXPRESSION: usize = offset_of!(TSAsExpression, expression);
+pub(super) const OFFSET_TS_AS_EXPRESSION_SPAN: usize = offset_of!(TSAsExpression, span);
+pub(super) const OFFSET_TS_AS_EXPRESSION_EXPRESSION: usize = offset_of!(TSAsExpression, expression);
+pub(super) const OFFSET_TS_AS_EXPRESSION_TYPE_ANNOTATION: usize =
+    offset_of!(TSAsExpression, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -9955,12 +10064,12 @@ impl<'a> TSAsExpressionWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_AS_EXPRESSION_EXPRESSION) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_TS_SATISFIES_EXPRESSION_SPAN: usize = offset_of!(TSSatisfiesExpression, span);
-const OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION: usize =
-    offset_of!(TSSatisfiesExpression, type_annotation);
-const OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION: usize =
+pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_SPAN: usize =
+    offset_of!(TSSatisfiesExpression, span);
+pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_EXPRESSION: usize =
     offset_of!(TSSatisfiesExpression, expression);
+pub(super) const OFFSET_TS_SATISFIES_EXPRESSION_TYPE_ANNOTATION: usize =
+    offset_of!(TSSatisfiesExpression, type_annotation);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10003,11 +10112,11 @@ impl<'a> TSSatisfiesExpressionWithoutTypeAnnotation<'a> {
         }
     }
 }
-
-const OFFSET_TS_TYPE_ASSERTION_SPAN: usize = offset_of!(TSTypeAssertion, span);
-const OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION: usize =
+pub(super) const OFFSET_TS_TYPE_ASSERTION_SPAN: usize = offset_of!(TSTypeAssertion, span);
+pub(super) const OFFSET_TS_TYPE_ASSERTION_EXPRESSION: usize =
+    offset_of!(TSTypeAssertion, expression);
+pub(super) const OFFSET_TS_TYPE_ASSERTION_TYPE_ANNOTATION: usize =
     offset_of!(TSTypeAssertion, type_annotation);
-const OFFSET_TS_TYPE_ASSERTION_EXPRESSION: usize = offset_of!(TSTypeAssertion, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10046,13 +10155,14 @@ impl<'a> TSTypeAssertionWithoutTypeAnnotation<'a> {
         unsafe { &*(self.0.add(OFFSET_TS_TYPE_ASSERTION_EXPRESSION) as *const Expression<'a>) }
     }
 }
-
-const OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN: usize = offset_of!(TSImportEqualsDeclaration, span);
-const OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE: usize =
+pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_SPAN: usize =
+    offset_of!(TSImportEqualsDeclaration, span);
+pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID: usize =
+    offset_of!(TSImportEqualsDeclaration, id);
+pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_MODULE_REFERENCE: usize =
     offset_of!(TSImportEqualsDeclaration, module_reference);
-const OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND: usize =
+pub(super) const OFFSET_TS_IMPORT_EQUALS_DECLARATION_IMPORT_KIND: usize =
     offset_of!(TSImportEqualsDeclaration, import_kind);
-const OFFSET_TS_IMPORT_EQUALS_DECLARATION_ID: usize = offset_of!(TSImportEqualsDeclaration, id);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10112,8 +10222,10 @@ impl<'a> TSImportEqualsDeclarationWithoutModuleReference<'a> {
         }
     }
 }
-
-const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN: usize = offset_of!(TSExternalModuleReference, span);
+pub(super) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN: usize =
+    offset_of!(TSExternalModuleReference, span);
+pub(super) const OFFSET_TS_EXTERNAL_MODULE_REFERENCE_EXPRESSION: usize =
+    offset_of!(TSExternalModuleReference, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10125,8 +10237,9 @@ impl TSExternalModuleReferenceWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_EXTERNAL_MODULE_REFERENCE_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_NON_NULL_EXPRESSION_SPAN: usize = offset_of!(TSNonNullExpression, span);
+pub(super) const OFFSET_TS_NON_NULL_EXPRESSION_SPAN: usize = offset_of!(TSNonNullExpression, span);
+pub(super) const OFFSET_TS_NON_NULL_EXPRESSION_EXPRESSION: usize =
+    offset_of!(TSNonNullExpression, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10138,8 +10251,8 @@ impl TSNonNullExpressionWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_NON_NULL_EXPRESSION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_DECORATOR_SPAN: usize = offset_of!(Decorator, span);
+pub(super) const OFFSET_DECORATOR_SPAN: usize = offset_of!(Decorator, span);
+pub(super) const OFFSET_DECORATOR_EXPRESSION: usize = offset_of!(Decorator, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10151,8 +10264,9 @@ impl DecoratorWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_DECORATOR_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_EXPORT_ASSIGNMENT_SPAN: usize = offset_of!(TSExportAssignment, span);
+pub(super) const OFFSET_TS_EXPORT_ASSIGNMENT_SPAN: usize = offset_of!(TSExportAssignment, span);
+pub(super) const OFFSET_TS_EXPORT_ASSIGNMENT_EXPRESSION: usize =
+    offset_of!(TSExportAssignment, expression);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10164,9 +10278,10 @@ impl TSExportAssignmentWithoutExpression {
         unsafe { &*(self.0.add(OFFSET_TS_EXPORT_ASSIGNMENT_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN: usize =
+pub(super) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN: usize =
     offset_of!(TSNamespaceExportDeclaration, span);
+pub(super) const OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_ID: usize =
+    offset_of!(TSNamespaceExportDeclaration, id);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10178,12 +10293,12 @@ impl TSNamespaceExportDeclarationWithoutId {
         unsafe { &*(self.0.add(OFFSET_TS_NAMESPACE_EXPORT_DECLARATION_SPAN) as *const Span) }
     }
 }
-
-const OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN: usize = offset_of!(TSInstantiationExpression, span);
-const OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS: usize =
-    offset_of!(TSInstantiationExpression, type_parameters);
-const OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION: usize =
+pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_SPAN: usize =
+    offset_of!(TSInstantiationExpression, span);
+pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_EXPRESSION: usize =
     offset_of!(TSInstantiationExpression, expression);
+pub(super) const OFFSET_TS_INSTANTIATION_EXPRESSION_TYPE_PARAMETERS: usize =
+    offset_of!(TSInstantiationExpression, type_parameters);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10227,9 +10342,11 @@ impl<'a> TSInstantiationExpressionWithoutTypeParameters<'a> {
         }
     }
 }
-
-const OFFSET_JS_DOC_NULLABLE_TYPE_SPAN: usize = offset_of!(JSDocNullableType, span);
-const OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX: usize = offset_of!(JSDocNullableType, postfix);
+pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_SPAN: usize = offset_of!(JSDocNullableType, span);
+pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_TYPE_ANNOTATION: usize =
+    offset_of!(JSDocNullableType, type_annotation);
+pub(super) const OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX: usize =
+    offset_of!(JSDocNullableType, postfix);
 
 #[repr(transparent)]
 #[derive(Debug)]
@@ -10246,3 +10363,4 @@ impl JSDocNullableTypeWithoutTypeAnnotation {
         unsafe { &*(self.0.add(OFFSET_JS_DOC_NULLABLE_TYPE_POSTFIX) as *const bool) }
     }
 }
+pub(super) const OFFSET_JS_DOC_UNKNOWN_TYPE_SPAN: usize = offset_of!(JSDocUnknownType, span);

@@ -74,10 +74,16 @@ function generateAncestorsCode(types) {
             continue;
         }
 
-        const typeNameScreaming = camelToScreaming(type.name),
-            variantNames = [];
-        let offsetVars = '',
-            thisAncestorTypes = '';
+        // TODO: Don't create `Ancestor`s for types which are never a parent
+        // e.g. `IdentifierReference`
+        const typeNameScreaming = camelToScreaming(type.name);
+        for (const field of type.fields) {
+            const offsetVarName = `OFFSET_${typeNameScreaming}_${field.name.toUpperCase()}`;
+            field.offsetVarName = offsetVarName;
+            ancestorTypes += `pub(super) const ${offsetVarName}: usize = offset_of!(${type.name}, ${field.rawName});\n`;
+        }
+
+        const variantNames = [];
         for (const field of type.fields) {
             if (!types[unwrapTypeName(field.type)]) continue;
 
@@ -86,17 +92,10 @@ function generateAncestorsCode(types) {
             for (const otherField of type.fields) {
                 if (otherField === field) continue;
 
-                let {offsetVarName} = otherField;
-                if (!offsetVarName) {
-                    offsetVarName = `OFFSET_${typeNameScreaming}_${otherField.name.toUpperCase()}`;
-                    otherField.offsetVarName = offsetVarName;
-                    offsetVars += `const ${offsetVarName}: usize = offset_of!(${type.name}, ${otherField.rawName});\n`;
-                }
-
                 methodsCode += `
                     #[inline]
                     pub fn ${otherField.rawName}(&self) -> &${otherField.rawType} {
-                        unsafe { &*(self.0.add(${offsetVarName}) as *const ${otherField.rawType}) }
+                        unsafe { &*(self.0.add(${otherField.offsetVarName}) as *const ${otherField.rawType}) }
                     }
                 `;
 
@@ -108,7 +107,7 @@ function generateAncestorsCode(types) {
             let structFields = 'pub(super) *const u8';
             if (hasLifetime) structFields += ", pub(super) PhantomData<&'a ()>";
 
-            thisAncestorTypes += `
+            ancestorTypes += `
                 #[repr(transparent)]
                 #[derive(Debug)]
                 pub struct ${structName}(${structFields});
@@ -126,11 +125,6 @@ function generateAncestorsCode(types) {
             field.ancestorHasLifetime = hasLifetime;
             discriminant++;
         }
-
-        ancestorTypes += `
-            ${offsetVars}
-            ${thisAncestorTypes}
-        `;
 
         if (variantNames.length > 0) {
             variantNamesForStructs[type.name] = variantNames;
@@ -171,6 +165,9 @@ function generateAncestorsCode(types) {
             clippy::cast_ptr_alignment
         )]
 
+        // TODO: Remove unneeded offset consts, then remove next line
+        #![allow(dead_code)]
+
         use std::{marker::PhantomData, mem::offset_of};
 
         use oxc_allocator::{Box, Vec};
@@ -205,55 +202,40 @@ function generateWalkFunctionsCode(types) {
         const snakeName = camelToSnake(type.name),
             ty = toTypeName(type);
         if (type.kind === 'struct') {
-            const visitedFields = type.fields.filter((field, index) => {
-                field.index = index;
-                return unwrapTypeName(field.type) in types;
-            });
+            const visitedFields = type.fields.filter(field => unwrapTypeName(field.type) in types);
 
             const fieldsCodes = visitedFields.map((field, index) => {
-                const otherField = field.index === 0 ? type.fields[1] : type.fields[field.index - 1],
-                    fieldCamelName = snakeToCamel(field.name);
-                const pushCode = `unsafe {
-                    ctx.${index === 0 ? 'push_stack' : 'replace_stack'}(
-                        Ancestor::${type.name}${fieldCamelName}(
-                            ancestor::${type.name}Without${fieldCamelName}(
-                                (&mut node.${otherField.rawName} as *const _ as *const u8)
-                                    .sub(offset_of!(${type.name}, ${otherField.rawName}))
-                                ${field.ancestorHasLifetime ? ', PhantomData' : ''}
-                            )
-                        )
-                    )
-                };\n`;
-                
                 const {name: fieldTypeName, wrappers: fieldTypeWrappers} = typeAndWrappers(field.type);
+
+                const retagCode = index === 0 ? '' : `ctx.retag_stack(${field.ancestorDiscriminant});`,
+                    fieldCode = `node.byte_add(ancestor::${field.offsetVarName}) as *mut ${field.type}`;
 
                 if (fieldTypeWrappers[0] === 'Option') {
                     const remainingWrappers = fieldTypeWrappers.slice(1);
-                    if (remainingWrappers[0] === 'Box') remainingWrappers.shift();
 
                     let walkCode;
                     if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Vec') {
                         if (fieldTypeName === 'Statement') {
                             // Special case for `Option<Vec<Statement>>`
-                            walkCode = `walk_statements(traverser, field, ctx);`;
+                            walkCode = `walk_statements(traverser, field as *mut _, ctx);`;
                         } else {
                             walkCode = `
                                 for item in field.iter_mut() {
-                                    walk_${camelToSnake(fieldTypeName)}(traverser, item, ctx);
+                                    walk_${camelToSnake(fieldTypeName)}(traverser, item as *mut _, ctx);
                                 }
                             `.trim();
                         }
+                    } else if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Box') {
+                        walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, (&mut **field) as *mut _, ctx);`;
                     } else if (remainingWrappers.length > 0) {
                         walkCode = `todo!("TODO: ${field.type}");`;
                     } else {
-                        walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field, ctx);`;
+                        walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, field as *mut _, ctx);`;
                     }
 
-                    const [preCode, postCode] = index === 0 ? [pushCode, ''] : ['', pushCode];
                     return `
-                        ${preCode}
-                        if let Some(field) = &mut node.${field.rawName} {
-                            ${postCode}
+                        if let Some(field) = &mut *(${fieldCode}) {
+                            ${retagCode}
                             ${walkCode}
                         }
                     `;
@@ -265,9 +247,9 @@ function generateWalkFunctionsCode(types) {
                     let walkVecCode;
                     if (remainingWrappers.length === 0 && fieldTypeName === 'Statement') {
                         // Special case for `Vec<Statement>`
-                        walkVecCode = `walk_statements(traverser, &mut node.${field.rawName}, ctx);`
+                        walkVecCode = `walk_statements(traverser, ${fieldCode}, ctx);`
                     } else {
-                        let walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, item, ctx);`,
+                        let walkCode = `walk_${camelToSnake(fieldTypeName)}(traverser, item as *mut _, ctx);`,
                             iterModifier = '';
                         if (remainingWrappers.length === 1 && remainingWrappers[0] === 'Option') {
                             iterModifier = '.flatten()';
@@ -275,44 +257,78 @@ function generateWalkFunctionsCode(types) {
                             walkCode = `todo!("TODO: ${field.type}");`;
                         }
                         walkVecCode = `
-                            for item in node.${field.rawName}.iter_mut()${iterModifier} {
+                            for item in (*(${fieldCode})).iter_mut()${iterModifier} {
                                 ${walkCode}
                             }
                         `.trim();
                     }
 
                     return `
-                        ${pushCode}
+                        ${retagCode}
                         ${walkVecCode}
                     `;
                 }
 
+                if (fieldTypeWrappers.length === 1 && fieldTypeWrappers[0] === 'Box') {
+                    // TODO: Maybe substitute:
+                    // (&mut **(&mut *(${fieldCode}))) as *mut _
+                    return `
+                        ${retagCode}
+                        walk_${camelToSnake(fieldTypeName)}(
+                            traverser, (&mut **(${fieldCode})) as *mut _, ctx
+                        );
+                    `;
+                }
+
+                if (fieldTypeWrappers.length > 0) return `todo!("TODO: ${field.type}");`;
+
                 return `
-                    ${pushCode}
-                    walk_${camelToSnake(fieldTypeName)}(traverser, &mut node.${field.rawName}, ctx);
+                    ${retagCode}
+                    walk_${camelToSnake(fieldTypeName)}(traverser, ${fieldCode}, ctx);
                 `;
             });
 
-            if (fieldsCodes.length > 0) fieldsCodes.push('unsafe { ctx.pop_stack() };');
+            if (visitedFields.length > 0) {
+                const field = visitedFields[0],
+                    fieldCamelName = snakeToCamel(field.name);
+                fieldsCodes.unshift(`
+                    ctx.push_stack(
+                        Ancestor::${type.name}${fieldCamelName}(
+                            ancestor::${type.name}Without${fieldCamelName}(
+                                node as *const u8,
+                                ${field.ancestorHasLifetime ? 'PhantomData,' : ''}
+                            )
+                        )
+                    );
+                `);
+                fieldsCodes.push('ctx.pop_stack();');
+            }
 
             walkMethods += `
-                ${fieldsCodes.length === 0 ? '#[inline]' : ''}
-                pub(super) fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
+                pub(super) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(
                     traverser: &mut Tr,
-                    node: &mut ${ty},
+                    node: *mut ${ty},
                     ctx: &mut TraverseCtx<'a>
                 ) {
-                    traverser.enter_${snakeName}(node, ctx);
+                    traverser.enter_${snakeName}(&mut *node, ctx);
                     ${fieldsCodes.join('\n')}
-                    traverser.exit_${snakeName}(node, ctx);
+                    traverser.exit_${snakeName}(&mut *node, ctx);
                 }
             `.replace(/\n\s*\n+/g, '\n');
         } else if (type.kind === 'enum') {
             const variantCodes = type.variants.map((variant) => {
-                const variantTypeName = unwrapTypeName(variant.type),
+                const {name: variantTypeName, wrappers: fieldTypeWrappers} = typeAndWrappers(variant.type),
                     variantType = types[variantTypeName];
-                const walkCode = variantType
-                    ? `walk_${camelToSnake(variantTypeName)}(traverser, node, ctx)`
+
+                let unboxedCode;
+                if (fieldTypeWrappers.length === 1 && fieldTypeWrappers[0] === 'Box') {
+                    unboxedCode = '(&mut **node)';
+                } else if (fieldTypeWrappers.length === 0) {
+                    unboxedCode = 'node';
+                }
+
+                const walkCode = variantType && unboxedCode
+                    ? `walk_${camelToSnake(variantTypeName)}(traverser, ${unboxedCode} as *mut _, ctx)`
                     : `todo!("TODO: ${variant.type}")`;
                 return `${type.name}::${variant.name}(node) => ${walkCode},`;
             });
@@ -320,18 +336,18 @@ function generateWalkFunctionsCode(types) {
             for (const inheritedTypeName of type.inherits) {
                 const inheritedSnakeName = camelToSnake(inheritedTypeName);
                 variantCodes.push(
-                    `match_${inheritedSnakeName}!(${type.name}) => `
-                    + `walk_${inheritedSnakeName}(traverser, node.to_${inheritedSnakeName}_mut(), ctx),`
+                    `node @ match_${inheritedSnakeName}!(${type.name}) => `
+                    + `walk_${inheritedSnakeName}(traverser, node.to_${inheritedSnakeName}_mut() as *mut _, ctx),`
                 );
             }
 
             walkMethods += `
-                pub(super) fn walk_${snakeName}<'a, Tr: Traverse<'a>>(traverser: &mut Tr, node: &mut ${ty}, ctx: &mut TraverseCtx<'a>) {
-                    traverser.enter_${snakeName}(node, ctx);
-                    match node {
+                pub(super) unsafe fn walk_${snakeName}<'a, Tr: Traverse<'a>>(traverser: &mut Tr, node: *mut ${ty}, ctx: &mut TraverseCtx<'a>) {
+                    traverser.enter_${snakeName}(&mut *node, ctx);
+                    match &mut *node {
                         ${variantCodes.join('\n')}
                     }
-                    traverser.exit_${snakeName}(node, ctx);
+                    traverser.exit_${snakeName}(&mut *node, ctx);
                 }
             `;
         } else {
@@ -352,7 +368,10 @@ function generateWalkFunctionsCode(types) {
             clippy::borrow_as_ptr
         )]
 
-        use std::{marker::PhantomData, mem::offset_of};
+        // TODO: Replace 'byte_add' with 'add, then remove next line
+        #![allow(clippy::incompatible_msrv)]
+
+        use std::marker::PhantomData;
 
         use oxc_allocator::Vec;
 
@@ -361,16 +380,16 @@ function generateWalkFunctionsCode(types) {
 
         ${walkMethods}
 
-        pub(super) fn walk_statements<'a, Tr: Traverse<'a>>(
+        pub(super) unsafe fn walk_statements<'a, Tr: Traverse<'a>>(
             traverser: &mut Tr,
-            stmts: &mut Vec<'a, Statement<'a>>,
+            stmts: *mut Vec<'a, Statement<'a>>,
             ctx: &mut TraverseCtx<'a>
         ) {
-            traverser.enter_statements(stmts, ctx);
-            for stmt in stmts.iter_mut() {
+            traverser.enter_statements(&mut *stmts, ctx);
+            for stmt in (*stmts).iter_mut() {
                 walk_statement(traverser, stmt, ctx);
             }
-            traverser.exit_statements(stmts, ctx);
+            traverser.exit_statements(&mut *stmts, ctx);
         }
     `;
 }

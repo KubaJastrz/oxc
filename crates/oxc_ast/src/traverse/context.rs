@@ -36,6 +36,8 @@ impl<'a> TraverseCtx<'a> {
     pub fn parent(&self) -> &Ancestor<'a> {
         // TODO: Would be better to make `Ancestor` `Copy` and return an owned `Ancestor`
         // for this function and also `ancestor` and `find_ancestor`, but Miri doesn't like it
+        // TODO: Put `Ancestor::None` on stack at start, so there's always a parent,
+        // then make this `.unwrap_unchecked()`
         self.stack.last().unwrap()
     }
 
@@ -83,13 +85,14 @@ impl<'a> TraverseCtx<'a> {
         self.stack.pop().unwrap_unchecked();
     }
 
-    /// Replace last item on stack.
+    /// Retag last item on stack.
     /// # SAFETY
-    /// Stack must not be empty.
+    /// * Stack must not be empty.
+    /// * Last item on stack must contain type corresponding to provided discriminant.
     #[inline]
-    #[allow(unsafe_code)]
-    pub(super) unsafe fn replace_stack(&mut self, ancestor: Ancestor<'a>) {
-        *self.stack.last_mut().unwrap_unchecked() = ancestor;
+    #[allow(unsafe_code, clippy::ptr_as_ptr, clippy::ref_as_ptr)]
+    pub(super) unsafe fn retag_stack(&mut self, discriminant: u16) {
+        *(self.stack.last_mut().unwrap_unchecked() as *mut _ as *mut u16) = discriminant;
     }
 
     /// Return if stack and stack arena are empty
