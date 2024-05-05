@@ -13,13 +13,16 @@ export default function generateAncestorsCode(types) {
         // e.g. `IdentifierReference`
         const typeSnakeName = camelToSnake(type.name),
             typeScreamingName = typeSnakeName.toUpperCase();
+        let offsetCode = '';
         for (const field of type.fields) {
             const offsetVarName = `OFFSET_${typeScreamingName}_${field.name.toUpperCase()}`;
             field.offsetVarName = offsetVarName;
-            ancestorTypes += `pub(crate) const ${offsetVarName}: usize = offset_of!(${type.name}, ${field.rawName});\n`;
+            offsetCode += `pub(crate) const ${offsetVarName}: usize = `
+                + `offset_of!(${type.name}, ${field.rawName});\n`;
         }
 
         const variantNames = [];
+        let thisAncestorTypes = '';
         for (const field of type.fields) {
             const fieldTypeName = field.innerTypeName,
                 fieldType = types[fieldTypeName];
@@ -46,7 +49,7 @@ export default function generateAncestorsCode(types) {
                 lifetime = type.hasLifetime ? "<'a>" : '',
                 structName = `${type.name}Without${fieldNameCamel}${lifetime}`;
 
-            ancestorTypes += `
+            thisAncestorTypes += `
                 #[repr(transparent)]
                 #[derive(Debug)]
                 pub struct ${structName}(
@@ -72,6 +75,11 @@ export default function generateAncestorsCode(types) {
         }
 
         if (variantNames.length > 0) {
+            ancestorTypes += `
+                ${offsetCode}
+                ${thisAncestorTypes}
+            `;
+
             isFunctions += `
                 #[inline]
                 pub fn is_${typeSnakeName}(&self) -> bool {
@@ -100,9 +108,6 @@ export default function generateAncestorsCode(types) {
             clippy::undocumented_unsafe_blocks,
             clippy::cast_ptr_alignment
         )]
-
-        // TODO: Remove unneeded offset consts, then remove next line
-        #![allow(dead_code)]
 
         use memoffset::offset_of;
 
