@@ -151,6 +151,8 @@ function generateAncestorsCode(types) {
         `;
     }
 
+    const discriminantType = discriminant <= 256 ? 'u8' : 'u16';
+
     return `
         ${PREAMBLE}
 
@@ -177,11 +179,13 @@ function generateAncestorsCode(types) {
             AssignmentOperator, BinaryOperator, LogicalOperator, UnaryOperator, UpdateOperator,
         };
 
+        pub(crate) type AncestorDiscriminant = ${discriminantType};
+
         /// Ancestor type used in AST traversal.
         ///
         /// Encodes both the type of the parent, and child's location in the parent.
         /// i.e. variants for \`BinaryExpressionLeft\` and \`BinaryExpressionRight\`, not just \`BinaryExpression\`.
-        #[repr(C, u16)]
+        #[repr(C, ${discriminantType})]
         #[derive(Debug)]
         pub enum Ancestor<'a> {
             None = 0,

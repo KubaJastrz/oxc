@@ -1,7 +1,7 @@
 use oxc_allocator::Allocator;
 use oxc_ast::AstBuilder;
 
-use super::Ancestor;
+use crate::ancestor::{Ancestor, AncestorDiscriminant};
 
 const INITIAL_STACK_CAPACITY: usize = 64;
 
@@ -96,11 +96,13 @@ impl<'a> TraverseCtx<'a> {
     /// Retag last item on stack.
     /// # SAFETY
     /// * Stack must not be empty.
+    /// * `discriminant` must be valid discriminant value for `Ancestor` enum.
     /// * Last item on stack must contain type corresponding to provided discriminant.
     #[inline]
     #[allow(unsafe_code, clippy::ptr_as_ptr, clippy::ref_as_ptr)]
-    pub(super) unsafe fn retag_stack(&mut self, discriminant: u16) {
-        *(self.stack.last_mut().unwrap_unchecked() as *mut _ as *mut u16) = discriminant;
+    pub(super) unsafe fn retag_stack(&mut self, discriminant: AncestorDiscriminant) {
+        *(self.stack.last_mut().unwrap_unchecked() as *mut _ as *mut AncestorDiscriminant) =
+            discriminant;
     }
 }
 

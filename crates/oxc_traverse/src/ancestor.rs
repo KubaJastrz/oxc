@@ -22,6 +22,8 @@ use oxc_syntax::operator::{
     AssignmentOperator, BinaryOperator, LogicalOperator, UnaryOperator, UpdateOperator,
 };
 
+pub(crate) type AncestorDiscriminant = u16;
+
 /// Ancestor type used in AST traversal.
 ///
 /// Encodes both the type of the parent, and child's location in the parent.
