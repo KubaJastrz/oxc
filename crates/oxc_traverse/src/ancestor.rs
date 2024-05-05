@@ -10,7 +10,9 @@
 // TODO: Remove unneeded offset consts, then remove next line
 #![allow(dead_code)]
 
-use std::{marker::PhantomData, mem::offset_of};
+use std::marker::PhantomData;
+
+use memoffset::offset_of;
 
 use oxc_allocator::{Box, Vec};
 #[allow(clippy::wildcard_imports)]
