@@ -40,34 +40,12 @@ function parseFile(code, filename, types) {
             if (line !== '') itemLines.push(line);
         }
 
-        if (kind === 'enum') {
-            types[name] = parseEnum(name, hasLifetime, itemLines, filename, startLineIndex);
-        } else {
+        if (kind === 'struct') {
             types[name] = parseStruct(name, hasLifetime, itemLines, filename, startLineIndex);
-        }
-    }
-}
-
-function parseEnum(name, hasLifetime, lines, filename, startLineIndex) {
-    const variants = [],
-        inherits = [];
-    for (const [lineIndex, line] of lines.entries()) {
-        const match = line.match(/^(.+?)\((.+?)\)(?: ?= ?(\d+))?,$/);
-        if (match) {
-            const [, name, rawType, discriminantStr] = match,
-                type = rawType.replace(/<'a>/g, '').replace(/<'a,\s*/g, '<'),
-                discriminant = discriminantStr ? +discriminantStr : null;
-            variants.push({name, type, rawType, discriminant});
         } else {
-            const match2 = line.match(/^@inherit ([A-Za-z]+)$/);
-            assert(
-                match2,
-                `Cannot parse line ${startLineIndex + lineIndex} in '${filename}' as enum variant: '${line}'`
-            );
-            inherits.push(match2[1]);
+            types[name] = parseEnum(name, hasLifetime, itemLines, filename, startLineIndex);
         }
     }
-    return {kind: 'enum', name, hasLifetime, variants, inherits};
 }
 
 function parseStruct(name, hasLifetime, lines, filename, startLineIndex) {
@@ -91,4 +69,26 @@ function parseStruct(name, hasLifetime, lines, filename, startLineIndex) {
         fields.push({name, type, rawName, rawType});
     }
     return {kind: 'struct', name, hasLifetime, fields};
+}
+
+function parseEnum(name, hasLifetime, lines, filename, startLineIndex) {
+    const variants = [],
+        inherits = [];
+    for (const [lineIndex, line] of lines.entries()) {
+        const match = line.match(/^(.+?)\((.+?)\)(?: ?= ?(\d+))?,$/);
+        if (match) {
+            const [, name, rawType, discriminantStr] = match,
+                type = rawType.replace(/<'a>/g, '').replace(/<'a,\s*/g, '<'),
+                discriminant = discriminantStr ? +discriminantStr : null;
+            variants.push({name, type, rawType, discriminant});
+        } else {
+            const match2 = line.match(/^@inherit ([A-Za-z]+)$/);
+            assert(
+                match2,
+                `Cannot parse line ${startLineIndex + lineIndex} in '${filename}' as enum variant: '${line}'`
+            );
+            inherits.push(match2[1]);
+        }
+    }
+    return {kind: 'enum', name, hasLifetime, variants, inherits};
 }
