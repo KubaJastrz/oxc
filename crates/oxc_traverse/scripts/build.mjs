@@ -208,7 +208,7 @@ function generateWalkFunctionsCode(types) {
                 const {name: fieldTypeName, wrappers: fieldTypeWrappers} = typeAndWrappers(field.type);
 
                 const retagCode = index === 0 ? '' : `ctx.retag_stack(${field.ancestorDiscriminant});`,
-                    fieldCode = `node.byte_add(ancestor::${field.offsetVarName}) as *mut ${field.type}`;
+                    fieldCode = `(node as *mut u8).add(ancestor::${field.offsetVarName}) as *mut ${field.type}`;
 
                 if (fieldTypeWrappers[0] === 'Option') {
                     const remainingWrappers = fieldTypeWrappers.slice(1);
@@ -383,11 +383,9 @@ function generateWalkFunctionsCode(types) {
             clippy::undocumented_unsafe_blocks,
             clippy::semicolon_if_nothing_returned,
             clippy::ptr_as_ptr,
-            clippy::borrow_as_ptr
+            clippy::borrow_as_ptr,
+            clippy::cast_ptr_alignment
         )]
-
-        // TODO: Replace 'byte_add' with 'add, then remove next line
-        #![allow(clippy::incompatible_msrv)]
 
         use std::marker::PhantomData;
 
