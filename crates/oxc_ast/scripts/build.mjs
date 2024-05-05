@@ -62,17 +62,13 @@ function generateTraverseTraitCode(types) {
 }
 
 function generateAncestorsCode(types) {
+    const variantNamesForEnums = Object.create(null);
     let enumVariants = '',
         isFunctions = '',
-        ancestorTypes = '';
-    const variantNamesForStructs = Object.create(null),
-        enumTypes = [];
-    let discriminant = 1;
+        ancestorTypes = '',
+        discriminant = 1;
     for (const type of Object.values(types)) {
-        if (type.kind === 'enum') {
-            enumTypes.push(type);
-            continue;
-        }
+        if (type.kind === 'enum') continue;
 
         // TODO: Don't create `Ancestor`s for types which are never a parent
         // e.g. `IdentifierReference`
@@ -85,7 +81,9 @@ function generateAncestorsCode(types) {
 
         const variantNames = [];
         for (const field of type.fields) {
-            if (!types[unwrapTypeName(field.type)]) continue;
+            const fieldTypeName = unwrapTypeName(field.type),
+                fieldType = types[fieldTypeName];
+            if (!fieldType) continue;
 
             let methodsCode = '',
                 hasLifetime = false;
@@ -124,10 +122,14 @@ function generateAncestorsCode(types) {
             field.ancestorDiscriminant = discriminant;
             field.ancestorHasLifetime = hasLifetime;
             discriminant++;
+
+            if (fieldType.kind === 'enum') {
+                (variantNamesForEnums[fieldTypeName] || (variantNamesForEnums[fieldTypeName] = []))
+                    .push(variantName);
+            }
         }
 
         if (variantNames.length > 0) {
-            variantNamesForStructs[type.name] = variantNames;
             isFunctions += `
                 #[inline]
                 pub fn is_${camelToSnake(type.name)}(&self) -> bool {
@@ -137,21 +139,13 @@ function generateAncestorsCode(types) {
         }
     }
 
-    for (const type of enumTypes) {
-        const variantNames = [];
-        for (const variant of type.variants) {
-            const variantTypeName = unwrapTypeName(variant.type);
-            variantNames.push(...(variantNamesForStructs[variantTypeName] || []));
-        }
-
-        if (variantNames.length > 0) {
-            isFunctions += `
-                #[inline]
-                pub fn is_${camelToSnake(type.name)}(&self) -> bool {
-                    matches!(self, ${variantNames.map(name => `Self::${name}(_)`).join(' | ')})
-                }
-            `;
-        }
+    for (const [typeName, variantNames] of Object.entries(variantNamesForEnums)) {
+        isFunctions += `
+            #[inline]
+            pub fn is_via_${camelToSnake(typeName)}(&self) -> bool {
+                matches!(self, ${variantNames.map(name => `Self::${name}(_)`).join(' | ')})
+            }
+        `;
     }
 
     return `

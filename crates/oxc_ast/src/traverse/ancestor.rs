@@ -1292,517 +1292,336 @@ impl<'a> Ancestor<'a> {
     }
 
     #[inline]
-    pub fn is_expression(&self) -> bool {
+    pub fn is_via_statement(&self) -> bool {
         matches!(
             self,
-            Self::TemplateLiteralQuasis(_)
-                | Self::TemplateLiteralExpressions(_)
-                | Self::MetaPropertyMeta(_)
-                | Self::MetaPropertyProperty(_)
-                | Self::ArrayExpressionElements(_)
-                | Self::ArrowFunctionExpressionParams(_)
-                | Self::ArrowFunctionExpressionBody(_)
-                | Self::ArrowFunctionExpressionTypeParameters(_)
-                | Self::ArrowFunctionExpressionReturnType(_)
-                | Self::AssignmentExpressionLeft(_)
-                | Self::AssignmentExpressionRight(_)
-                | Self::AwaitExpressionArgument(_)
-                | Self::BinaryExpressionLeft(_)
-                | Self::BinaryExpressionRight(_)
-                | Self::CallExpressionCallee(_)
-                | Self::CallExpressionArguments(_)
-                | Self::CallExpressionTypeParameters(_)
-                | Self::ChainExpressionExpression(_)
-                | Self::ClassId(_)
-                | Self::ClassSuperClass(_)
-                | Self::ClassBody(_)
-                | Self::ClassTypeParameters(_)
-                | Self::ClassSuperTypeParameters(_)
-                | Self::ClassImplements(_)
-                | Self::ClassDecorators(_)
-                | Self::ConditionalExpressionTest(_)
-                | Self::ConditionalExpressionConsequent(_)
-                | Self::ConditionalExpressionAlternate(_)
-                | Self::FunctionId(_)
-                | Self::FunctionThisParam(_)
-                | Self::FunctionParams(_)
-                | Self::FunctionBody(_)
-                | Self::FunctionTypeParameters(_)
-                | Self::FunctionReturnType(_)
-                | Self::ImportExpressionSource(_)
-                | Self::ImportExpressionArguments(_)
-                | Self::LogicalExpressionLeft(_)
-                | Self::LogicalExpressionRight(_)
-                | Self::NewExpressionCallee(_)
-                | Self::NewExpressionArguments(_)
-                | Self::NewExpressionTypeParameters(_)
-                | Self::ObjectExpressionProperties(_)
-                | Self::ParenthesizedExpressionExpression(_)
-                | Self::SequenceExpressionExpressions(_)
-                | Self::TaggedTemplateExpressionTag(_)
-                | Self::TaggedTemplateExpressionQuasi(_)
-                | Self::TaggedTemplateExpressionTypeParameters(_)
-                | Self::UnaryExpressionArgument(_)
-                | Self::UpdateExpressionArgument(_)
-                | Self::YieldExpressionArgument(_)
-                | Self::PrivateInExpressionLeft(_)
-                | Self::PrivateInExpressionRight(_)
-                | Self::JSXElementOpeningElement(_)
-                | Self::JSXElementClosingElement(_)
-                | Self::JSXElementChildren(_)
-                | Self::JSXFragmentChildren(_)
-                | Self::TSAsExpressionExpression(_)
-                | Self::TSAsExpressionTypeAnnotation(_)
-                | Self::TSSatisfiesExpressionExpression(_)
-                | Self::TSSatisfiesExpressionTypeAnnotation(_)
-                | Self::TSTypeAssertionExpression(_)
-                | Self::TSTypeAssertionTypeAnnotation(_)
-                | Self::TSNonNullExpressionExpression(_)
-                | Self::TSInstantiationExpressionExpression(_)
-                | Self::TSInstantiationExpressionTypeParameters(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_array_expression_element(&self) -> bool {
-        matches!(self, Self::SpreadElementArgument(_))
-    }
-
-    #[inline]
-    pub fn is_object_property_kind(&self) -> bool {
-        matches!(
-            self,
-            Self::ObjectPropertyKey(_)
-                | Self::ObjectPropertyValue(_)
-                | Self::ObjectPropertyInit(_)
-                | Self::SpreadElementArgument(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_member_expression(&self) -> bool {
-        matches!(
-            self,
-            Self::ComputedMemberExpressionObject(_)
-                | Self::ComputedMemberExpressionExpression(_)
-                | Self::StaticMemberExpressionObject(_)
-                | Self::StaticMemberExpressionProperty(_)
-                | Self::PrivateFieldExpressionObject(_)
-                | Self::PrivateFieldExpressionField(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_argument(&self) -> bool {
-        matches!(self, Self::SpreadElementArgument(_))
-    }
-
-    #[inline]
-    pub fn is_simple_assignment_target(&self) -> bool {
-        matches!(
-            self,
-            Self::TSAsExpressionExpression(_)
-                | Self::TSAsExpressionTypeAnnotation(_)
-                | Self::TSSatisfiesExpressionExpression(_)
-                | Self::TSSatisfiesExpressionTypeAnnotation(_)
-                | Self::TSNonNullExpressionExpression(_)
-                | Self::TSTypeAssertionExpression(_)
-                | Self::TSTypeAssertionTypeAnnotation(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_assignment_target_pattern(&self) -> bool {
-        matches!(
-            self,
-            Self::ArrayAssignmentTargetElements(_)
-                | Self::ArrayAssignmentTargetRest(_)
-                | Self::ObjectAssignmentTargetProperties(_)
-                | Self::ObjectAssignmentTargetRest(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_assignment_target_maybe_default(&self) -> bool {
-        matches!(
-            self,
-            Self::AssignmentTargetWithDefaultBinding(_) | Self::AssignmentTargetWithDefaultInit(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_assignment_target_property(&self) -> bool {
-        matches!(
-            self,
-            Self::AssignmentTargetPropertyIdentifierBinding(_)
-                | Self::AssignmentTargetPropertyIdentifierInit(_)
-                | Self::AssignmentTargetPropertyPropertyName(_)
-                | Self::AssignmentTargetPropertyPropertyBinding(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_chain_element(&self) -> bool {
-        matches!(
-            self,
-            Self::CallExpressionCallee(_)
-                | Self::CallExpressionArguments(_)
-                | Self::CallExpressionTypeParameters(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_statement(&self) -> bool {
-        matches!(
-            self,
-            Self::BlockStatementBody(_)
-                | Self::BreakStatementLabel(_)
-                | Self::ContinueStatementLabel(_)
-                | Self::DoWhileStatementBody(_)
-                | Self::DoWhileStatementTest(_)
-                | Self::ExpressionStatementExpression(_)
-                | Self::ForInStatementLeft(_)
-                | Self::ForInStatementRight(_)
-                | Self::ForInStatementBody(_)
-                | Self::ForOfStatementLeft(_)
-                | Self::ForOfStatementRight(_)
-                | Self::ForOfStatementBody(_)
-                | Self::ForStatementInit(_)
-                | Self::ForStatementTest(_)
-                | Self::ForStatementUpdate(_)
-                | Self::ForStatementBody(_)
-                | Self::IfStatementTest(_)
+            Self::ProgramBody(_)
+                | Self::BlockStatementBody(_)
                 | Self::IfStatementConsequent(_)
                 | Self::IfStatementAlternate(_)
-                | Self::LabeledStatementLabel(_)
-                | Self::LabeledStatementBody(_)
-                | Self::ReturnStatementArgument(_)
-                | Self::SwitchStatementDiscriminant(_)
-                | Self::SwitchStatementCases(_)
-                | Self::ThrowStatementArgument(_)
-                | Self::TryStatementBlock(_)
-                | Self::TryStatementHandler(_)
-                | Self::TryStatementFinalizer(_)
-                | Self::WhileStatementTest(_)
+                | Self::DoWhileStatementBody(_)
                 | Self::WhileStatementBody(_)
-                | Self::WithStatementObject(_)
+                | Self::ForStatementBody(_)
+                | Self::ForInStatementBody(_)
+                | Self::ForOfStatementBody(_)
                 | Self::WithStatementBody(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_declaration(&self) -> bool {
-        matches!(
-            self,
-            Self::VariableDeclarationDeclarations(_)
-                | Self::FunctionId(_)
-                | Self::FunctionThisParam(_)
-                | Self::FunctionParams(_)
-                | Self::FunctionBody(_)
-                | Self::FunctionTypeParameters(_)
-                | Self::FunctionReturnType(_)
-                | Self::ClassId(_)
-                | Self::ClassSuperClass(_)
-                | Self::ClassBody(_)
-                | Self::ClassTypeParameters(_)
-                | Self::ClassSuperTypeParameters(_)
-                | Self::ClassImplements(_)
-                | Self::ClassDecorators(_)
-                | Self::UsingDeclarationDeclarations(_)
-                | Self::TSTypeAliasDeclarationId(_)
-                | Self::TSTypeAliasDeclarationTypeAnnotation(_)
-                | Self::TSTypeAliasDeclarationTypeParameters(_)
-                | Self::TSInterfaceDeclarationId(_)
-                | Self::TSInterfaceDeclarationBody(_)
-                | Self::TSInterfaceDeclarationTypeParameters(_)
-                | Self::TSInterfaceDeclarationExtends(_)
-                | Self::TSEnumDeclarationId(_)
-                | Self::TSEnumDeclarationMembers(_)
-                | Self::TSModuleDeclarationId(_)
-                | Self::TSModuleDeclarationBody(_)
-                | Self::TSImportEqualsDeclarationId(_)
-                | Self::TSImportEqualsDeclarationModuleReference(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_for_statement_init(&self) -> bool {
-        matches!(
-            self,
-            Self::VariableDeclarationDeclarations(_) | Self::UsingDeclarationDeclarations(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_for_statement_left(&self) -> bool {
-        matches!(
-            self,
-            Self::VariableDeclarationDeclarations(_) | Self::UsingDeclarationDeclarations(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_binding_pattern_kind(&self) -> bool {
-        matches!(
-            self,
-            Self::ObjectPatternProperties(_)
-                | Self::ObjectPatternRest(_)
-                | Self::ArrayPatternElements(_)
-                | Self::ArrayPatternRest(_)
-                | Self::AssignmentPatternLeft(_)
-                | Self::AssignmentPatternRight(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_class_element(&self) -> bool {
-        matches!(
-            self,
-            Self::StaticBlockBody(_)
-                | Self::MethodDefinitionKey(_)
-                | Self::MethodDefinitionValue(_)
-                | Self::MethodDefinitionDecorators(_)
-                | Self::PropertyDefinitionKey(_)
-                | Self::PropertyDefinitionValue(_)
-                | Self::PropertyDefinitionTypeAnnotation(_)
-                | Self::PropertyDefinitionDecorators(_)
-                | Self::AccessorPropertyKey(_)
-                | Self::AccessorPropertyValue(_)
-                | Self::AccessorPropertyDecorators(_)
-                | Self::TSIndexSignatureParameters(_)
-                | Self::TSIndexSignatureTypeAnnotation(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_module_declaration(&self) -> bool {
-        matches!(
-            self,
-            Self::ImportDeclarationSpecifiers(_)
-                | Self::ImportDeclarationSource(_)
-                | Self::ImportDeclarationWithClause(_)
-                | Self::ExportAllDeclarationExported(_)
-                | Self::ExportAllDeclarationSource(_)
-                | Self::ExportAllDeclarationWithClause(_)
-                | Self::ExportDefaultDeclarationDeclaration(_)
-                | Self::ExportDefaultDeclarationExported(_)
-                | Self::ExportNamedDeclarationDeclaration(_)
-                | Self::ExportNamedDeclarationSpecifiers(_)
-                | Self::ExportNamedDeclarationSource(_)
-                | Self::ExportNamedDeclarationWithClause(_)
-                | Self::TSExportAssignmentExpression(_)
-                | Self::TSNamespaceExportDeclarationId(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_import_declaration_specifier(&self) -> bool {
-        matches!(
-            self,
-            Self::ImportSpecifierImported(_)
-                | Self::ImportSpecifierLocal(_)
-                | Self::ImportDefaultSpecifierLocal(_)
-                | Self::ImportNamespaceSpecifierLocal(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_export_default_declaration_kind(&self) -> bool {
-        matches!(
-            self,
-            Self::FunctionId(_)
-                | Self::FunctionThisParam(_)
-                | Self::FunctionParams(_)
-                | Self::FunctionBody(_)
-                | Self::FunctionTypeParameters(_)
-                | Self::FunctionReturnType(_)
-                | Self::ClassId(_)
-                | Self::ClassSuperClass(_)
-                | Self::ClassBody(_)
-                | Self::ClassTypeParameters(_)
-                | Self::ClassSuperTypeParameters(_)
-                | Self::ClassImplements(_)
-                | Self::ClassDecorators(_)
-                | Self::TSInterfaceDeclarationId(_)
-                | Self::TSInterfaceDeclarationBody(_)
-                | Self::TSInterfaceDeclarationTypeParameters(_)
-                | Self::TSInterfaceDeclarationExtends(_)
-                | Self::TSEnumDeclarationId(_)
-                | Self::TSEnumDeclarationMembers(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_jsx_element_name(&self) -> bool {
-        matches!(
-            self,
-            Self::JSXNamespacedNameNamespace(_)
-                | Self::JSXNamespacedNameProperty(_)
-                | Self::JSXMemberExpressionObject(_)
-                | Self::JSXMemberExpressionProperty(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_jsx_member_expression_object(&self) -> bool {
-        matches!(self, Self::JSXMemberExpressionObject(_) | Self::JSXMemberExpressionProperty(_))
-    }
-
-    #[inline]
-    pub fn is_jsx_attribute_item(&self) -> bool {
-        matches!(
-            self,
-            Self::JSXAttributeName(_)
-                | Self::JSXAttributeValue(_)
-                | Self::JSXSpreadAttributeArgument(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_jsx_attribute_name(&self) -> bool {
-        matches!(self, Self::JSXNamespacedNameNamespace(_) | Self::JSXNamespacedNameProperty(_))
-    }
-
-    #[inline]
-    pub fn is_jsx_attribute_value(&self) -> bool {
-        matches!(
-            self,
-            Self::JSXExpressionContainerExpression(_)
-                | Self::JSXElementOpeningElement(_)
-                | Self::JSXElementClosingElement(_)
-                | Self::JSXElementChildren(_)
-                | Self::JSXFragmentChildren(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_jsx_child(&self) -> bool {
-        matches!(
-            self,
-            Self::JSXElementOpeningElement(_)
-                | Self::JSXElementClosingElement(_)
-                | Self::JSXElementChildren(_)
-                | Self::JSXFragmentChildren(_)
-                | Self::JSXExpressionContainerExpression(_)
-                | Self::JSXSpreadChildExpression(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_ts_literal(&self) -> bool {
-        matches!(
-            self,
-            Self::TemplateLiteralQuasis(_)
-                | Self::TemplateLiteralExpressions(_)
-                | Self::UnaryExpressionArgument(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_ts_type(&self) -> bool {
-        matches!(
-            self,
-            Self::TSArrayTypeElementType(_)
-                | Self::TSConditionalTypeCheckType(_)
-                | Self::TSConditionalTypeExtendsType(_)
-                | Self::TSConditionalTypeTrueType(_)
-                | Self::TSConditionalTypeFalseType(_)
-                | Self::TSConstructorTypeParams(_)
-                | Self::TSConstructorTypeReturnType(_)
-                | Self::TSConstructorTypeTypeParameters(_)
-                | Self::TSFunctionTypeThisParam(_)
-                | Self::TSFunctionTypeParams(_)
-                | Self::TSFunctionTypeReturnType(_)
-                | Self::TSFunctionTypeTypeParameters(_)
-                | Self::TSImportTypeArgument(_)
-                | Self::TSImportTypeQualifier(_)
-                | Self::TSImportTypeAttributes(_)
-                | Self::TSImportTypeTypeParameters(_)
-                | Self::TSIndexedAccessTypeObjectType(_)
-                | Self::TSIndexedAccessTypeIndexType(_)
-                | Self::TSInferTypeTypeParameter(_)
-                | Self::TSIntersectionTypeTypes(_)
-                | Self::TSLiteralTypeLiteral(_)
-                | Self::TSMappedTypeTypeParameter(_)
-                | Self::TSMappedTypeNameType(_)
-                | Self::TSMappedTypeTypeAnnotation(_)
-                | Self::TSNamedTupleMemberElementType(_)
-                | Self::TSNamedTupleMemberLabel(_)
-                | Self::TSQualifiedNameLeft(_)
-                | Self::TSQualifiedNameRight(_)
-                | Self::TSTemplateLiteralTypeQuasis(_)
-                | Self::TSTemplateLiteralTypeTypes(_)
-                | Self::TSTupleTypeElementTypes(_)
-                | Self::TSTypeLiteralMembers(_)
-                | Self::TSTypeOperatorTypeAnnotation(_)
-                | Self::TSTypePredicateParameterName(_)
-                | Self::TSTypePredicateTypeAnnotation(_)
-                | Self::TSTypeQueryExprName(_)
-                | Self::TSTypeQueryTypeParameters(_)
-                | Self::TSTypeReferenceTypeName(_)
-                | Self::TSTypeReferenceTypeParameters(_)
-                | Self::TSUnionTypeTypes(_)
-                | Self::JSDocNullableTypeTypeAnnotation(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_ts_tuple_element(&self) -> bool {
-        matches!(self, Self::TSOptionalTypeTypeAnnotation(_) | Self::TSRestTypeTypeAnnotation(_))
-    }
-
-    #[inline]
-    pub fn is_ts_type_name(&self) -> bool {
-        matches!(self, Self::TSQualifiedNameLeft(_) | Self::TSQualifiedNameRight(_))
-    }
-
-    #[inline]
-    pub fn is_ts_signature(&self) -> bool {
-        matches!(
-            self,
-            Self::TSIndexSignatureParameters(_)
-                | Self::TSIndexSignatureTypeAnnotation(_)
-                | Self::TSPropertySignatureKey(_)
-                | Self::TSPropertySignatureTypeAnnotation(_)
-                | Self::TSCallSignatureDeclarationThisParam(_)
-                | Self::TSCallSignatureDeclarationParams(_)
-                | Self::TSCallSignatureDeclarationReturnType(_)
-                | Self::TSCallSignatureDeclarationTypeParameters(_)
-                | Self::TSConstructSignatureDeclarationParams(_)
-                | Self::TSConstructSignatureDeclarationReturnType(_)
-                | Self::TSConstructSignatureDeclarationTypeParameters(_)
-                | Self::TSMethodSignatureKey(_)
-                | Self::TSMethodSignatureThisParam(_)
-                | Self::TSMethodSignatureParams(_)
-                | Self::TSMethodSignatureReturnType(_)
-                | Self::TSMethodSignatureTypeParameters(_)
-        )
-    }
-
-    #[inline]
-    pub fn is_ts_module_declaration_body(&self) -> bool {
-        matches!(
-            self,
-            Self::TSModuleDeclarationId(_)
-                | Self::TSModuleDeclarationBody(_)
+                | Self::SwitchCaseConsequent(_)
+                | Self::LabeledStatementBody(_)
+                | Self::FunctionBodyStatements(_)
+                | Self::StaticBlockBody(_)
                 | Self::TSModuleBlockBody(_)
         )
     }
 
     #[inline]
-    pub fn is_ts_type_query_expr_name(&self) -> bool {
+    pub fn is_via_array_expression_element(&self) -> bool {
+        matches!(self, Self::ArrayExpressionElements(_))
+    }
+
+    #[inline]
+    pub fn is_via_object_property_kind(&self) -> bool {
+        matches!(self, Self::ObjectExpressionProperties(_))
+    }
+
+    #[inline]
+    pub fn is_via_property_key(&self) -> bool {
         matches!(
             self,
-            Self::TSImportTypeArgument(_)
-                | Self::TSImportTypeQualifier(_)
-                | Self::TSImportTypeAttributes(_)
-                | Self::TSImportTypeTypeParameters(_)
+            Self::ObjectPropertyKey(_)
+                | Self::AssignmentTargetPropertyPropertyName(_)
+                | Self::BindingPropertyKey(_)
+                | Self::MethodDefinitionKey(_)
+                | Self::PropertyDefinitionKey(_)
+                | Self::AccessorPropertyKey(_)
+                | Self::TSPropertySignatureKey(_)
+                | Self::TSMethodSignatureKey(_)
         )
     }
 
     #[inline]
-    pub fn is_ts_module_reference(&self) -> bool {
-        matches!(self, Self::TSExternalModuleReferenceExpression(_))
+    pub fn is_via_expression(&self) -> bool {
+        matches!(
+            self,
+            Self::ObjectPropertyValue(_)
+                | Self::ObjectPropertyInit(_)
+                | Self::TemplateLiteralExpressions(_)
+                | Self::TaggedTemplateExpressionTag(_)
+                | Self::ComputedMemberExpressionObject(_)
+                | Self::ComputedMemberExpressionExpression(_)
+                | Self::StaticMemberExpressionObject(_)
+                | Self::PrivateFieldExpressionObject(_)
+                | Self::CallExpressionCallee(_)
+                | Self::NewExpressionCallee(_)
+                | Self::SpreadElementArgument(_)
+                | Self::UnaryExpressionArgument(_)
+                | Self::BinaryExpressionLeft(_)
+                | Self::BinaryExpressionRight(_)
+                | Self::PrivateInExpressionRight(_)
+                | Self::LogicalExpressionLeft(_)
+                | Self::LogicalExpressionRight(_)
+                | Self::ConditionalExpressionTest(_)
+                | Self::ConditionalExpressionConsequent(_)
+                | Self::ConditionalExpressionAlternate(_)
+                | Self::AssignmentExpressionRight(_)
+                | Self::AssignmentTargetWithDefaultInit(_)
+                | Self::AssignmentTargetPropertyIdentifierInit(_)
+                | Self::SequenceExpressionExpressions(_)
+                | Self::AwaitExpressionArgument(_)
+                | Self::ParenthesizedExpressionExpression(_)
+                | Self::VariableDeclaratorInit(_)
+                | Self::ExpressionStatementExpression(_)
+                | Self::IfStatementTest(_)
+                | Self::DoWhileStatementTest(_)
+                | Self::WhileStatementTest(_)
+                | Self::ForStatementTest(_)
+                | Self::ForStatementUpdate(_)
+                | Self::ForInStatementRight(_)
+                | Self::ForOfStatementRight(_)
+                | Self::ReturnStatementArgument(_)
+                | Self::WithStatementObject(_)
+                | Self::SwitchStatementDiscriminant(_)
+                | Self::SwitchCaseTest(_)
+                | Self::ThrowStatementArgument(_)
+                | Self::AssignmentPatternRight(_)
+                | Self::YieldExpressionArgument(_)
+                | Self::ClassSuperClass(_)
+                | Self::PropertyDefinitionValue(_)
+                | Self::AccessorPropertyValue(_)
+                | Self::ImportExpressionSource(_)
+                | Self::ImportExpressionArguments(_)
+                | Self::JSXSpreadAttributeArgument(_)
+                | Self::JSXSpreadChildExpression(_)
+                | Self::TSEnumMemberInitializer(_)
+                | Self::TSInterfaceHeritageExpression(_)
+                | Self::TSImportAttributeValue(_)
+                | Self::TSAsExpressionExpression(_)
+                | Self::TSSatisfiesExpressionExpression(_)
+                | Self::TSTypeAssertionExpression(_)
+                | Self::TSNonNullExpressionExpression(_)
+                | Self::DecoratorExpression(_)
+                | Self::TSExportAssignmentExpression(_)
+                | Self::TSInstantiationExpressionExpression(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_argument(&self) -> bool {
+        matches!(self, Self::CallExpressionArguments(_) | Self::NewExpressionArguments(_))
+    }
+
+    #[inline]
+    pub fn is_via_simple_assignment_target(&self) -> bool {
+        matches!(self, Self::UpdateExpressionArgument(_))
+    }
+
+    #[inline]
+    pub fn is_via_assignment_target(&self) -> bool {
+        matches!(
+            self,
+            Self::AssignmentExpressionLeft(_)
+                | Self::AssignmentTargetRestTarget(_)
+                | Self::AssignmentTargetWithDefaultBinding(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_assignment_target_maybe_default(&self) -> bool {
+        matches!(
+            self,
+            Self::ArrayAssignmentTargetElements(_)
+                | Self::AssignmentTargetPropertyPropertyBinding(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_assignment_target_property(&self) -> bool {
+        matches!(self, Self::ObjectAssignmentTargetProperties(_))
+    }
+
+    #[inline]
+    pub fn is_via_chain_element(&self) -> bool {
+        matches!(self, Self::ChainExpressionExpression(_))
+    }
+
+    #[inline]
+    pub fn is_via_for_statement_init(&self) -> bool {
+        matches!(self, Self::ForStatementInit(_))
+    }
+
+    #[inline]
+    pub fn is_via_for_statement_left(&self) -> bool {
+        matches!(self, Self::ForInStatementLeft(_) | Self::ForOfStatementLeft(_))
+    }
+
+    #[inline]
+    pub fn is_via_binding_pattern_kind(&self) -> bool {
+        matches!(self, Self::BindingPatternKind(_))
+    }
+
+    #[inline]
+    pub fn is_via_class_element(&self) -> bool {
+        matches!(self, Self::ClassBodyBody(_))
+    }
+
+    #[inline]
+    pub fn is_via_import_declaration_specifier(&self) -> bool {
+        matches!(self, Self::ImportDeclarationSpecifiers(_))
+    }
+
+    #[inline]
+    pub fn is_via_module_export_name(&self) -> bool {
+        matches!(
+            self,
+            Self::ImportSpecifierImported(_)
+                | Self::ExportDefaultDeclarationExported(_)
+                | Self::ExportAllDeclarationExported(_)
+                | Self::ExportSpecifierLocal(_)
+                | Self::ExportSpecifierExported(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_import_attribute_key(&self) -> bool {
+        matches!(self, Self::ImportAttributeKey(_))
+    }
+
+    #[inline]
+    pub fn is_via_declaration(&self) -> bool {
+        matches!(self, Self::ExportNamedDeclarationDeclaration(_))
+    }
+
+    #[inline]
+    pub fn is_via_export_default_declaration_kind(&self) -> bool {
+        matches!(self, Self::ExportDefaultDeclarationDeclaration(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_child(&self) -> bool {
+        matches!(self, Self::JSXElementChildren(_) | Self::JSXFragmentChildren(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_element_name(&self) -> bool {
+        matches!(self, Self::JSXOpeningElementName(_) | Self::JSXClosingElementName(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_attribute_item(&self) -> bool {
+        matches!(self, Self::JSXOpeningElementAttributes(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_member_expression_object(&self) -> bool {
+        matches!(self, Self::JSXMemberExpressionObject(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_expression(&self) -> bool {
+        matches!(self, Self::JSXExpressionContainerExpression(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_attribute_name(&self) -> bool {
+        matches!(self, Self::JSXAttributeName(_))
+    }
+
+    #[inline]
+    pub fn is_via_jsx_attribute_value(&self) -> bool {
+        matches!(self, Self::JSXAttributeValue(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_enum_member_name(&self) -> bool {
+        matches!(self, Self::TSEnumMemberId(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_type(&self) -> bool {
+        matches!(
+            self,
+            Self::TSTypeAnnotationTypeAnnotation(_)
+                | Self::TSConditionalTypeCheckType(_)
+                | Self::TSConditionalTypeExtendsType(_)
+                | Self::TSConditionalTypeTrueType(_)
+                | Self::TSConditionalTypeFalseType(_)
+                | Self::TSUnionTypeTypes(_)
+                | Self::TSIntersectionTypeTypes(_)
+                | Self::TSTypeOperatorTypeAnnotation(_)
+                | Self::TSArrayTypeElementType(_)
+                | Self::TSIndexedAccessTypeObjectType(_)
+                | Self::TSIndexedAccessTypeIndexType(_)
+                | Self::TSNamedTupleMemberElementType(_)
+                | Self::TSOptionalTypeTypeAnnotation(_)
+                | Self::TSRestTypeTypeAnnotation(_)
+                | Self::TSTypeParameterInstantiationParams(_)
+                | Self::TSTypeParameterConstraint(_)
+                | Self::TSTypeParameterDefault(_)
+                | Self::TSTypeAliasDeclarationTypeAnnotation(_)
+                | Self::TSImportTypeArgument(_)
+                | Self::TSMappedTypeNameType(_)
+                | Self::TSMappedTypeTypeAnnotation(_)
+                | Self::TSTemplateLiteralTypeTypes(_)
+                | Self::TSAsExpressionTypeAnnotation(_)
+                | Self::TSSatisfiesExpressionTypeAnnotation(_)
+                | Self::TSTypeAssertionTypeAnnotation(_)
+                | Self::JSDocNullableTypeTypeAnnotation(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_ts_literal(&self) -> bool {
+        matches!(self, Self::TSLiteralTypeLiteral(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_tuple_element(&self) -> bool {
+        matches!(self, Self::TSTupleTypeElementTypes(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_type_name(&self) -> bool {
+        matches!(
+            self,
+            Self::TSTypeReferenceTypeName(_)
+                | Self::TSQualifiedNameLeft(_)
+                | Self::TSClassImplementsExpression(_)
+                | Self::TSImportTypeQualifier(_)
+        )
+    }
+
+    #[inline]
+    pub fn is_via_ts_signature(&self) -> bool {
+        matches!(self, Self::TSInterfaceBodyBody(_) | Self::TSTypeLiteralMembers(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_type_predicate_name(&self) -> bool {
+        matches!(self, Self::TSTypePredicateParameterName(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_module_declaration_name(&self) -> bool {
+        matches!(self, Self::TSModuleDeclarationId(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_module_declaration_body(&self) -> bool {
+        matches!(self, Self::TSModuleDeclarationBody(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_type_query_expr_name(&self) -> bool {
+        matches!(self, Self::TSTypeQueryExprName(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_import_attribute_name(&self) -> bool {
+        matches!(self, Self::TSImportAttributeName(_))
+    }
+
+    #[inline]
+    pub fn is_via_ts_module_reference(&self) -> bool {
+        matches!(self, Self::TSImportEqualsDeclarationModuleReference(_))
     }
 }
 

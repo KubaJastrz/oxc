@@ -78,7 +78,7 @@ impl<'a> ReactDisplayName<'a> {
                     FinderRet::Found(ctx.ast.new_atom(&self.ctx.filename))
                 }
                 // Stop crawling up when hit a statement
-                _ if ancestor.is_statement() => FinderRet::Stop,
+                _ if ancestor.is_via_statement() => FinderRet::Stop,
                 _ => FinderRet::Continue,
             }
         });
