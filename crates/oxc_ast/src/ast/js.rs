@@ -4,7 +4,7 @@
 use std::{cell::Cell, fmt, hash::Hash};
 
 use oxc_allocator::{Box, Vec};
-use oxc_macros::visited_node;
+use oxc_ast_macros::visited_node;
 use oxc_span::{Atom, CompactStr, SourceType, Span};
 use oxc_syntax::{
     operator::{

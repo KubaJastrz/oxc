@@ -7,7 +7,7 @@
 #![allow(non_snake_case)]
 
 use oxc_allocator::{Box, Vec};
-use oxc_macros::visited_node;
+use oxc_ast_macros::visited_node;
 use oxc_span::{Atom, GetSpan, Span};
 #[cfg(feature = "serialize")]
 use serde::Serialize;

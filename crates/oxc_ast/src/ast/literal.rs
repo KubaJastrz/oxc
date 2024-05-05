@@ -9,7 +9,7 @@ use std::{
 };
 
 use bitflags::bitflags;
-use oxc_macros::visited_node;
+use oxc_ast_macros::visited_node;
 use oxc_span::{Atom, Span};
 use oxc_syntax::number::{BigintBase, NumberBase};
 #[cfg(feature = "serialize")]
