@@ -271,8 +271,6 @@ function generateWalkFunctionsCode(types) {
                 }
 
                 if (fieldTypeWrappers.length === 1 && fieldTypeWrappers[0] === 'Box') {
-                    // TODO: Maybe substitute:
-                    // (&mut **(&mut *(${fieldCode}))) as *mut _
                     return `
                         ${retagCode}
                         walk_${camelToSnake(fieldTypeName)}(
