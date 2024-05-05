@@ -9,10 +9,6 @@ export function typeAndWrappers(name) {
     return {name, wrappers};
 }
 
-export function unwrapTypeName(name) {
-    return typeAndWrappers(name).name;
-}
-
 export function toTypeName(type) {
     let ty = type.name;
     if (type.hasLifetime) ty += "<'a>";
@@ -29,10 +25,6 @@ export function camelToSnake(name) {
     }
     return name.slice(0, prefixLen).toLowerCase()
         + name.slice(prefixLen).replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
-}
-
-export function camelToScreaming(name) {
-    return camelToSnake(name).toUpperCase();
 }
 
 export function snakeToCamel(name) {

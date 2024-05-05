@@ -2,6 +2,7 @@ import {readFile} from 'fs/promises';
 import {join as pathJoin} from 'path';
 import {fileURLToPath} from 'url';
 import assert from 'assert';
+import {typeAndWrappers} from './utils.mjs';
 
 const FILENAMES = ['js.rs', 'jsx.rs', 'literal.rs', 'ts.rs'];
 
@@ -64,9 +65,11 @@ function parseStruct(name, hasLifetime, lines, filename, startLineIndex) {
             match,
             `Cannot parse line ${startLineIndex + i} in '${filename}' as struct field: '${line}'`
         );
-        const [, rawName, name, rawType] = match,
-            type = rawType.replace(/<'a>/g, '').replace(/<'a, ?/g, '<');
-        fields.push({name, type, rawName, rawType});
+        const [, rawName, name, rawTypeName] = match,
+            typeName = rawTypeName.replace(/<'a>/g, '').replace(/<'a, ?/g, '<'),
+            {name: innerTypeName, wrappers} = typeAndWrappers(typeName);
+        
+        fields.push({name, typeName, rawName, rawTypeName, innerTypeName, wrappers});
     }
     return {kind: 'struct', name, hasLifetime, fields};
 }
@@ -77,10 +80,11 @@ function parseEnum(name, hasLifetime, lines, filename, startLineIndex) {
     for (const [lineIndex, line] of lines.entries()) {
         const match = line.match(/^(.+?)\((.+?)\)(?: ?= ?(\d+))?,$/);
         if (match) {
-            const [, name, rawType, discriminantStr] = match,
-                type = rawType.replace(/<'a>/g, '').replace(/<'a,\s*/g, '<'),
+            const [, name, rawTypeName, discriminantStr] = match,
+                typeName = rawTypeName.replace(/<'a>/g, '').replace(/<'a,\s*/g, '<'),
+                {name: innerTypeName, wrappers} = typeAndWrappers(typeName),
                 discriminant = discriminantStr ? +discriminantStr : null;
-            variants.push({name, type, rawType, discriminant});
+            variants.push({name, typeName, rawTypeName, innerTypeName, wrappers, discriminant});
         } else {
             const match2 = line.match(/^@inherit ([A-Za-z]+)$/);
             assert(

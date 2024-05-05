@@ -3,13 +3,13 @@ import {camelToSnake, toTypeName} from './utils.mjs';
 export default function generateTraverseTraitCode(types) {
     let traverseMethods = '';
     for (const type of Object.values(types)) {
-        const snakeName = camelToSnake(type.name);
-        const ty = toTypeName(type);
+        const snakeName = camelToSnake(type.name),
+            typeName = toTypeName(type);
         traverseMethods += `
             #[inline]
-            fn enter_${snakeName}(&mut self, node: &mut ${ty}, ctx: &TraverseCtx<'a>) {}
+            fn enter_${snakeName}(&mut self, node: &mut ${typeName}, ctx: &TraverseCtx<'a>) {}
             #[inline]
-            fn exit_${snakeName}(&mut self, node: &mut ${ty}, ctx: &TraverseCtx<'a>) {}
+            fn exit_${snakeName}(&mut self, node: &mut ${typeName}, ctx: &TraverseCtx<'a>) {}
         `;
     }
 

@@ -1,4 +1,4 @@
-import {unwrapTypeName, camelToSnake, camelToScreaming, snakeToCamel} from './utils.mjs';
+import {camelToSnake, snakeToCamel} from './utils.mjs';
 
 export default function generateAncestorsCode(types) {
     const variantNamesForEnums = Object.create(null);
@@ -11,16 +11,17 @@ export default function generateAncestorsCode(types) {
 
         // TODO: Don't create `Ancestor`s for types which are never a parent
         // e.g. `IdentifierReference`
-        const typeNameScreaming = camelToScreaming(type.name);
+        const typeSnakeName = camelToSnake(type.name),
+            typeScreamingName = typeSnakeName.toUpperCase();
         for (const field of type.fields) {
-            const offsetVarName = `OFFSET_${typeNameScreaming}_${field.name.toUpperCase()}`;
+            const offsetVarName = `OFFSET_${typeScreamingName}_${field.name.toUpperCase()}`;
             field.offsetVarName = offsetVarName;
             ancestorTypes += `pub(crate) const ${offsetVarName}: usize = offset_of!(${type.name}, ${field.rawName});\n`;
         }
 
         const variantNames = [];
         for (const field of type.fields) {
-            const fieldTypeName = unwrapTypeName(field.type),
+            const fieldTypeName = field.innerTypeName,
                 fieldType = types[fieldTypeName];
             if (!fieldType) continue;
 
@@ -30,19 +31,20 @@ export default function generateAncestorsCode(types) {
 
                 methodsCode += `
                     #[inline]
-                    pub fn ${otherField.rawName}(&self) -> &${otherField.rawType} {
+                    pub fn ${otherField.rawName}(&self) -> &${otherField.rawTypeName} {
                         unsafe {
                             &*(
                                 (self.0 as *const u8).add(${otherField.offsetVarName})
-                                as *const ${otherField.rawType}
+                                as *const ${otherField.rawTypeName}
                             )
                         }
                     }
                 `;
             }
 
-            const lifetime = type.hasLifetime ? "<'a>" : '',
-                structName = `${type.name}Without${snakeToCamel(field.name)}${lifetime}`;
+            const fieldNameCamel = snakeToCamel(field.name),
+                lifetime = type.hasLifetime ? "<'a>" : '',
+                structName = `${type.name}Without${fieldNameCamel}${lifetime}`;
 
             ancestorTypes += `
                 #[repr(transparent)]
@@ -56,7 +58,7 @@ export default function generateAncestorsCode(types) {
                 }
             `;
 
-            const variantName = `${type.name}${snakeToCamel(field.name)}`;
+            const variantName = `${type.name}${fieldNameCamel}`;
             variantNames.push(variantName);
 
             enumVariants += `${variantName}(${structName}) = ${discriminant},\n`;
@@ -72,7 +74,7 @@ export default function generateAncestorsCode(types) {
         if (variantNames.length > 0) {
             isFunctions += `
                 #[inline]
-                pub fn is_${camelToSnake(type.name)}(&self) -> bool {
+                pub fn is_${typeSnakeName}(&self) -> bool {
                     matches!(self, ${variantNames.map(name => `Self::${name}(_)`).join(' | ')})
                 }
             `;
